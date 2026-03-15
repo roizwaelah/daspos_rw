@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="4dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="0.5dp"
     app:strokeColor="@color/divider"
@@ -44,23 +44,23 @@
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="48dp"
+            android:layout_width="38dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:minWidth="0dp"
             android:contentDescription="@string/edit"
-            android:padding="4dp"
+            android:padding="2dp"
             android:src="@drawable/ic_pencil"
             app:tint="@color/accent_blue" />
 
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="48dp"
+            android:layout_width="38dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:minWidth="0dp"
             android:contentDescription="@string/delete"
-            android:padding="4dp"
+            android:padding="2dp"
             android:src="@drawable/ic_trash"
             app:tint="@color/danger_red" />
     </LinearLayout>
