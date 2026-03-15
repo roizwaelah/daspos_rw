@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daspos.R;
 import com.daspos.model.Product;
 import com.daspos.shared.util.CurrencyUtils;
-import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
 
     static class VH extends RecyclerView.ViewHolder {
         TextView tvName, tvInfo;
-        MaterialButton btnEdit, btnDelete;
+        View btnEdit, btnDelete;
         VH(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvProductName);
