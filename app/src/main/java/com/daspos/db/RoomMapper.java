@@ -23,7 +23,7 @@ public class RoomMapper {
     }
 
     public static UserEntity toEntity(User model) {
-        return new UserEntity(model.getUsername(), model.getRole());
+        return new UserEntity(model.getUsername(), model.getRole(), "");
     }
 
     public static User toModel(UserEntity entity) {
