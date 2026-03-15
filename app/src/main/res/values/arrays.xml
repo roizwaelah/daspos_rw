@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="product_sort_options">
+        <item>Nama A-Z</item>
+        <item>Nama Z-A</item>
+        <item>Harga Termurah</item>
+        <item>Harga Tertinggi</item>
+        <item>Stok Terbanyak</item>
+    </string-array>
+
+    <string-array name="role_options">
+        <item>Admin</item>
+        <item>Kasir</item>
+    </string-array>
+
+    <string-array name="backup_interval_options">
+        <item>Harian</item>
+        <item>Mingguan</item>
+        <item>Bulanan</item>
+    </string-array>
+</resources>
