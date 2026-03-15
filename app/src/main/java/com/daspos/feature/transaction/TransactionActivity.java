@@ -44,6 +44,7 @@ public class TransactionActivity extends BaseActivity {
     private RecyclerView rvCart;
     private View layoutCartState;
     private MaterialButton btnFinish;
+    private View searchDropdownCard;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +61,7 @@ public class TransactionActivity extends BaseActivity {
         etPay = findViewById(R.id.etPay);
         MaterialButton btnCancel = findViewById(R.id.btnCancel);
         btnFinish = findViewById(R.id.btnFinish);
+        searchDropdownCard = findViewById(R.id.searchDropdownCard);
         final View layoutSearchState = findViewById(R.id.layoutSearchState);
         final ProgressBar progressSearch = findViewById(R.id.progressSearch);
         final TextView tvSearchState = findViewById(R.id.tvSearchState);
@@ -71,7 +73,10 @@ public class TransactionActivity extends BaseActivity {
         searchAdapter = new ProductSearchAdapter(new ProductSearchAdapter.Listener() {
             @Override public void onAdd(Product product) { addToCart(product); }
         });
-        cartAdapter = new CartAdapter();
+        cartAdapter = new CartAdapter(new CartAdapter.Listener() {
+            @Override public void onMinus(CartItem item) { decrementCartItem(item); }
+            @Override public void onPlus(CartItem item) { incrementCartItem(item); }
+        });
         rvSearch.setAdapter(searchAdapter);
         rvCart.setAdapter(cartAdapter);
         viewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
@@ -84,6 +89,7 @@ public class TransactionActivity extends BaseActivity {
         viewModel.getSearchUiState().observe(this, new Observer<ListUiState<Product>>() {
             @Override public void onChanged(ListUiState<Product> state) {
                 UiStateRenderer.renderListState(state, rvSearch, layoutSearchState, progressSearch, tvSearchState, getString(R.string.loading));
+                searchDropdownCard.setVisibility(state != null && state.getStatus() != ListUiState.Status.SUCCESS ? View.VISIBLE : (searchAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE));
             }
         });
         viewModel.getScreenState().observe(this, new Observer<TransactionScreenState>() {
@@ -119,7 +125,12 @@ public class TransactionActivity extends BaseActivity {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void afterTextChanged(Editable s) { }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { viewModel.searchProducts(s.toString()); }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = s == null ? "" : s.toString();
+                viewModel.searchProducts(query);
+                if (query.trim().isEmpty()) searchDropdownCard.setVisibility(View.GONE);
+                else searchDropdownCard.setVisibility(View.VISIBLE);
+            }
         });
         etPay.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -150,10 +161,35 @@ public class TransactionActivity extends BaseActivity {
                 item.setQty(item.getQty() + 1);
                 cartAdapter.submit(cartItems);
                 viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+                searchDropdownCard.setVisibility(View.GONE);
                 return;
             }
         }
         cartItems.add(new CartItem(latest, 1));
+        cartAdapter.submit(cartItems);
+        viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+        searchDropdownCard.setVisibility(View.GONE);
+    }
+
+    private void decrementCartItem(CartItem item) {
+        if (item == null) return;
+        if (item.getQty() <= 1) {
+            cartItems.remove(item);
+        } else {
+            item.setQty(item.getQty() - 1);
+        }
+        cartAdapter.submit(cartItems);
+        viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+    }
+
+    private void incrementCartItem(CartItem item) {
+        if (item == null) return;
+        Product latest = ProductRepository.getById(this, item.getProduct().getId());
+        if (latest == null || item.getQty() >= latest.getStock()) {
+            ViewUtils.toast(this, getString(R.string.stock_not_enough));
+            return;
+        }
+        item.setQty(item.getQty() + 1);
         cartAdapter.submit(cartItems);
         viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
     }

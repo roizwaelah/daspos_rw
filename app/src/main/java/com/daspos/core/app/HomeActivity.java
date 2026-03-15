@@ -16,7 +16,6 @@ import com.daspos.feature.transaction.TransactionActivity;
 import com.daspos.repository.ProductRepository;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
-import com.daspos.shared.util.ThemeManager;
 
 public class HomeActivity extends BaseActivity {
     @Override
@@ -32,23 +31,14 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
 
         TextView tvStoreName = findViewById(R.id.tvStoreName);
-        TextView tvSettings = findViewById(R.id.tvSettings);
-        ImageView btnTheme = findViewById(R.id.btnTheme);
+        ImageView btnSettings = findViewById(R.id.btnSettings);
 
         tvStoreName.setText(StoreConfigStore.getStoreName(this));
 
-        tvSettings.setOnClickListener(new View.OnClickListener() {
+        btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomeActivity.this, SettingActivity.class));
-            }
-        });
-
-        btnTheme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ThemeManager.toggleTheme(HomeActivity.this);
-                recreate();
             }
         });
 
