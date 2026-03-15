@@ -64,7 +64,7 @@
 
             <Spinner
                 android:id="@+id/spSort"
-                android:layout_width="148dp"
+                android:layout_width="90dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:textSize="11sp"

@@ -40,11 +40,11 @@
         android:id="@+id/btnAddCart"
         style="@style/DasPosPrimaryButton"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="match_parent"
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:minWidth="0dp"
         android:text="@string/add"
-        android:textSize="11sp"
+        android:textSize="12sp"
         tools:ignore="TouchTargetSizeCheck" />
 </LinearLayout>
