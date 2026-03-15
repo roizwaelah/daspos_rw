@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -42,7 +43,8 @@
         android:contentDescription="@string/cancel"
         android:padding="6dp"
         android:src="@drawable/ic_minus"
-        app:tint="@color/primary_green" />
+        app:tint="@color/primary_green"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/tvCartSubtotal"
@@ -62,5 +64,6 @@
         android:contentDescription="@string/finish"
         android:padding="6dp"
         android:src="@drawable/ic_plus"
-        app:tint="@color/primary_green" />
+        app:tint="@color/primary_green"
+        tools:ignore="TouchTargetSizeCheck" />
 </LinearLayout>
