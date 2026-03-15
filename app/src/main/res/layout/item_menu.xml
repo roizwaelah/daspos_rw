@@ -26,7 +26,7 @@
             android:layout_height="22dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_menu_product"
-            app:tint="@color/text_primary" />
+            app:tint="@color/primary_green" />
 
         <TextView
             android:id="@+id/tvTitle"
