@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="52dp"
     android:gravity="center_vertical"
+    android:minHeight="52dp"
     android:orientation="horizontal"
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
@@ -33,12 +34,33 @@
             android:textSize="11sp" />
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/btnMinus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cancel"
+        android:padding="6dp"
+        android:src="@drawable/ic_minus"
+        app:tint="@color/primary_green" />
+
     <TextView
         android:id="@+id/tvCartSubtotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
         android:text="Rp 10.000"
         android:textColor="@color/text_primary"
         android:textSize="11sp"
         android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/btnPlus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/finish"
+        android:padding="6dp"
+        android:src="@drawable/ic_plus"
+        app:tint="@color/primary_green" />
 </LinearLayout>
