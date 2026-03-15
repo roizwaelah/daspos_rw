@@ -34,13 +34,15 @@
                     android:textColor="@color/text_secondary" android:textSize="12sp"/>
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etStoreName"
+                    android:id="@+id/tvStoreName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:hint="@string/insert_store_name"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_marginTop="12dp" android:text="@string/label_username"
@@ -52,8 +54,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:hint="@string/insert_username"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_marginTop="12dp" android:text="@string/label_password"
@@ -65,9 +69,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:hint="@string/insert_password"
                     android:inputType="textPassword"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_marginTop="12dp" android:text="@string/confirm_password"
@@ -79,9 +85,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:hint="@string/insert_password_again"
                     android:inputType="textPassword"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRegister"
