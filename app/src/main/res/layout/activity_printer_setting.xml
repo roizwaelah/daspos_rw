@@ -16,23 +16,25 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_card"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
                     android:text="@string/select_printer"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
@@ -41,8 +43,7 @@
                 <RadioGroup
                     android:id="@+id/rgPrinterType"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_height="wrap_content">
 
                     <RadioButton
                         android:id="@+id/rbNone"
@@ -115,31 +116,34 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPrinterCancel"
-                        style="@style/DasPosGrayButton"
+                        style="@style/DasPosDangerButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="6dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
-                        android:text="@string/cancel" />
+                        android:text="@string/cancel"
+                        android:textSize="11sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnTestPrint"
                         style="@style/DasPosGrayButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginEnd="6dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
-                        android:text="@string/test_print" />
+                        android:text="@string/test_print"
+                        android:textSize="11sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPrinterSave"
                         style="@style/DasPosPrimaryButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:layout_weight="1"
-                        android:text="@string/save" />
+                        android:text="@string/save"
+                        android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
