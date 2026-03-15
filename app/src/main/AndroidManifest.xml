@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <application
+        android:name=".DasPosApp"
+        android:allowBackup="true"
+        android:icon="@android:drawable/sym_def_app_icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DasPos">
+
+        <activity android:name=".feature.printer.BluetoothScanActivity" />
+        <activity android:name=".feature.user.UserListActivity" />
+        <activity android:name=".feature.user.EditUserActivity" />
+        <activity android:name=".feature.user.AddUserActivity" />
+        <activity android:name=".feature.transaction.StrukActivity" />
+        <activity android:name=".feature.settings.ReceiptPreviewActivity" />
+        <activity android:name=".feature.product.ImportProductActivity" />
+        <activity android:name=".feature.settings.SelectDatabaseActivity" />
+        <activity android:name=".feature.settings.ContactUsActivity" />
+        <activity android:name=".feature.settings.AppInfoActivity" />
+        <activity android:name=".feature.settings.BackupRestoreActivity" />
+        <activity android:name=".feature.printer.PrinterSettingActivity" />
+        <activity android:name=".feature.settings.ReceiptSettingActivity" />
+        <activity android:name=".feature.settings.StoreInfoActivity" />
+        <activity android:name=".feature.settings.ChangePasswordActivity" />
+        <activity android:name=".feature.settings.AccountSettingActivity" />
+        <activity android:name=".feature.settings.SettingActivity" />
+        <activity android:name=".feature.report.ReportActivity" />
+        <activity android:name=".feature.product.ProductFormActivity" />
+        <activity android:name=".feature.product.ProductActivity" />
+        <activity android:name=".feature.transaction.TransactionActivity" />
+        <activity android:name=".core.app.HomeActivity" />
+        <activity android:name=".feature.auth.RegisterActivity" />
+        <activity android:name=".feature.auth.LoginActivity" />
+        <activity
+            android:name=".core.app.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
