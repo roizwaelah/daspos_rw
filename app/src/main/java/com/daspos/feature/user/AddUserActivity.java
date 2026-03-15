@@ -59,7 +59,7 @@ public class AddUserActivity extends BaseActivity {
                 String username = etUsername.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
                 if (!viewModel.validateNewUser(username, password)) return;
-                viewModel.addUser(username, spinner.getSelectedItem().toString());
+                viewModel.addUser(username, password, spinner.getSelectedItem().toString());
             }
         });
     }

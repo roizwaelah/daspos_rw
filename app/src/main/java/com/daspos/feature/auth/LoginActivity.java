@@ -8,6 +8,8 @@ import android.widget.TextView;
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.core.app.HomeActivity;
+import com.daspos.repository.UserRepository;
+import com.daspos.shared.util.ViewUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -25,11 +27,16 @@ public class LoginActivity extends BaseActivity {
             @Override public void onClick(View v) {
                 String user = String.valueOf(etUsername.getText()).trim();
                 String pass = String.valueOf(etPassword.getText()).trim();
-                if (!user.isEmpty() && !pass.isEmpty()) {
+                if (user.isEmpty() || pass.isEmpty()) {
+                    ViewUtils.toast(LoginActivity.this, getString(R.string.field_required));
+                    return;
+                }
+
+                if (UserRepository.authenticate(LoginActivity.this, user, pass)) {
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
                 } else {
-                    etUsername.setError(getString(R.string.label_username));
+                    ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed));
                 }
             }
         });

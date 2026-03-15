@@ -65,6 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:inputType="textPassword"
                     android:padding="12dp"
                     android:textSize="14sp"/>
 
@@ -78,6 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:inputType="textPassword"
                     android:padding="12dp"
                     android:textSize="14sp"/>
 

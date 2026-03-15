@@ -9,6 +9,7 @@ import com.daspos.model.CartItem;
 import com.daspos.model.Product;
 import com.daspos.model.ReportItem;
 import com.daspos.model.TransactionRecord;
+import com.daspos.shared.util.DbExecutor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,45 +20,49 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class TransactionRepository {
-    public static void save(Context context, List<CartItem> items, double total, double pay, double change) {
-        AppDatabase db = AppDatabase.getInstance(context);
-        int next = db.transactionDao().count() + 1;
-        String id = "#TRX" + String.format(Locale.getDefault(), "%03d", next);
-        String date = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
-        String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-        long timestamp = System.currentTimeMillis();
+    public static void save(final Context context, final List<CartItem> items, final double total, final double pay, final double change) {
+        DbExecutor.runBlocking(() -> {
+            AppDatabase db = AppDatabase.getInstance(context);
+            int next = db.transactionDao().count() + 1;
+            String id = "#TRX" + String.format(Locale.getDefault(), "%03d", next);
+            String date = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
+            String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+            long timestamp = System.currentTimeMillis();
 
-        db.transactionDao().insertTransaction(new TransactionEntity(id, date, time, timestamp, total, pay, change));
+            db.transactionDao().insertTransaction(new TransactionEntity(id, date, time, timestamp, total, pay, change));
 
-        List<TransactionItemEntity> entities = new ArrayList<>();
-        for (CartItem item : items) {
-            entities.add(new TransactionItemEntity(
-                    UUID.randomUUID().toString(),
-                    id,
-                    item.getProduct().getId(),
-                    item.getProduct().getName(),
-                    item.getProduct().getPrice(),
-                    item.getQty()
-            ));
-        }
-        db.transactionDao().insertTransactionItems(entities);
-        ProductRepository.reduceStock(context, items);
-    }
-
-    public static List<TransactionRecord> getAll(Context context) {
-        List<TransactionRecord> list = new ArrayList<>();
-        AppDatabase db = AppDatabase.getInstance(context);
-        for (TransactionEntity t : db.transactionDao().getAllTransactions()) {
-            List<CartItem> items = new ArrayList<>();
-            for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
-                items.add(new CartItem(
-                        new Product(item.productId, item.productName, item.price, 0),
-                        item.qty
+            List<TransactionItemEntity> entities = new ArrayList<>();
+            for (CartItem item : items) {
+                entities.add(new TransactionItemEntity(
+                        UUID.randomUUID().toString(),
+                        id,
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getProduct().getPrice(),
+                        item.getQty()
                 ));
             }
-            list.add(new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items));
-        }
-        return list;
+            db.transactionDao().insertTransactionItems(entities);
+            ProductRepository.reduceStock(context, items);
+        });
+    }
+
+    public static List<TransactionRecord> getAll(final Context context) {
+        return DbExecutor.runBlocking(() -> {
+            List<TransactionRecord> list = new ArrayList<>();
+            AppDatabase db = AppDatabase.getInstance(context);
+            for (TransactionEntity t : db.transactionDao().getAllTransactions()) {
+                List<CartItem> items = new ArrayList<>();
+                for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
+                    items.add(new CartItem(
+                            new Product(item.productId, item.productName, item.price, 0),
+                            item.qty
+                    ));
+                }
+                list.add(new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items));
+            }
+            return list;
+        });
     }
 
     public static TransactionRecord getLast(Context context) {
@@ -72,10 +77,10 @@ public class TransactionRepository {
             if (trxCal == null) continue;
             boolean match = monthly
                     ? trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
-                      && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
+                    && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
                     : trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
-                      && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
-                      && trxCal.get(Calendar.DAY_OF_MONTH) == selectedCalendar.get(Calendar.DAY_OF_MONTH);
+                    && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
+                    && trxCal.get(Calendar.DAY_OF_MONTH) == selectedCalendar.get(Calendar.DAY_OF_MONTH);
             if (match) filtered.add(new ReportItem(t.getId(), t.getDate(), t.getTime(), t.getTotal()));
         }
         return filtered;
