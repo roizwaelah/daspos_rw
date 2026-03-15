@@ -1,0 +1,93 @@
+package com.daspos.feature.settings;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+
+import com.daspos.R;
+import com.daspos.core.app.BaseActivity;
+import com.daspos.shared.util.ViewUtils;
+
+public class BackupRestoreActivity extends BaseActivity {
+    private static final int REQ_BACKUP = 901;
+    private static final int REQ_RESTORE = 902;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_backup_restore);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.backup_restore));
+
+        Spinner spinner = findViewById(R.id.spBackupInterval);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.backup_interval_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        findViewById(R.id.btnBackupNow).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { createBackupFile(); }
+        });
+        findViewById(R.id.btnChooseRestoreFile).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { chooseRestoreFile(); }
+        });
+        findViewById(R.id.btnResetAllData).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                new AlertDialog.Builder(BackupRestoreActivity.this)
+                        .setTitle(getString(R.string.reset_data))
+                        .setMessage(getString(R.string.reset_warning))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override public void onClick(DialogInterface dialog, int which) {
+                                BackupRestoreHelper.resetAll(BackupRestoreActivity.this);
+                                ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.reset_success));
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.cancel), null)
+                        .show();
+            }
+        });
+    }
+
+    private void createBackupFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        intent.putExtra(Intent.EXTRA_TITLE, "daspos_backup.json");
+        startActivityForResult(intent, REQ_BACKUP);
+    }
+
+    private void chooseRestoreFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/json");
+        startActivityForResult(intent, REQ_RESTORE);
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
+        final Uri uri = data.getData();
+        if (requestCode == REQ_BACKUP) {
+            ViewUtils.toast(this, getString(BackupRestoreHelper.backup(this, uri) ? R.string.backup_success : R.string.export_failed));
+        } else if (requestCode == REQ_RESTORE) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.restore))
+                    .setMessage(getString(R.string.restore_confirm))
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override public void onClick(DialogInterface dialog, int which) {
+                            BackupRestoreHelper.RestoreStatus status = BackupRestoreHelper.restore(BackupRestoreActivity.this, uri);
+                            if (status == BackupRestoreHelper.RestoreStatus.SUCCESS) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_success));
+                            else if (status == BackupRestoreHelper.RestoreStatus.INCOMPATIBLE_VERSION) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.backup_incompatible));
+                            else ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_invalid));
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.cancel), null)
+                    .show();
+        }
+    }
+}
