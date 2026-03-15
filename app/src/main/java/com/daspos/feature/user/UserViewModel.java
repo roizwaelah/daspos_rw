@@ -60,8 +60,8 @@ public class UserViewModel extends AndroidViewModel {
         return true;
     }
 
-    public void addUser(String username, String role) {
-        UserRepository.add(getApplication(), username, role);
+    public void addUser(String username, String password, String role) {
+        UserRepository.add(getApplication(), username, password, role);
         loadUsers();
         uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan")));
     }

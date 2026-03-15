@@ -10,9 +10,11 @@ public class UserEntity {
     @NonNull
     public String username;
     public String role;
+    public String passwordHash;
 
-    public UserEntity(@NonNull String username, String role) {
+    public UserEntity(@NonNull String username, String role, String passwordHash) {
         this.username = username;
         this.role = role;
+        this.passwordHash = passwordHash;
     }
 }

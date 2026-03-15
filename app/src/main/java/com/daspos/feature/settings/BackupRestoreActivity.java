@@ -15,9 +15,13 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.shared.util.ViewUtils;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class BackupRestoreActivity extends BaseActivity {
     private static final int REQ_BACKUP = 901;
     private static final int REQ_RESTORE = 902;
+    private final ExecutorService ioExecutor = Executors.newSingleThreadExecutor();
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +47,27 @@ public class BackupRestoreActivity extends BaseActivity {
                         .setMessage(getString(R.string.reset_warning))
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override public void onClick(DialogInterface dialog, int which) {
-                                BackupRestoreHelper.resetAll(BackupRestoreActivity.this);
-                                ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.reset_success));
+                                ioExecutor.execute(new Runnable() {
+                                    @Override public void run() {
+                                        BackupRestoreHelper.resetAll(BackupRestoreActivity.this);
+                                        runOnUiThread(new Runnable() {
+                                            @Override public void run() {
+                                                ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.reset_success));
+                                            }
+                                        });
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton(getString(R.string.cancel), null)
                         .show();
             }
         });
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        ioExecutor.shutdown();
     }
 
     private void createBackupFile() {
@@ -73,17 +90,34 @@ public class BackupRestoreActivity extends BaseActivity {
         if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
         final Uri uri = data.getData();
         if (requestCode == REQ_BACKUP) {
-            ViewUtils.toast(this, getString(BackupRestoreHelper.backup(this, uri) ? R.string.backup_success : R.string.export_failed));
+            ioExecutor.execute(new Runnable() {
+                @Override public void run() {
+                    final boolean ok = BackupRestoreHelper.backup(BackupRestoreActivity.this, uri);
+                    runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                            ViewUtils.toast(BackupRestoreActivity.this, getString(ok ? R.string.backup_success : R.string.export_failed));
+                        }
+                    });
+                }
+            });
         } else if (requestCode == REQ_RESTORE) {
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.restore))
                     .setMessage(getString(R.string.restore_confirm))
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override public void onClick(DialogInterface dialog, int which) {
-                            BackupRestoreHelper.RestoreStatus status = BackupRestoreHelper.restore(BackupRestoreActivity.this, uri);
-                            if (status == BackupRestoreHelper.RestoreStatus.SUCCESS) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_success));
-                            else if (status == BackupRestoreHelper.RestoreStatus.INCOMPATIBLE_VERSION) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.backup_incompatible));
-                            else ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_invalid));
+                            ioExecutor.execute(new Runnable() {
+                                @Override public void run() {
+                                    final BackupRestoreHelper.RestoreStatus status = BackupRestoreHelper.restore(BackupRestoreActivity.this, uri);
+                                    runOnUiThread(new Runnable() {
+                                        @Override public void run() {
+                                            if (status == BackupRestoreHelper.RestoreStatus.SUCCESS) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_success));
+                                            else if (status == BackupRestoreHelper.RestoreStatus.INCOMPATIBLE_VERSION) ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.backup_incompatible));
+                                            else ViewUtils.toast(BackupRestoreActivity.this, getString(R.string.restore_invalid));
+                                        }
+                                    });
+                                }
+                            });
                         }
                     })
                     .setNegativeButton(getString(R.string.cancel), null)

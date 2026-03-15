@@ -21,7 +21,7 @@ import com.daspos.db.entity.UserEntity;
                 TransactionEntity.class,
                 TransactionItemEntity.class
         },
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -41,7 +41,6 @@ public abstract class AppDatabase extends RoomDatabase {
                                     "daspos_room.db"
                             )
                             .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries()
                             .build();
                 }
             }
