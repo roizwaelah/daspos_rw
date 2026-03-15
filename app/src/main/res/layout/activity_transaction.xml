@@ -27,13 +27,13 @@
             <EditText
                 android:id="@+id/etSearchProduct"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_input"
                 android:drawableStart="@android:drawable/ic_menu_search"
                 android:drawablePadding="3dp"
                 android:hint="@string/search_product"
                 android:padding="6dp"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/searchDropdownCard"
@@ -115,7 +115,15 @@
                         android:id="@+id/rvCart"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="10dp" />
+                        android:padding="0dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/empty_cart"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
 
                     <LinearLayout
                         android:id="@+id/layoutCartState"
@@ -124,13 +132,6 @@
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="0dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/empty_cart"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
                     </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
@@ -162,6 +163,7 @@
                 android:background="@drawable/bg_input"
                 android:hint="@string/pay"
                 android:inputType="number"
+                android:minHeight="48dp"
                 android:padding="12dp"
                 android:textSize="14sp" />
 
