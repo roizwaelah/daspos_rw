@@ -20,27 +20,32 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <EditText
-            android:id="@+id/etSearchProduct"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_input"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="3dp"
-            android:hint="@string/search_product"
-            android:padding="6dp"
-            android:textSize="11sp" />
-
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/etSearchProduct"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="3dp"
+                android:hint="@string/search_product"
+                android:padding="6dp"
+                android:textSize="11sp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/searchDropdownCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="42dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="8dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -48,14 +53,11 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvSearchResult"
-                        android:layout_width="354dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_card"
+                        android:maxHeight="240dp"
                         android:nestedScrollingEnabled="false"
-                        android:gravity="center"
-                        android:paddingLeft="36dp"
-                        android:paddingTop="0dp"
-                        android:paddingRight="36dp" />
+                        android:padding="10dp" />
 
                     <LinearLayout
                         android:id="@+id/layoutSearchState"
@@ -80,11 +82,23 @@
                             android:textSize="11sp" />
                     </LinearLayout>
                 </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="6dp"
                     android:text="@string/cart"
                     android:textColor="@color/text_primary"

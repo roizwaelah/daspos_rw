@@ -34,23 +34,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings"
-                android:textColor="@color/primary_green"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
             <ImageView
-                android:id="@+id/btnTheme"
+                android:id="@+id/btnSettings"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:layout_marginStart="10dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="6dp"
-                android:src="@android:drawable/ic_menu_day" />
+                android:src="@drawable/ic_setting" />
         </LinearLayout>
 
         <LinearLayout
