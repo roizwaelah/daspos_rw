@@ -27,7 +27,6 @@
             android:contentDescription="@null"
             android:src="@drawable/ic_menu_product"
             app:tint="@color/primary_green" />
-            android:src="@drawable/ic_menu_product" />
 
         <TextView
             android:id="@+id/tvTitle"
