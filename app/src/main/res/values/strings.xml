@@ -246,6 +246,11 @@
     <string name="menu">Daftar Menu</string>
     <string name="time">Waktu</string>
     <string name="add">Tambah</string>
+    <string name="database">Database</string>
+    <string name="insert_username">Masukkan Username</string>
+    <string name="insert_password">Masukkan Password</string>
+    <string name="insert_password_again">Masukkan Password Lagi</string>
+    <string name="insert_store_name">Masukkan Nama Toko</string>
 </resources>
 
 
