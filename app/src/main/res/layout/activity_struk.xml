@@ -27,8 +27,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@android:drawable/sym_def_app_icon"
-                android:tint="@color/text_primary"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:tint="@color/text_primary" />
 
             <TextView
                 android:id="@+id/tvReceiptStoreName"
@@ -41,16 +41,6 @@
                 android:textAllCaps="true"
                 android:textColor="@color/text_primary"
                 android:textSize="21sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:letterSpacing="0.22"
-                android:text="ARTISAN BAKERY"
-                android:textAllCaps="true"
-                android:textColor="@color/text_secondary"
-                android:textSize="10sp" />
 
             <LinearLayout
                 android:id="@+id/layoutReceiptIdentity"
@@ -86,28 +76,41 @@
                     android:textSize="11sp" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvReceiptDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="14 Mar 2026 10:45"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/divider_dashed_receipt" />
 
-            <TextView
-                android:id="@+id/tvReceiptTransactionNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="No. Transaksi: TRX-20260314-001"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvReceiptTransactionNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="No. Transaksi: TRX-20260314-001"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvReceiptDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:paddingStart="56dp"
+                    android:text="14 Mar 2026 10:45"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/divider_dashed_receipt" />
 
             <LinearLayout
@@ -143,7 +146,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/divider_dashed_receipt" />
 
