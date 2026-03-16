@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
 import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
@@ -89,6 +90,7 @@ public class SettingActivity extends BaseActivity {
                         R.string.logout_confirm_message,
                         R.string.logout,
                         () -> {
+                            AuthSessionStore.clearSession(SettingActivity.this);
                             startActivity(new Intent(SettingActivity.this, LoginActivity.class));
                             finishAffinity();
                         }

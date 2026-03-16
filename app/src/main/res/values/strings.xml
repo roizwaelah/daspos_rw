@@ -61,6 +61,12 @@
     <string name="exit_confirmation_title">Keluar Aplikasi</string>
     <string name="exit_confirmation_message">Apakah Anda yakin ingin keluar dari aplikasi?</string>
     <string name="account_info">Info Akun</string>
+    <string name="account_username_format">Username: %1$s</string>
+    <string name="account_role_format">Role: %1$s</string>
+    <string name="account_store_format">Toko: %1$s</string>
+    <string name="account_username_placeholder">Username: -</string>
+    <string name="account_role_placeholder">Role: -</string>
+    <string name="account_store_placeholder">Toko: -</string>
     <string name="role">Role</string>
     <string name="change_password">Ganti Password</string>
     <string name="old_password">Password Lama</string>
@@ -262,6 +268,8 @@
     <string name="insert_address">Masukkan Alamat Toko</string>
     <string name="insert_phone">Masukkan No Tlp</string>
     <string name="insert_email">Masukkan Email</string>
+    <string name="password_updated">Password berhasil diperbarui</string>
+    <string name="old_password_invalid">Password lama tidak sesuai</string>
+    <string name="user_session_not_found">Sesi login tidak ditemukan, silakan login ulang</string>
 
 </resources>
-
