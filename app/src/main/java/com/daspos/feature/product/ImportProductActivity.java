@@ -222,7 +222,7 @@ public class ImportProductActivity extends BaseActivity {
 
     private boolean writeImportLog(Uri uri, String content) {
         try {
-            OutputStream out = getContentResolver().openOutputStream(uri, "wt");
+            OutputStream out = getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             out.write(content.getBytes(StandardCharsets.UTF_8));
             out.flush();
