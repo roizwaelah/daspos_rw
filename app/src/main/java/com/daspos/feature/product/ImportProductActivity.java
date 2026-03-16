@@ -16,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -183,23 +182,22 @@ public class ImportProductActivity extends BaseActivity {
     private void showProgressDialog(String message) {
         hideProgressDialog();
 
-        ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog);
-        LinearLayout container = new LinearLayout(themedContext);
+        LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.HORIZONTAL);
         int padding = Math.round(getResources().getDisplayMetrics().density * 20);
         container.setPadding(padding, padding, padding, padding);
 
-        ProgressBar progressBar = new ProgressBar(themedContext);
+        ProgressBar progressBar = new ProgressBar(this);
         progressBar.setIndeterminate(true);
 
-        TextView textView = new TextView(themedContext);
+        TextView textView = new TextView(this);
         textView.setText(message);
         textView.setPadding(Math.round(getResources().getDisplayMetrics().density * 16), 0, 0, 0);
 
         container.addView(progressBar);
         container.addView(textView);
 
-        progressDialog = new MaterialAlertDialogBuilder(this)
+        progressDialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
                 .setView(container)
                 .setCancelable(false)
                 .create();
