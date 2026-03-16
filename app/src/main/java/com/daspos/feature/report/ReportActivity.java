@@ -172,7 +172,7 @@ public class ReportActivity extends BaseActivity {
         container.addView(progressBar);
         container.addView(textView);
 
-        progressDialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
+        progressDialog = new MaterialAlertDialogBuilder(this, com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
                 .setView(container)
                 .setCancelable(false)
                 .create();

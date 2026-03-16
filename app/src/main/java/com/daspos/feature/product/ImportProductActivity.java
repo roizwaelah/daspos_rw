@@ -129,7 +129,7 @@ public class ImportProductActivity extends BaseActivity {
             try {
                 final int flags = data.getFlags() &
                         (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                getContentResolver().takePersistableUriPermission(uri, flags);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } catch (Exception ignored) { }
             try {
                 String type = getContentResolver().getType(uri);
@@ -198,7 +198,7 @@ public class ImportProductActivity extends BaseActivity {
         container.addView(progressBar);
         container.addView(textView);
 
-        progressDialog = new MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
+        progressDialog = new MaterialAlertDialogBuilder(this, com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
                 .setView(container)
                 .setCancelable(false)
                 .create();
