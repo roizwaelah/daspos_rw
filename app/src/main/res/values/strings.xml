@@ -56,6 +56,10 @@
     <string name="contact_us">Hubungi Kami</string>
     <string name="app_info">Info</string>
     <string name="logout">Logout</string>
+    <string name="logout_confirm_message">Apakah Anda yakin ingin logout?</string>
+    <string name="exit">Keluar</string>
+    <string name="exit_confirmation_title">Keluar Aplikasi</string>
+    <string name="exit_confirmation_message">Apakah Anda yakin ingin keluar dari aplikasi?</string>
     <string name="account_info">Info Akun</string>
     <string name="role">Role</string>
     <string name="change_password">Ganti Password</string>
@@ -252,5 +256,4 @@
     <string name="insert_password_again">Masukkan Password Lagi</string>
     <string name="insert_store_name">Masukkan Nama Toko</string>
 </resources>
-
 

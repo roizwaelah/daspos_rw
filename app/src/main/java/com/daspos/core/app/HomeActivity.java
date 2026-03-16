@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.daspos.R;
 import com.daspos.feature.product.ProductActivity;
 import com.daspos.feature.report.ReportActivity;
@@ -91,5 +93,15 @@ public class HomeActivity extends BaseActivity {
                 .setText(CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
         ((TextView) findViewById(R.id.tvStatProducts))
                 .setText(String.valueOf(ProductRepository.getAll(this).size()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_confirmation_title)
+                .setMessage(R.string.exit_confirmation_message)
+                .setPositiveButton(R.string.exit, (dialog, which) -> finishAffinity())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 }
