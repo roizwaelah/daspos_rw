@@ -62,9 +62,10 @@ public class ReportExportHelper {
 
             document.finishPage(page);
             ContentResolver resolver = context.getContentResolver();
-            OutputStream out = resolver.openOutputStream(uri);
+            OutputStream out = resolver.openOutputStream(uri, "wt");
             if (out == null) return false;
             document.writeTo(out);
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {
@@ -83,9 +84,10 @@ public class ReportExportHelper {
                 sb.append(item.getTime()).append(",");
                 sb.append(item.getTotal()).append("\n");
             }
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
             if (out == null) return false;
             out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {
@@ -123,9 +125,10 @@ public class ReportExportHelper {
             sheet.autoSizeColumn(1);
             sheet.autoSizeColumn(2);
 
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
             if (out == null) return false;
             workbook.write(out);
+            out.flush();
             out.close();
             return true;
         } catch (Throwable e) {

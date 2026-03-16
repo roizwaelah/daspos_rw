@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -169,9 +170,10 @@ public class ProductImportHelper {
     public static boolean writeTemplateCsv(Context context, Uri uri) {
         try {
             String csv = "nama,harga,stok\nKopi Susu,18000,20\nMie Instan,4500,50\n";
-            java.io.OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
             if (out == null) return false;
             out.write(csv.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) { return false; }
@@ -193,9 +195,13 @@ public class ProductImportHelper {
             r2.createCell(0).setCellValue("Mie Instan");
             r2.createCell(1).setCellValue(4500);
             r2.createCell(2).setCellValue(50);
-            java.io.OutputStream out = context.getContentResolver().openOutputStream(uri);
-            if (out == null) return false;
+            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
+            if (out == null) {
+                wb.close();
+                return false;
+            }
             wb.write(out);
+            out.flush();
             out.close();
             wb.close();
             return true;
