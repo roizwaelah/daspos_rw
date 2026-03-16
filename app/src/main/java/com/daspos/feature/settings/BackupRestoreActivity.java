@@ -1,6 +1,5 @@
 package com.daspos.feature.settings;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,11 +7,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
 import java.util.concurrent.ExecutorService;
@@ -42,11 +41,13 @@ public class BackupRestoreActivity extends BaseActivity {
         });
         findViewById(R.id.btnResetAllData).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                new AlertDialog.Builder(BackupRestoreActivity.this)
-                        .setTitle(getString(R.string.reset_data))
-                        .setMessage(getString(R.string.reset_warning))
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override public void onClick(DialogInterface dialog, int which) {
+                NotificationDialogHelper.showWarningConfirmation(
+                        BackupRestoreActivity.this,
+                        R.string.reset_data,
+                        R.string.reset_warning,
+                        android.R.string.ok,
+                        new Runnable() {
+                            @Override public void run() {
                                 ioExecutor.execute(new Runnable() {
                                     @Override public void run() {
                                         BackupRestoreHelper.resetAll(BackupRestoreActivity.this);
@@ -58,9 +59,8 @@ public class BackupRestoreActivity extends BaseActivity {
                                     }
                                 });
                             }
-                        })
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .show();
+                        }
+                );
             }
         });
     }
@@ -103,16 +103,13 @@ public class BackupRestoreActivity extends BaseActivity {
                 }
             });
         } else if (requestCode == REQ_RESTORE) {
-            try {
-                final int flags = data.getFlags() &
-                        (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                getContentResolver().takePersistableUriPermission(uri, flags);
-            } catch (Exception ignored) { }
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.restore))
-                    .setMessage(getString(R.string.restore_confirm))
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override public void onClick(DialogInterface dialog, int which) {
+            NotificationDialogHelper.showWarningConfirmation(
+                    this,
+                    R.string.restore,
+                    R.string.restore_confirm,
+                    android.R.string.ok,
+                    new Runnable() {
+                        @Override public void run() {
                             ioExecutor.execute(new Runnable() {
                                 @Override public void run() {
                                     final BackupRestoreHelper.RestoreStatus status = BackupRestoreHelper.restore(BackupRestoreActivity.this, uri);
@@ -126,9 +123,8 @@ public class BackupRestoreActivity extends BaseActivity {
                                 }
                             });
                         }
-                    })
-                    .setNegativeButton(getString(R.string.cancel), null)
-                    .show();
+                    }
+            );
         }
     }
 }
