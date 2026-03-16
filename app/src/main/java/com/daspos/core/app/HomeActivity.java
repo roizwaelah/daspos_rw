@@ -1,6 +1,7 @@
 package com.daspos.core.app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,7 +23,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ((TextView) findViewById(R.id.tvStoreName)).setText(StoreConfigStore.getStoreName(this));
+        bindStoreIdentity();
         bindStats();
     }
 
@@ -31,10 +32,9 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        TextView tvStoreName = findViewById(R.id.tvStoreName);
         ImageView btnSettings = findViewById(R.id.btnSettings);
 
-        tvStoreName.setText(StoreConfigStore.getStoreName(this));
+        bindStoreIdentity();
 
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +77,23 @@ public class HomeActivity extends BaseActivity {
         bindHomeMenu(R.id.menuBackup, R.string.backup_restore, R.drawable.ic_upload);
 
         bindStats();
+    }
+
+
+    private void bindStoreIdentity() {
+        ((TextView) findViewById(R.id.tvStoreName)).setText(StoreConfigStore.getStoreName(this));
+
+        ImageView imgStoreLogo = findViewById(R.id.imgStoreLogo);
+        String logoUri = StoreConfigStore.getLogoUri(this);
+        if (logoUri != null && !logoUri.trim().isEmpty()) {
+            try {
+                imgStoreLogo.setImageURI(Uri.parse(logoUri));
+                return;
+            } catch (Exception ignored) {
+                // fallback to default icon
+            }
+        }
+        imgStoreLogo.setImageResource(R.drawable.ic_store);
     }
 
     private void bindHomeMenu(int menuId, int titleRes, int iconRes) {
