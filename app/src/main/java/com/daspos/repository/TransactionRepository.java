@@ -14,6 +14,7 @@ import com.daspos.shared.util.DbExecutor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -100,7 +101,7 @@ public class TransactionRepository {
             }
 
             List<Long> sortedDays = new ArrayList<>(summaries.keySet());
-            sortedDays.sort((left, right) -> Long.compare(right, left));
+            Collections.sort(sortedDays, (left, right) -> Long.compare(right, left));
             for (Long dayKey : sortedDays) {
                 DailyTransactionSummary summary = summaries.get(dayKey);
                 if (summary == null) continue;
