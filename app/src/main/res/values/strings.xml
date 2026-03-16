@@ -124,7 +124,7 @@
     <string name="duplicate_info">Beberapa data duplikat akan ditandai sebelum proses import dilakukan.</string>
     <string name="import_action">Import</string>
     <string name="receipt_preview">Preview Struk</string>
-    <string name="print_receipt">Cetak Struk</string>
+    <string name="print_receipt">Cetak</string>
     <string name="receipt_transaction_number">No. Transaksi: %1$s</string>
     <string name="add_user">Tambah User</string>
     <string name="edit_user">Edit User</string>

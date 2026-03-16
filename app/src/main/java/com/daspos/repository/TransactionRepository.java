@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class TransactionRepository {
-    public static void save(final Context context, final List<CartItem> items, final double total, final double pay, final double change) {
-        DbExecutor.runBlocking(() -> {
+    public static String save(final Context context, final List<CartItem> items, final double total, final double pay, final double change) {
+        return DbExecutor.runBlocking(() -> {
             AppDatabase db = AppDatabase.getInstance(context);
             long timestamp = System.currentTimeMillis();
             Calendar monthStart = Calendar.getInstance();
@@ -62,6 +62,7 @@ public class TransactionRepository {
             }
             db.transactionDao().insertTransactionItems(entities);
             ProductRepository.reduceStock(context, items);
+            return id;
         });
     }
 
@@ -80,6 +81,26 @@ public class TransactionRepository {
                 list.add(new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items));
             }
             return list;
+        });
+    }
+
+
+
+    public static TransactionRecord getById(final Context context, final String transactionId) {
+        if (transactionId == null || transactionId.trim().isEmpty()) return null;
+        return DbExecutor.runBlocking(() -> {
+            AppDatabase db = AppDatabase.getInstance(context);
+            TransactionEntity t = db.transactionDao().getTransactionById(transactionId);
+            if (t == null) return null;
+
+            List<CartItem> items = new ArrayList<>();
+            for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
+                items.add(new CartItem(
+                        new Product(item.productId, item.productName, item.price, 0),
+                        item.qty
+                ));
+            }
+            return new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items);
         });
     }
 

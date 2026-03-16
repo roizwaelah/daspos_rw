@@ -21,7 +21,7 @@ public class ReceiptPreviewActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.receipt_preview));
 
-        ((TextView) findViewById(R.id.tvReceiptHeader)).setText(StoreConfigStore.getStoreName(this));
+        ((TextView) findViewById(R.id.tvReceiptStoreName)).setText(StoreConfigStore.getStoreName(this));
         ((TextView) findViewById(R.id.tvReceiptAddress)).setText(StoreConfigStore.getAddress(this));
         ((TextView) findViewById(R.id.tvReceiptPhone)).setText(StoreConfigStore.getPhone(this));
         ((TextView) findViewById(R.id.tvReceiptEmail)).setText(StoreConfigStore.getEmail(this));
@@ -31,7 +31,7 @@ public class ReceiptPreviewActivity extends BaseActivity {
                 || !StoreConfigStore.getEmail(this).isEmpty();
         findViewById(R.id.layoutReceiptIdentity).setVisibility(hasIdentityLine ? View.VISIBLE : View.GONE);
 
-        ImageView logo = findViewById(R.id.imgReceiptLogo);
+        ImageView logo = findViewById(R.id.imgReceiptStoreLogo);
         String logoUri = StoreConfigStore.getLogoUri(this);
         if (logoUri != null && !logoUri.trim().isEmpty()) {
             try {

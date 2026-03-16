@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -23,6 +26,7 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
+import com.daspos.shared.util.DownloadsUriHelper;
 import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
@@ -33,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ImportProductActivity extends BaseActivity {
-    private static final int REQ_TEMPLATE = 501;
     private static final int REQ_IMPORT = 502;
     private static final int REQ_EXPORT_LOG = 503;
 
@@ -43,6 +46,7 @@ public class ImportProductActivity extends BaseActivity {
     private ProductImportHelper.ParsedImport parsedImport;
     private boolean presetLoaded = false;
     private String currentInvalidLog = "";
+    private AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +83,24 @@ public class ImportProductActivity extends BaseActivity {
     }
 
     private void createTemplateFile() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType(templateAsXlsx
+        String fileName = templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv";
+        String mimeType = templateAsXlsx
                 ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                : "text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE,
-                templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv");
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, REQ_TEMPLATE);
+                : "text/csv";
+        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, mimeType);
+        if (uri == null) {
+            showDownloadResultNotification(false, getString(R.string.export_failed));
+            return;
+        }
+
+        showProgressDialog("Sedang membuat template...");
+        boolean ok = templateAsXlsx
+                ? ProductImportHelper.writeTemplateXlsx(this, uri)
+                : ProductImportHelper.writeTemplateCsv(this, uri);
+        hideProgressDialog();
+        showDownloadResultNotification(ok,
+                getString(ok ? R.string.template_download_success : R.string.export_failed)
+                        + (ok ? "\nTersimpan di Download/DasPos" : ""));
     }
 
     private void openImportFile() {
@@ -112,17 +125,11 @@ public class ImportProductActivity extends BaseActivity {
 
         Uri uri = data.getData();
 
-        if (requestCode == REQ_TEMPLATE) {
-            boolean ok = templateAsXlsx
-                    ? ProductImportHelper.writeTemplateXlsx(this, uri)
-                    : ProductImportHelper.writeTemplateCsv(this, uri);
-            ViewUtils.toast(this, getString(ok ? R.string.template_download_success : R.string.export_failed));
-
-        } else if (requestCode == REQ_IMPORT) {
+        if (requestCode == REQ_IMPORT) {
             try {
                 final int flags = data.getFlags() &
                         (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                getContentResolver().takePersistableUriPermission(uri, flags);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } catch (Exception ignored) { }
             try {
                 String type = getContentResolver().getType(uri);
@@ -164,9 +171,53 @@ public class ImportProductActivity extends BaseActivity {
             }
 
         } else if (requestCode == REQ_EXPORT_LOG) {
+            showProgressDialog("Menyimpan log import...");
             boolean ok = writeImportLog(uri, currentInvalidLog);
-            ViewUtils.toast(this, getString(ok ? R.string.import_log_saved : R.string.export_failed));
+            hideProgressDialog();
+            showDownloadResultNotification(ok,
+                    getString(ok ? R.string.import_log_saved : R.string.export_failed));
         }
+    }
+
+
+    private void showProgressDialog(String message) {
+        hideProgressDialog();
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        int padding = Math.round(getResources().getDisplayMetrics().density * 20);
+        container.setPadding(padding, padding, padding, padding);
+
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setIndeterminate(true);
+
+        TextView textView = new TextView(this);
+        textView.setText(message);
+        textView.setPadding(Math.round(getResources().getDisplayMetrics().density * 16), 0, 0, 0);
+
+        container.addView(progressBar);
+        container.addView(textView);
+
+        progressDialog = new MaterialAlertDialogBuilder(this, com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
+                .setView(container)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        progressDialog = null;
+    }
+
+    private void showDownloadResultNotification(boolean success, String message) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(success ? "Berhasil" : "Gagal")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private boolean writeImportLog(Uri uri, String content) {
@@ -174,6 +225,7 @@ public class ImportProductActivity extends BaseActivity {
             OutputStream out = getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             out.write(content.getBytes(StandardCharsets.UTF_8));
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {
