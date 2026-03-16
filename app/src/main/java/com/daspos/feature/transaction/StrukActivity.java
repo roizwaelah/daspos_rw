@@ -111,6 +111,7 @@ public class StrukActivity extends BaseActivity {
 
         ((TextView) findViewById(R.id.tvReceiptStoreName)).setText(StoreConfigStore.getStoreName(this));
         ((TextView) findViewById(R.id.tvReceiptDate)).setText(transaction.getDate() + " " + transaction.getTime());
+        ((TextView) findViewById(R.id.tvReceiptTransactionNumber)).setText(getString(R.string.receipt_transaction_number, transaction.getId()));
         ((TextView) findViewById(R.id.tvReceiptAddress)).setText(StoreConfigStore.getAddress(this));
         ((TextView) findViewById(R.id.tvReceiptPhone)).setText(StoreConfigStore.getPhone(this));
         ((TextView) findViewById(R.id.tvReceiptEmail)).setText(StoreConfigStore.getEmail(this));
