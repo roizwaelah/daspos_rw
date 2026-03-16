@@ -91,16 +91,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="No. Transaksi: TRX-20260314-001"
+                    android:text="No. Transaksi: 260314001"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tvReceiptDate"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:paddingStart="56dp"
+                    android:paddingStart="98dp"
+                    android:paddingEnd="0dp"
                     android:text="14 Mar 2026 10:45"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
@@ -185,15 +186,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/print_receipt" />
+            android:gravity="end"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal" >
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnFinish"
-            style="@style/DasPosGrayButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/finish" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrintReceipt"
+                style="@style/DasPosBlueButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/print_receipt" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFinish"
+                style="@style/DasPosPrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/finish" />
+
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
