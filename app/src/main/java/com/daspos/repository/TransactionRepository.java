@@ -14,6 +14,7 @@ import com.daspos.shared.util.DbExecutor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +26,26 @@ public class TransactionRepository {
     public static void save(final Context context, final List<CartItem> items, final double total, final double pay, final double change) {
         DbExecutor.runBlocking(() -> {
             AppDatabase db = AppDatabase.getInstance(context);
-            int next = db.transactionDao().count() + 1;
-            String id = "#TRX" + String.format(Locale.getDefault(), "%03d", next);
-            String date = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
-            String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
             long timestamp = System.currentTimeMillis();
+            Calendar monthStart = Calendar.getInstance();
+            monthStart.setTimeInMillis(timestamp);
+            monthStart.set(Calendar.DAY_OF_MONTH, 1);
+            monthStart.set(Calendar.HOUR_OF_DAY, 0);
+            monthStart.set(Calendar.MINUTE, 0);
+            monthStart.set(Calendar.SECOND, 0);
+            monthStart.set(Calendar.MILLISECOND, 0);
+
+            Calendar nextMonthStart = (Calendar) monthStart.clone();
+            nextMonthStart.add(Calendar.MONTH, 1);
+
+            int next = db.transactionDao().countByTimestampRange(
+                    monthStart.getTimeInMillis(),
+                    nextMonthStart.getTimeInMillis()
+            ) + 1;
+            String id = new SimpleDateFormat("yyMMdd", Locale.getDefault()).format(new Date(timestamp))
+                    + String.format(Locale.getDefault(), "%04d", next);
+            String date = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date(timestamp));
+            String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(timestamp));
 
             db.transactionDao().insertTransaction(new TransactionEntity(id, date, time, timestamp, total, pay, change));
 
@@ -100,7 +116,7 @@ public class TransactionRepository {
             }
 
             List<Long> sortedDays = new ArrayList<>(summaries.keySet());
-            sortedDays.sort((left, right) -> Long.compare(right, left));
+            Collections.sort(sortedDays, (left, right) -> Long.compare(right, left));
             for (Long dayKey : sortedDays) {
                 DailyTransactionSummary summary = summaries.get(dayKey);
                 if (summary == null) continue;
