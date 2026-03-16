@@ -16,6 +16,7 @@
     <string name="create_account">Buat Akun Baru</string>
     <string name="transactions_today">Transaksi Hari Ini</string>
     <string name="income_today">Pendapatan Hari Ini</string>
+    <string name="income_this_month">Pendapatan Bulan Ini</string>
     <string name="total_income">Total pendapatan</string>
     <string name="total_transactions">Total Transaksi</string>
     <string name="total_products">Total Produk</string>
