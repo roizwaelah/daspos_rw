@@ -1,6 +1,8 @@
 package com.daspos.feature.transaction;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -26,15 +28,25 @@ import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.ViewUtils;
 
 public class StrukActivity extends BaseActivity {
+    public static final String EXTRA_TRANSACTION_ID = "extra_transaction_id";
     private static final int REQ_BT_PRINT = 811;
     private TransactionRecord currentTransaction;
+
+
+    public static Intent createIntent(Context context, String transactionId) {
+        Intent intent = new Intent(context, StrukActivity.class);
+        intent.putExtra(EXTRA_TRANSACTION_ID, transactionId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_struk);
 
-        currentTransaction = TransactionRepository.getLast(this);
+        String transactionId = getIntent().getStringExtra(EXTRA_TRANSACTION_ID);
+        currentTransaction = TransactionRepository.getById(this, transactionId);
+        if (currentTransaction == null) currentTransaction = TransactionRepository.getLast(this);
         renderLastTransaction();
 
         findViewById(R.id.btnPrintReceipt).setOnClickListener(new View.OnClickListener() {
@@ -52,6 +64,10 @@ public class StrukActivity extends BaseActivity {
     }
 
     private void printReceipt() {
+        if (currentTransaction == null) {
+            ViewUtils.toast(this, "Data struk tidak ditemukan");
+            return;
+        }
         String type = PrinterConfigStore.getType(this);
         if ("bluetooth".equals(type)) printBluetooth();
         else if ("network".equals(type)) printNetwork();

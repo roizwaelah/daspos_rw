@@ -18,6 +18,9 @@ public interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY timestamp DESC LIMIT 1")
     TransactionEntity getLastTransaction();
 
+    @Query("SELECT * FROM transactions WHERE id = :transactionId LIMIT 1")
+    TransactionEntity getTransactionById(String transactionId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTransaction(TransactionEntity item);
 
