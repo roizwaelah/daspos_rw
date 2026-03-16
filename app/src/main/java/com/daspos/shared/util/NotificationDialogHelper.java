@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import com.daspos.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public final class NotificationDialogHelper {
@@ -22,13 +23,29 @@ public final class NotificationDialogHelper {
             Activity activity,
             int titleRes,
             int messageRes,
-            int positiveRes,
+            int confirmTextRes,
+            Runnable onConfirmed
+    ) {
+        showWarningConfirmation(
+                activity,
+                activity.getString(titleRes),
+                activity.getString(messageRes),
+                activity.getString(confirmTextRes),
+                onConfirmed
+        );
+    }
+
+    public static void showWarningConfirmation(
+            Activity activity,
+            String title,
+            String message,
+            String confirmText,
             Runnable onConfirmed
     ) {
         View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_notification, null);
 
-        ((TextView) dialogView.findViewById(R.id.tvDialogTitle)).setText(titleRes);
-        ((TextView) dialogView.findViewById(R.id.tvDialogMessage)).setText(messageRes);
+        ((TextView) dialogView.findViewById(R.id.tvDialogTitle)).setText(title);
+        ((TextView) dialogView.findViewById(R.id.tvDialogMessage)).setText(message);
 
         ImageView icon = dialogView.findViewById(R.id.imgDialogIcon);
         icon.setImageResource(R.drawable.ic_warning);
@@ -36,8 +53,6 @@ public final class NotificationDialogHelper {
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(activity, R.style.DasPosAlertDialog)
                 .setView(dialogView)
-                .setPositiveButton(positiveRes, (d, which) -> onConfirmed.run())
-                .setNegativeButton(R.string.cancel, null)
                 .create();
 
         dialog.setOnShowListener(d -> {
@@ -45,6 +60,16 @@ public final class NotificationDialogHelper {
             if (dialog.getWindow() != null && background != null) {
                 dialog.getWindow().setBackgroundDrawable(background);
             }
+        });
+
+        MaterialButton btnCancel = dialogView.findViewById(R.id.btnDialogCancel);
+        MaterialButton btnConfirm = dialogView.findViewById(R.id.btnDialogConfirm);
+        btnConfirm.setText(confirmText);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnConfirm.setOnClickListener(v -> {
+            dialog.dismiss();
+            onConfirmed.run();
         });
 
         dialog.show();
