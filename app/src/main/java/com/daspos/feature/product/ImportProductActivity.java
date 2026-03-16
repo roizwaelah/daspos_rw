@@ -86,6 +86,7 @@ public class ImportProductActivity extends BaseActivity {
                 : "text/csv");
         intent.putExtra(Intent.EXTRA_TITLE,
                 templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv");
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intent, REQ_TEMPLATE);
     }
 
@@ -100,6 +101,7 @@ public class ImportProductActivity extends BaseActivity {
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         };
         intent.putExtra(Intent.EXTRA_MIME_TYPES, types);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         startActivityForResult(intent, REQ_IMPORT);
     }
 
@@ -117,6 +119,11 @@ public class ImportProductActivity extends BaseActivity {
             ViewUtils.toast(this, getString(ok ? R.string.template_download_success : R.string.export_failed));
 
         } else if (requestCode == REQ_IMPORT) {
+            try {
+                final int flags = data.getFlags() &
+                        (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(uri, flags);
+            } catch (Exception ignored) { }
             try {
                 String type = getContentResolver().getType(uri);
                 String path = String.valueOf(uri);
@@ -265,6 +272,7 @@ public class ImportProductActivity extends BaseActivity {
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_TITLE, "daspos_import_log.txt");
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivityForResult(intent, REQ_EXPORT_LOG);
             }
         });

@@ -19,7 +19,7 @@ public class ContactUsActivity extends BaseActivity {
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.contact_us));
         findViewById(R.id.btnWhatsapp).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                String number = "6281234567890";
+                String number = "628112630731";
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/" + number));
                 try { startActivity(intent); } catch (Exception e) { ViewUtils.toast(ContactUsActivity.this, "WhatsApp/browser tidak tersedia"); }
             }

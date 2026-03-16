@@ -110,6 +110,7 @@ public class ReportActivity extends BaseActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/pdf");
         intent.putExtra(Intent.EXTRA_TITLE, ReportExportHelper.buildSuggestedFileName("laporan_daspos", "pdf"));
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intent, REQ_EXPORT_PDF);
     }
 
@@ -118,6 +119,7 @@ public class ReportActivity extends BaseActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         intent.putExtra(Intent.EXTRA_TITLE, ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx"));
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intent, REQ_EXPORT_XLSX);
     }
 

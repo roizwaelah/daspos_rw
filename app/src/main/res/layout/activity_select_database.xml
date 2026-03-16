@@ -24,140 +24,141 @@
             android:padding="16dp">
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_card"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
                 android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/select_database"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <RadioGroup
-                    android:id="@+id/rgDatabase"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical">
-
-                    <RadioButton
-                        android:id="@+id/rbLocal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="@string/local_database" />
-
-                    <RadioButton
-                        android:id="@+id/rbRemote"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"                        android:text="@string/remote_database" />
-                </RadioGroup>
+                android:padding="8dp">
 
                 <LinearLayout
-                    android:id="@+id/layoutRemote"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:padding="4dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="IP Address"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:text="@string/select_database"
+                        android:textColor="@color/text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                    <EditText
-                        android:id="@+id/etDbIp"
+                    <RadioGroup
+                        android:id="@+id/rgDatabase"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_input"
-                        android:padding="8dp"
-                        android:textSize="14sp" />
+                        android:layout_marginTop="2dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Port"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        <RadioButton
+                            android:id="@+id/rbLocal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/local_database" />
 
-                    <EditText
-                        android:id="@+id/etDbPort"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_input"
-                        android:inputType="number"
-                        android:padding="8dp"
-                        android:textSize="14sp" />
+                        <RadioButton
+                            android:id="@+id/rbRemote"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/remote_database" />
+                    </RadioGroup>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/label_username"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/etDbUsername"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_input"
-                        android:padding="8dp"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/label_password"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/etDbPassword"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_input"
-                        android:padding="8dp"
-                        android:textSize="14sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnTestConnection"
-                        style="@style/DasPosGrayButton"
+                    <LinearLayout
+                        android:id="@+id/layoutRemote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/test_connection" />
-                </LinearLayout>
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSaveDatabase"
-                    style="@style/DasPosPrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/save" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP Address"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/etDbIp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_input"
+                            android:padding="8dp"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Port"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/etDbPort"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_input"
+                            android:inputType="number"
+                            android:padding="8dp"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/label_username"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/etDbUsername"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_input"
+                            android:padding="8dp"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/label_password"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
+                        <EditText
+                            android:id="@+id/etDbPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_input"
+                            android:padding="8dp"
+                            android:textSize="14sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnTestConnection"
+                            style="@style/DasPosGrayButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/test_connection" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveDatabase"
+                        style="@style/DasPosPrimaryButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/save" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
