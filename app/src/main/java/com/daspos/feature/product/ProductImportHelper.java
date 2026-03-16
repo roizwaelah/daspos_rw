@@ -170,7 +170,7 @@ public class ProductImportHelper {
     public static boolean writeTemplateCsv(Context context, Uri uri) {
         try {
             String csv = "nama,harga,stok\nKopi Susu,18000,20\nMie Instan,4500,50\n";
-            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
+            OutputStream out = context.getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             out.write(csv.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             out.flush();
@@ -195,7 +195,7 @@ public class ProductImportHelper {
             r2.createCell(0).setCellValue("Mie Instan");
             r2.createCell(1).setCellValue(4500);
             r2.createCell(2).setCellValue(50);
-            OutputStream out = context.getContentResolver().openOutputStream(uri, "wt");
+            OutputStream out = context.getContentResolver().openOutputStream(uri);
             if (out == null) {
                 wb.close();
                 return false;
@@ -205,7 +205,7 @@ public class ProductImportHelper {
             out.close();
             wb.close();
             return true;
-        } catch (Throwable e) { return false; }
+        } catch (Exception | org.apache.poi.javax.xml.stream.FactoryConfigurationError e) { return false; }
     }
 
     private static ProductResult toProduct(String[] cells, int[] mapping) {
