@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
@@ -82,8 +83,15 @@ public class SettingActivity extends BaseActivity {
         findViewById(R.id.btnLogout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SettingActivity.this, LoginActivity.class));
-                finishAffinity();
+                new AlertDialog.Builder(SettingActivity.this)
+                        .setTitle(R.string.logout)
+                        .setMessage(R.string.logout_confirm_message)
+                        .setPositiveButton(R.string.logout, (dialog, which) -> {
+                            startActivity(new Intent(SettingActivity.this, LoginActivity.class));
+                            finishAffinity();
+                        })
+                        .setNegativeButton(R.string.cancel, null)
+                        .show();
             }
         });
     }
