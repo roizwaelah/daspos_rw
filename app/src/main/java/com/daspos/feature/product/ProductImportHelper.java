@@ -205,7 +205,7 @@ public class ProductImportHelper {
             out.close();
             wb.close();
             return true;
-        } catch (Exception e) { return false; }
+        } catch (Throwable e) { return false; }
     }
 
     private static ProductResult toProduct(String[] cells, int[] mapping) {
