@@ -19,6 +19,8 @@ import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.NotificationDialogHelper;
 
+import java.util.Calendar;
+
 public class HomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
@@ -109,6 +111,10 @@ public class HomeActivity extends BaseActivity {
                 .setText(CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
         ((TextView) findViewById(R.id.tvStatProducts))
                 .setText(String.valueOf(ProductRepository.getAll(this).size()));
+        ((TextView) findViewById(R.id.tvStatIncomeMonth))
+                .setText(CurrencyUtils.formatRupiah(
+                        TransactionRepository.getIncomeByPeriod(this, Calendar.getInstance(), true)
+                ));
     }
 
     @Override
