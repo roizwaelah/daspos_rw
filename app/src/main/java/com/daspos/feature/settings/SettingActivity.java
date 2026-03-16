@@ -6,12 +6,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.auth.LoginActivity;
+import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
 public class SettingActivity extends BaseActivity {
@@ -83,15 +83,16 @@ public class SettingActivity extends BaseActivity {
         findViewById(R.id.btnLogout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(SettingActivity.this)
-                        .setTitle(R.string.logout)
-                        .setMessage(R.string.logout_confirm_message)
-                        .setPositiveButton(R.string.logout, (dialog, which) -> {
+                NotificationDialogHelper.showWarningConfirmation(
+                        SettingActivity.this,
+                        R.string.logout,
+                        R.string.logout_confirm_message,
+                        R.string.logout,
+                        () -> {
                             startActivity(new Intent(SettingActivity.this, LoginActivity.class));
                             finishAffinity();
-                        })
-                        .setNegativeButton(R.string.cancel, null)
-                        .show();
+                        }
+                );
             }
         });
     }

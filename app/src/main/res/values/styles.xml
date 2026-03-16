@@ -12,6 +12,8 @@
         <item name="android:background">@color/primary_green</item>
         <item name="titleTextColor">@color/surface_white</item>
         <item name="navigationIconTint">@color/surface_white</item>
+        <item name="contentInsetStartWithNavigation">8dp</item>
+        <item name="titleMarginStart">8dp</item>
     </style>
 
     <style name="DasPosPrimaryButton" parent="Widget.MaterialComponents.Button">
@@ -69,4 +71,17 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+
+    <style name="DasPosAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="backgroundInsetStart">24dp</item>
+        <item name="backgroundInsetEnd">24dp</item>
+        <item name="backgroundInsetTop">24dp</item>
+        <item name="backgroundInsetBottom">24dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.DasPos.Dialog</item>
+    </style>
+
+    <style name="ShapeAppearance.DasPos.Dialog" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
 </resources>
