@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Versi 1.0"
+                android:text="@string/app_version_not_available"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
 
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="Aplikasi POS sederhana untuk transaksi, produk, laporan, backup, dan pengaturan toko."
+                android:text="@string/app_info_overview"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />
@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Changelog: penyempurnaan UI, import/export, backup/restore, dan printer."
+                android:text="@string/app_info_features"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />
@@ -66,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Kebijakan privasi: data aplikasi disimpan lokal sesuai pengaturan backup yang dipilih pengguna."
+                android:text="@string/app_info_data_note"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />

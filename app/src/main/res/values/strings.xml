@@ -101,6 +101,11 @@
     <string name="reset_data">Reset Semua Data</string>
     <string name="reset_desc">Tindakan ini akan menghapus seluruh data transaksi dan master secara permanen.</string>
     <string name="app_version">Versi</string>
+    <string name="app_version_not_available">Versi tidak tersedia</string>
+    <string name="app_version_build_format">Versi %1$s (Build %2$d)</string>
+    <string name="app_info_overview">DasPos adalah aplikasi kasir (Point of Sale) untuk membantu operasional toko harian, mulai dari pengelolaan produk, transaksi penjualan, hingga rekap laporan.</string>
+    <string name="app_info_features">Fitur utama aplikasi mencakup manajemen produk, transaksi kasir, laporan harian/bulanan, pengaturan struk, backup/restore data, dan dukungan printer Bluetooth maupun network.</string>
+    <string name="app_info_data_note">Data disimpan secara lokal di perangkat dan dapat dicadangkan secara manual melalui menu Backup/Restore sesuai kebutuhan pengguna.</string>
     <string name="app_description">DasPos adalah aplikasi POS sederhana untuk toko ritel dengan fitur produk, transaksi, laporan, dan backup.</string>
     <string name="changelog">Changelog</string>
     <string name="privacy_policy">Kebijakan Privasi</string>
