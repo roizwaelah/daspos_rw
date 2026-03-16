@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.ViewUtils;
 import com.google.android.material.button.MaterialButton;
@@ -17,20 +18,23 @@ public class RegisterActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        final TextInputEditText etStoreName = findViewById(R.id.etStoreName);
         final TextInputEditText etUsername = findViewById(R.id.etUsername);
         final TextInputEditText etPassword = findViewById(R.id.etPassword);
         final TextInputEditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
 
         MaterialButton btnRegister = findViewById(R.id.btnRegister);
+        etStoreName.setText(StoreConfigStore.getStoreName(this));
         TextView tvLogin = findViewById(R.id.tvLogin);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
+                String storeName = String.valueOf(etStoreName.getText()).trim();
                 String username = String.valueOf(etUsername.getText()).trim();
                 String password = String.valueOf(etPassword.getText()).trim();
                 String confirmPassword = String.valueOf(etConfirmPassword.getText()).trim();
 
-                if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                if (storeName.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     ViewUtils.toast(RegisterActivity.this, getString(R.string.field_required));
                     return;
                 }
@@ -44,6 +48,14 @@ public class RegisterActivity extends BaseActivity {
                     ViewUtils.toast(RegisterActivity.this, getString(R.string.username_already_exists));
                     return;
                 }
+
+                StoreConfigStore.save(
+                        RegisterActivity.this,
+                        storeName,
+                        StoreConfigStore.getAddress(RegisterActivity.this),
+                        StoreConfigStore.getPhone(RegisterActivity.this),
+                        StoreConfigStore.getEmail(RegisterActivity.this)
+                );
 
                 UserRepository.add(RegisterActivity.this, username, password, "Kasir");
                 ViewUtils.toast(RegisterActivity.this, getString(R.string.register_success));
