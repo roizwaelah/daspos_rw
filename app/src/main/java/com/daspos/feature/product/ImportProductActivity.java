@@ -26,6 +26,7 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
+import com.daspos.shared.util.DownloadsUriHelper;
 import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ImportProductActivity extends BaseActivity {
-    private static final int REQ_TEMPLATE = 501;
     private static final int REQ_IMPORT = 502;
     private static final int REQ_EXPORT_LOG = 503;
 
@@ -83,15 +83,24 @@ public class ImportProductActivity extends BaseActivity {
     }
 
     private void createTemplateFile() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType(templateAsXlsx
+        String fileName = templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv";
+        String mimeType = templateAsXlsx
                 ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                : "text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE,
-                templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv");
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, REQ_TEMPLATE);
+                : "text/csv";
+        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, mimeType);
+        if (uri == null) {
+            showDownloadResultNotification(false, getString(R.string.export_failed));
+            return;
+        }
+
+        showProgressDialog("Sedang membuat template...");
+        boolean ok = templateAsXlsx
+                ? ProductImportHelper.writeTemplateXlsx(this, uri)
+                : ProductImportHelper.writeTemplateCsv(this, uri);
+        hideProgressDialog();
+        showDownloadResultNotification(ok,
+                getString(ok ? R.string.template_download_success : R.string.export_failed)
+                        + (ok ? "\nTersimpan di Download/DasPos" : ""));
     }
 
     private void openImportFile() {
@@ -116,16 +125,7 @@ public class ImportProductActivity extends BaseActivity {
 
         Uri uri = data.getData();
 
-        if (requestCode == REQ_TEMPLATE) {
-            showProgressDialog("Sedang membuat template...");
-            boolean ok = templateAsXlsx
-                    ? ProductImportHelper.writeTemplateXlsx(this, uri)
-                    : ProductImportHelper.writeTemplateCsv(this, uri);
-            hideProgressDialog();
-            showDownloadResultNotification(ok,
-                    getString(ok ? R.string.template_download_success : R.string.export_failed));
-
-        } else if (requestCode == REQ_IMPORT) {
+        if (requestCode == REQ_IMPORT) {
             try {
                 final int flags = data.getFlags() &
                         (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
