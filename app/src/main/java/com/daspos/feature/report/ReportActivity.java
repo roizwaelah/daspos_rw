@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.transaction.StrukActivity;
 import com.daspos.model.ReportItem;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
@@ -71,7 +72,12 @@ public class ReportActivity extends BaseActivity {
                 CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
 
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ReportAdapter();
+        adapter = new ReportAdapter(new ReportAdapter.Listener() {
+            @Override public void onReportItemClicked(ReportItem item) {
+                if (item == null || isMonthlyMode()) return;
+                startActivity(StrukActivity.createIntent(ReportActivity.this, item.getId()));
+            }
+        });
         rv.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(ReportViewModel.class);

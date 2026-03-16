@@ -16,7 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.VH> {
+    public interface Listener {
+        void onReportItemClicked(ReportItem item);
+    }
+
     private final List<ReportItem> items = new ArrayList<>();
+    private final Listener listener;
+
+    public ReportAdapter(Listener listener) {
+        this.listener = listener;
+    }
 
     public void submit(List<ReportItem> list) {
         items.clear();
@@ -40,6 +49,11 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.VH> {
         holder.tvId.setText(item.getId());
         holder.tvTime.setText(item.getTime());
         holder.tvTotal.setText(CurrencyUtils.formatRupiah(item.getTotal()));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                if (listener != null) listener.onReportItemClicked(item);
+            }
+        });
     }
 
     @Override

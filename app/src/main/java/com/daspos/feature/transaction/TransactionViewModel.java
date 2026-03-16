@@ -104,9 +104,9 @@ public class TransactionViewModel extends AndroidViewModel {
         }
 
         screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.PROCESSING, "Memproses transaksi"));
-        TransactionRepository.save(getApplication(), new ArrayList<>(cartItems), total, pay, change);
+        String transactionId = TransactionRepository.save(getApplication(), new ArrayList<>(cartItems), total, pay, change);
         screenState.setValue(TransactionScreenState.empty().withCheckout(TransactionScreenState.CheckoutStatus.SUCCESS, "Transaksi berhasil disimpan"));
-        uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.navigateToReceipt("Transaksi berhasil disimpan")));
+        uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.navigateToReceipt("Transaksi berhasil disimpan", transactionId)));
     }
 
     public void clearCheckoutStatus() {
