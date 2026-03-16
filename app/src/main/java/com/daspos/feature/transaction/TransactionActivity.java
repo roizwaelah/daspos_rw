@@ -112,7 +112,9 @@ public class TransactionActivity extends BaseActivity {
                     viewModel.clearCheckoutStatus();
                 } else if (effect.getType() == TransactionUiEffect.Type.NAVIGATE_TO_RECEIPT) {
                     ViewUtils.toast(TransactionActivity.this, effect.getMessage());
-                    startActivity(new Intent(TransactionActivity.this, StrukActivity.class));
+                    Intent receiptIntent = new Intent(TransactionActivity.this, StrukActivity.class);
+                    receiptIntent.putExtra(StrukActivity.EXTRA_TRANSACTION_ID, effect.getTransactionId());
+                    startActivity(receiptIntent);
                     cartItems.clear();
                     cartAdapter.submit(cartItems);
                     etPay.setText("");
