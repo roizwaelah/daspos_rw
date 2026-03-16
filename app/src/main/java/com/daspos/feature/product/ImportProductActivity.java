@@ -8,12 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +46,7 @@ public class ImportProductActivity extends BaseActivity {
     private ProductImportHelper.ParsedImport parsedImport;
     private boolean presetLoaded = false;
     private String currentInvalidLog = "";
+    private AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +117,13 @@ public class ImportProductActivity extends BaseActivity {
         Uri uri = data.getData();
 
         if (requestCode == REQ_TEMPLATE) {
+            showProgressDialog("Sedang membuat template...");
             boolean ok = templateAsXlsx
                     ? ProductImportHelper.writeTemplateXlsx(this, uri)
                     : ProductImportHelper.writeTemplateCsv(this, uri);
-            ViewUtils.toast(this, getString(ok ? R.string.template_download_success : R.string.export_failed));
+            hideProgressDialog();
+            showDownloadResultNotification(ok,
+                    getString(ok ? R.string.template_download_success : R.string.export_failed));
 
         } else if (requestCode == REQ_IMPORT) {
             try {
@@ -164,16 +171,62 @@ public class ImportProductActivity extends BaseActivity {
             }
 
         } else if (requestCode == REQ_EXPORT_LOG) {
+            showProgressDialog("Menyimpan log import...");
             boolean ok = writeImportLog(uri, currentInvalidLog);
-            ViewUtils.toast(this, getString(ok ? R.string.import_log_saved : R.string.export_failed));
+            hideProgressDialog();
+            showDownloadResultNotification(ok,
+                    getString(ok ? R.string.import_log_saved : R.string.export_failed));
         }
+    }
+
+
+    private void showProgressDialog(String message) {
+        hideProgressDialog();
+
+        ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog);
+        LinearLayout container = new LinearLayout(themedContext);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        int padding = Math.round(getResources().getDisplayMetrics().density * 20);
+        container.setPadding(padding, padding, padding, padding);
+
+        ProgressBar progressBar = new ProgressBar(themedContext);
+        progressBar.setIndeterminate(true);
+
+        TextView textView = new TextView(themedContext);
+        textView.setText(message);
+        textView.setPadding(Math.round(getResources().getDisplayMetrics().density * 16), 0, 0, 0);
+
+        container.addView(progressBar);
+        container.addView(textView);
+
+        progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(container)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        progressDialog = null;
+    }
+
+    private void showDownloadResultNotification(boolean success, String message) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(success ? "Berhasil" : "Gagal")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private boolean writeImportLog(Uri uri, String content) {
         try {
-            OutputStream out = getContentResolver().openOutputStream(uri);
+            OutputStream out = getContentResolver().openOutputStream(uri, "wt");
             if (out == null) return false;
             out.write(content.getBytes(StandardCharsets.UTF_8));
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {

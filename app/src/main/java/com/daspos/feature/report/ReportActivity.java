@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +26,7 @@ import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.UiStateRenderer;
 import com.daspos.ui.state.ReportUiState;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,6 +45,7 @@ public class ReportActivity extends BaseActivity {
     private TextView tvSummaryIncome;
     private RadioGroup rgRecap;
     private ReportViewModel viewModel;
+    private androidx.appcompat.app.AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,14 +134,60 @@ public class ReportActivity extends BaseActivity {
         Uri uri = data.getData();
         boolean ok = false;
         if (requestCode == REQ_EXPORT_PDF) {
+            showProgressDialog("Mengekspor laporan PDF...");
             ok = ReportExportHelper.exportPdf(this, uri, tvSelectedDate.getText().toString(), adapter.getItems(),
                     Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
-            ViewUtils.toast(this, getString(ok ? R.string.export_success : R.string.export_failed));
+            hideProgressDialog();
+            showExportResultNotification(ok, getString(ok ? R.string.export_success : R.string.export_failed));
         } else if (requestCode == REQ_EXPORT_XLSX) {
+            showProgressDialog("Mengekspor laporan XLSX...");
             ok = ReportExportHelper.exportXlsx(this, uri, adapter.getItems(),
                     Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
-            ViewUtils.toast(this, getString(ok ? R.string.xlsx_export_success : R.string.export_failed));
+            hideProgressDialog();
+            showExportResultNotification(ok, getString(ok ? R.string.xlsx_export_success : R.string.export_failed));
         }
+    }
+
+
+    private void showProgressDialog(String message) {
+        hideProgressDialog();
+
+        ContextThemeWrapper themedContext = new ContextThemeWrapper(this, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog);
+        LinearLayout container = new LinearLayout(themedContext);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        int padding = Math.round(getResources().getDisplayMetrics().density * 20);
+        container.setPadding(padding, padding, padding, padding);
+
+        ProgressBar progressBar = new ProgressBar(themedContext);
+        progressBar.setIndeterminate(true);
+
+        TextView textView = new TextView(themedContext);
+        textView.setText(message);
+        textView.setPadding(Math.round(getResources().getDisplayMetrics().density * 16), 0, 0, 0);
+
+        container.addView(progressBar);
+        container.addView(textView);
+
+        progressDialog = new MaterialAlertDialogBuilder(this)
+                .setView(container)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        progressDialog = null;
+    }
+
+    private void showExportResultNotification(boolean success, String message) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(success ? "Berhasil" : "Gagal")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private double parseMoney(String displayed) {
