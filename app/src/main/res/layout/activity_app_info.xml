@@ -42,7 +42,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Versi 1.0"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:layout_marginTop="14dp"
                 android:text="Aplikasi POS sederhana untuk transaksi, produk, laporan, backup, dan pengaturan toko."
                 android:textColor="@color/text_primary"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />
 
             <TextView
@@ -59,7 +59,7 @@
                 android:layout_marginTop="12dp"
                 android:text="Changelog: penyempurnaan UI, import/export, backup/restore, dan printer."
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />
 
             <TextView
@@ -68,7 +68,7 @@
                 android:layout_marginTop="12dp"
                 android:text="Kebijakan privasi: data aplikasi disimpan lokal sesuai pengaturan backup yang dipilih pengguna."
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 tools:ignore="VisualLintLongText" />
         </LinearLayout>
     </ScrollView>

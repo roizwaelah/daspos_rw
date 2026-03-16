@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="DasPos Store"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="32sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:text="Kopi Susu x1   Rp 18.000"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                 android:gravity="end"
                 android:text="Total: Rp 18.000"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -106,7 +106,7 @@
                 android:gravity="center"
                 android:text="Terima kasih"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

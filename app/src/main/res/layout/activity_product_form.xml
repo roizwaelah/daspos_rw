@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/warm_gray"
@@ -44,7 +45,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/product_name"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
 
                 <EditText
                     android:id="@+id/etProductName"
@@ -52,8 +53,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -61,7 +64,7 @@
                     android:layout_marginTop="12dp"
                     android:text="@string/price"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
 
                 <EditText
                     android:id="@+id/etPrice"
@@ -70,8 +73,10 @@
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
                     android:inputType="number"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,7 +84,7 @@
                     android:layout_marginTop="12dp"
                     android:text="@string/stock"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
 
                 <EditText
                     android:id="@+id/etStock"
@@ -88,8 +93,10 @@
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input"
                     android:inputType="number"
+                    android:minHeight="48dp"
                     android:padding="12dp"
-                    android:textSize="14sp" />
+                    android:textSize="16sp"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

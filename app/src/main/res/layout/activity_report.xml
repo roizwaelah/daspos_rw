@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/today_transaction_history"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -60,7 +60,7 @@
                         android:layout_marginTop="4dp"
                         android:text="14 Maret 2026 • 12 transaksi • Rp 1.250.000"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -77,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/summary"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <RadioGroup
@@ -125,7 +125,7 @@
                         android:gravity="center"
                         android:text="14 Maret 2026"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <ImageButton
@@ -159,7 +159,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/total_transactions"
                             android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tvSummaryTransactionCount"
@@ -187,7 +187,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/total_income"
                             android:textColor="@color/text_secondary"
-                            android:textSize="12sp" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/tvSummaryIncome"
@@ -218,7 +218,7 @@
                         android:layout_weight="1"
                         android:text="ID"
                         android:textColor="@color/text_primary"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -228,7 +228,7 @@
                         android:gravity="center"
                         android:text="@string/time"
                         android:textColor="@color/text_primary"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -238,7 +238,7 @@
                         android:gravity="end"
                         android:text="@string/total"
                         android:textColor="@color/text_primary"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
