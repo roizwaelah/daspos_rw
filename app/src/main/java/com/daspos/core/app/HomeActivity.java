@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.daspos.R;
 import com.daspos.feature.product.ProductActivity;
 import com.daspos.feature.report.ReportActivity;
@@ -18,6 +16,7 @@ import com.daspos.feature.transaction.TransactionActivity;
 import com.daspos.repository.ProductRepository;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
+import com.daspos.shared.util.NotificationDialogHelper;
 
 public class HomeActivity extends BaseActivity {
     @Override
@@ -97,11 +96,12 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_confirmation_title)
-                .setMessage(R.string.exit_confirmation_message)
-                .setPositiveButton(R.string.exit, (dialog, which) -> finishAffinity())
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+        NotificationDialogHelper.showWarningConfirmation(
+                this,
+                R.string.exit_confirmation_title,
+                R.string.exit_confirmation_message,
+                R.string.exit,
+                this::finishAffinity
+        );
     }
 }
