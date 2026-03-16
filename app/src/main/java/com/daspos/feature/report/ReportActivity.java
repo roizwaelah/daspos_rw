@@ -1,10 +1,10 @@
 package com.daspos.feature.report;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -17,13 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.transaction.StrukActivity;
 import com.daspos.model.ReportItem;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
+import com.daspos.shared.util.DownloadsUriHelper;
 import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.UiStateRenderer;
 import com.daspos.ui.state.ReportUiState;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,8 +35,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ReportActivity extends BaseActivity {
-    private static final int REQ_EXPORT_PDF = 601;
-    private static final int REQ_EXPORT_XLSX = 602;
     private final Calendar selectedCalendar = Calendar.getInstance();
     private ReportAdapter adapter;
     private TextView tvTodayHistoryInfo;
@@ -42,6 +43,7 @@ public class ReportActivity extends BaseActivity {
     private TextView tvSummaryIncome;
     private RadioGroup rgRecap;
     private ReportViewModel viewModel;
+    private androidx.appcompat.app.AlertDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,12 @@ public class ReportActivity extends BaseActivity {
                 CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
 
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ReportAdapter();
+        adapter = new ReportAdapter(new ReportAdapter.Listener() {
+            @Override public void onReportItemClicked(ReportItem item) {
+                if (item == null || isMonthlyMode()) return;
+                startActivity(StrukActivity.createIntent(ReportActivity.this, item.getId()));
+            }
+        });
         rv.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(ReportViewModel.class);
@@ -106,38 +113,76 @@ public class ReportActivity extends BaseActivity {
     }
 
     private void startExportPdf() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/pdf");
-        intent.putExtra(Intent.EXTRA_TITLE, ReportExportHelper.buildSuggestedFileName("laporan_daspos", "pdf"));
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, REQ_EXPORT_PDF);
+        String fileName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "pdf");
+        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, "application/pdf");
+        if (uri == null) {
+            showExportResultNotification(false, getString(R.string.export_failed));
+            return;
+        }
+
+        showProgressDialog("Mengekspor laporan PDF...");
+        boolean ok = ReportExportHelper.exportPdf(this, uri, tvSelectedDate.getText().toString(), adapter.getItems(),
+                Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
+        hideProgressDialog();
+        showExportResultNotification(ok, getString(ok ? R.string.export_success : R.string.export_failed)
+                + (ok ? "\nTersimpan di Download/DasPos" : ""));
     }
 
     private void startExportXlsx() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        intent.putExtra(Intent.EXTRA_TITLE, ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx"));
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, REQ_EXPORT_XLSX);
+        String fileName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx");
+        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        if (uri == null) {
+            showExportResultNotification(false, getString(R.string.export_failed));
+            return;
+        }
+
+        showProgressDialog("Mengekspor laporan XLSX...");
+        boolean ok = ReportExportHelper.exportXlsx(this, uri, adapter.getItems(),
+                Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
+        hideProgressDialog();
+        showExportResultNotification(ok, getString(ok ? R.string.xlsx_export_success : R.string.export_failed)
+                + (ok ? "\nTersimpan di Download/DasPos" : ""));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
-        Uri uri = data.getData();
-        boolean ok = false;
-        if (requestCode == REQ_EXPORT_PDF) {
-            ok = ReportExportHelper.exportPdf(this, uri, tvSelectedDate.getText().toString(), adapter.getItems(),
-                    Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
-            ViewUtils.toast(this, getString(ok ? R.string.export_success : R.string.export_failed));
-        } else if (requestCode == REQ_EXPORT_XLSX) {
-            ok = ReportExportHelper.exportXlsx(this, uri, adapter.getItems(),
-                    Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
-            ViewUtils.toast(this, getString(ok ? R.string.xlsx_export_success : R.string.export_failed));
+
+    private void showProgressDialog(String message) {
+        hideProgressDialog();
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.HORIZONTAL);
+        int padding = Math.round(getResources().getDisplayMetrics().density * 20);
+        container.setPadding(padding, padding, padding, padding);
+
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setIndeterminate(true);
+
+        TextView textView = new TextView(this);
+        textView.setText(message);
+        textView.setPadding(Math.round(getResources().getDisplayMetrics().density * 16), 0, 0, 0);
+
+        container.addView(progressBar);
+        container.addView(textView);
+
+        progressDialog = new MaterialAlertDialogBuilder(this, com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog)
+                .setView(container)
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
+        progressDialog = null;
+    }
+
+    private void showExportResultNotification(boolean success, String message) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(success ? "Berhasil" : "Gagal")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private double parseMoney(String displayed) {

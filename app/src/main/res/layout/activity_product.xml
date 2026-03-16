@@ -56,10 +56,10 @@
             <EditText
                 android:id="@+id/etSearch"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_input"
-                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="6dp"
                 android:hint="@string/search_product"
                 android:paddingStart="10dp"
@@ -70,8 +70,8 @@
 
             <Spinner
                 android:id="@+id/spSort"
-                android:layout_width="126dp"
-                android:layout_height="match_parent"
+                android:layout_width="112dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:textSize="14sp"
                 android:background="@drawable/bg_input" />

@@ -65,6 +65,7 @@ public class ReportExportHelper {
             OutputStream out = resolver.openOutputStream(uri);
             if (out == null) return false;
             document.writeTo(out);
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {
@@ -86,6 +87,7 @@ public class ReportExportHelper {
             OutputStream out = context.getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+            out.flush();
             out.close();
             return true;
         } catch (Exception e) {
@@ -126,9 +128,10 @@ public class ReportExportHelper {
             OutputStream out = context.getContentResolver().openOutputStream(uri);
             if (out == null) return false;
             workbook.write(out);
+            out.flush();
             out.close();
             return true;
-        } catch (Throwable e) {
+        } catch (Exception | org.apache.poi.javax.xml.stream.FactoryConfigurationError e) {
             return false;
         } finally {
             try { if (workbook != null) workbook.close(); } catch (Exception ignored) { }
