@@ -69,6 +69,15 @@ public class UserRepository {
         });
     }
 
+    public static void updatePassword(final Context context, final String username, final String newPassword) {
+        DbExecutor.runBlocking(() -> {
+            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            if (existing == null) return;
+            String passwordHash = PasswordHasher.hash(newPassword);
+            AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, existing.role, passwordHash));
+        });
+    }
+
     public static void delete(final Context context, final String username) {
         DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().deleteByUsername(username));
     }
