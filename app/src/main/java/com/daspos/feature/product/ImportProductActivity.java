@@ -17,10 +17,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
+import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
 import java.io.OutputStream;
@@ -62,12 +65,17 @@ public class ImportProductActivity extends BaseActivity {
     }
 
     private void chooseTemplateFormat() {
-        new AlertDialog.Builder(this)
-                .setTitle("Import Produk")
-                .setMessage("Pilih tindakan yang ingin dilakukan")
-                .setPositiveButton("Buat Template", (dialog, which) -> createTemplateFile())
-                .setNegativeButton("Batal", null)
-                .show();
+        NotificationDialogHelper.showWarningConfirmation(
+                this,
+                "Import Produk",
+                "Pilih tindakan yang ingin dilakukan",
+                "Buat Template",
+                new Runnable() {
+                    @Override public void run() {
+                        createTemplateFile();
+                    }
+                }
+        );
     }
 
     private void createTemplateFile() {
@@ -235,7 +243,7 @@ public class ImportProductActivity extends BaseActivity {
         spPrice.setSelection(initialMapping[1]);
         spStock.setSelection(initialMapping[2]);
 
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this, R.style.DasPosAlertDialog).setView(dialogView).create();
         View btnCancel = dialogView.findViewById(R.id.btnPreviewCancel);
         View btnImport = dialogView.findViewById(R.id.btnPreviewImport);
 
