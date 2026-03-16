@@ -49,7 +49,7 @@ public final class NotificationDialogHelper {
 
         ImageView icon = dialogView.findViewById(R.id.imgDialogIcon);
         icon.setImageResource(R.drawable.bg_circle_warning_soft);
-        icon.setColorFilter(ContextCompat.getColor(activity, R.color.surface_white));
+        icon.clearColorFilter();
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(activity, R.style.DasPosAlertDialog)
                 .setView(dialogView)
