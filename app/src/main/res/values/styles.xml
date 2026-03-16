@@ -85,7 +85,6 @@
         <item name="cornerSize">20dp</item>
     </style>
 
-
     <style name="DasPosDialogDangerButton" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/danger_red</item>
         <item name="android:textColor">@color/surface_white</item>
