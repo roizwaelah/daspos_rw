@@ -1,19 +1,18 @@
 package com.daspos.feature.user;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.User;
+import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.state.ConsumableEvent;
 import com.daspos.ui.state.FormUiEffect;
@@ -49,16 +48,13 @@ public class EditUserActivity extends BaseActivity {
                 });
                 findViewById(R.id.btnDeleteUser).setOnClickListener(new View.OnClickListener() {
                     @Override public void onClick(View v) {
-                        new AlertDialog.Builder(EditUserActivity.this)
-                                .setTitle(getString(R.string.delete))
-                                .setMessage("Hapus user " + safeUser.getUsername() + "?")
-                                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                                    @Override public void onClick(DialogInterface dialog, int which) {
-                                        viewModel.deleteUser(safeUser.getUsername());
-                                    }
-                                })
-                                .setNegativeButton(getString(R.string.cancel), null)
-                                .show();
+                        NotificationDialogHelper.showWarningConfirmation(
+                                EditUserActivity.this,
+                                getString(R.string.delete),
+                                getString(R.string.delete_user_message, safeUser.getUsername()),
+                                getString(R.string.delete),
+                                () -> viewModel.deleteUser(safeUser.getUsername())
+                        );
                     }
                 });
             }

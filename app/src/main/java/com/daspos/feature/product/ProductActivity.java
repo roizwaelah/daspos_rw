@@ -1,6 +1,5 @@
 package com.daspos.feature.product;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,6 +21,7 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
+import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.UiStateRenderer;
 import com.daspos.ui.state.ListUiState;
@@ -70,17 +69,16 @@ public class ProductActivity extends BaseActivity {
             }
 
             @Override public void onDelete(final Product product) {
-                new AlertDialog.Builder(ProductActivity.this)
-                        .setTitle("Hapus produk")
-                        .setMessage("Yakin ingin menghapus " + product.getName() + "?")
-                        .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                            @Override public void onClick(DialogInterface dialog, int which) {
-                                ProductRepository.delete(ProductActivity.this, product.getId());
-                                reload();
-                            }
-                        })
-                        .setNegativeButton("Batal", null)
-                        .show();
+                NotificationDialogHelper.showWarningConfirmation(
+                        ProductActivity.this,
+                        getString(R.string.delete_product_title),
+                        getString(R.string.delete_product_message, product.getName()),
+                        getString(R.string.delete),
+                        () -> {
+                            ProductRepository.delete(ProductActivity.this, product.getId());
+                            reload();
+                        }
+                );
             }
         });
         rv.setAdapter(adapter);
