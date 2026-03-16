@@ -25,8 +25,8 @@ public class SettingActivity extends BaseActivity {
 
         bindSettingItem(R.id.itemStoreInfo, R.string.business_info, R.drawable.ic_store);
         bindSettingItem(R.id.itemPrinter, R.string.printer, R.drawable.ic_menu_printer);
-        bindSettingItem(R.id.itemReceipt, R.string.receipt, R.drawable.ic_menu_transaction);
-        bindSettingItem(R.id.itemAccount, R.string.account, R.drawable.ic_account);
+        bindSettingItem(R.id.itemReceipt, R.string.receipt, R.drawable.ic_receipt);
+        bindSettingItem(R.id.itemAccount, R.string.account, R.drawable.ic_user);
         bindSettingItem(R.id.itemContact, R.string.contact_us, R.drawable.ic_whatsapp);
         bindSettingItem(R.id.itemSelectDatabase, R.string.select_database, R.drawable.ic_menu_database);
         bindSettingItem(R.id.itemAppInfo, R.string.app_info, R.drawable.ic_info);

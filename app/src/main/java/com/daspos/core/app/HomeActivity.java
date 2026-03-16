@@ -74,7 +74,7 @@ public class HomeActivity extends BaseActivity {
         bindHomeMenu(R.id.menuProduct, R.string.manage_products, R.drawable.ic_menu_product);
         bindHomeMenu(R.id.menuTransaction, R.string.transactions, R.drawable.ic_menu_transaction);
         bindHomeMenu(R.id.menuReport, R.string.reports, R.drawable.ic_menu_report);
-        bindHomeMenu(R.id.menuBackup, R.string.backup_restore, R.drawable.ic_backup);
+        bindHomeMenu(R.id.menuBackup, R.string.backup_restore, R.drawable.ic_upload);
 
         bindStats();
     }

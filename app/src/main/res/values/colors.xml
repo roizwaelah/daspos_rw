@@ -15,5 +15,6 @@
     <color name="stat_green_text">#2E7D32</color>
     <color name="stat_blue_text">#1565C0</color>
     <color name="stat_amber_text">#EF6C00</color>
+    <color name="primary_green_light">#FF81C784</color>
 
 </resources>
