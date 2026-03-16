@@ -37,6 +37,7 @@ public class LoginActivity extends BaseActivity {
                     User loggedInUser = UserRepository.getByUsername(LoginActivity.this, user);
                     String role = loggedInUser == null ? "" : loggedInUser.getRole();
                     AuthSessionStore.saveSession(LoginActivity.this, user, role);
+                    AuthSessionStore.saveLastBackgroundAt(LoginActivity.this, 0L);
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
                 } else {
