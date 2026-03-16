@@ -31,7 +31,7 @@
                 android:layout_weight="1"
                 android:text="DasPos Store"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageView
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/transactions_today"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvStatTransactions"
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/income_today"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvStatIncome"
@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_products"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvStatProducts"
@@ -139,7 +139,7 @@
             android:layout_marginBottom="10dp"
             android:text="@string/menu"
             android:textColor="@color/text_primary"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <include

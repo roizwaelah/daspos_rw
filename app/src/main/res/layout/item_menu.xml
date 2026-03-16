@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:text="@string/manage_products"
             android:textColor="@color/text_primary"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <ImageView

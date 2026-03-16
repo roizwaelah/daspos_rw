@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:text="#TRX001"
         android:textColor="@color/text_primary"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="0dp"
@@ -24,7 +24,7 @@
         android:gravity="center"
         android:text="10:45"
         android:textColor="@color/text_secondary"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="0dp"
@@ -33,6 +33,6 @@
         android:gravity="end"
         android:text="Rp 125.000"
         android:textColor="@color/text_primary"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 </LinearLayout>

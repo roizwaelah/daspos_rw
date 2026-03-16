@@ -34,7 +34,8 @@
                 android:text="@string/contact_help_text"
                 android:textAlignment="center"
                 android:textColor="@color/text_primary"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                android:textStyle="italic"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnWhatsapp"

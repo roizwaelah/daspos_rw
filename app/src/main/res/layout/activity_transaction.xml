@@ -36,7 +36,7 @@
                 android:drawablePadding="6dp"
                 android:hint="@string/search_product"
                 android:padding="10dp"
-                android:textSize="13sp" />
+                android:textSize="16sp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/searchDropdownCard"
@@ -82,7 +82,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:textColor="@color/text_secondary"
-                            android:textSize="11sp" />
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -105,7 +105,7 @@
                     android:layout_marginBottom="6dp"
                     android:text="@string/cart"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <FrameLayout
@@ -134,7 +134,7 @@
                             android:layout_gravity="center"
                             android:text="@string/empty_cart"
                             android:textColor="@color/text_secondary"
-                            android:textSize="13sp" />
+                            android:textSize="16sp" />
                     </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
@@ -155,7 +155,7 @@
                 android:gravity="end"
                 android:text="Rp 0"
                 android:textColor="@color/text_primary"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -168,7 +168,8 @@
                 android:inputType="number"
                 android:minHeight="48dp"
                 android:padding="12dp"
-                android:textSize="14sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvChange"
@@ -178,7 +179,8 @@
                 android:gravity="end"
                 android:text="Kembalian: Rp 0"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="18sp"
+                android:textStyle="bold"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

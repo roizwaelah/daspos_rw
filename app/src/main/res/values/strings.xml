@@ -227,7 +227,7 @@
 
 
     <string name="invalid_preview">Preview Baris Invalid</string>
-    <string name="export_import_log">Export Log Import</string>
+    <string name="export_log">Export Log</string>
     <string name="import_log_saved">Log import berhasil disimpan</string>
     <string name="invalid_row_format">Baris %1$d: %2$s</string>
     <string name="invalid_reason_empty_name">Nama produk kosong</string>
@@ -242,7 +242,7 @@
     <string name="named_preset_saved">Preset bernama berhasil disimpan</string>
     <string name="named_preset_loaded">Preset bernama berhasil dimuat</string>
     <string name="named_preset_missing">Pilih preset yang tersedia</string>
-    <string name="copy_invalid_rows">Copy Invalid Rows</string>
+    <string name="copy_invalid">Copy Invalid</string>
     <string name="invalid_rows_copied">Invalid rows disalin ke clipboard</string>
     <string name="preset_name_required">Nama preset wajib diisi</string>
     <string name="select_restore_file">Pilih File</string>
@@ -259,6 +259,9 @@
     <string name="delete_product_title">Hapus Produk</string>
     <string name="delete_product_message">Yakin ingin menghapus %1$s?</string>
     <string name="delete_user_message">Hapus user %1$s?</string>
+    <string name="insert_address">Masukkan Alamat Toko</string>
+    <string name="insert_phone">Masukkan No Tlp</string>
+    <string name="insert_email">Masukkan Email</string>
 
 </resources>
 

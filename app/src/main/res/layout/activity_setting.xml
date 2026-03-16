@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/store_settings"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <include android:id="@+id/itemStoreInfo" layout="@layout/item_setting" />
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/app_settings"
                     android:textColor="@color/text_primary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <include android:id="@+id/itemAccount" layout="@layout/item_setting" />
