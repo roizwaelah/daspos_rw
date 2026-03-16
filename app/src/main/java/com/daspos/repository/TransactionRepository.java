@@ -15,8 +15,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 public class TransactionRepository {
@@ -72,13 +74,45 @@ public class TransactionRepository {
 
     public static List<ReportItem> getReportItemsByPeriod(Context context, Calendar selectedCalendar, boolean monthly) {
         List<ReportItem> filtered = new ArrayList<>();
+        if (monthly) {
+            Map<Long, DailyTransactionSummary> summaries = new HashMap<>();
+            for (TransactionRecord t : getAll(context)) {
+                Calendar trxCal = parseTransactionCalendar(t.getDate(), t.getTime());
+                if (trxCal == null) continue;
+                boolean matchMonth = trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
+                        && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH);
+                if (!matchMonth) continue;
+
+                Calendar dayCal = (Calendar) trxCal.clone();
+                dayCal.set(Calendar.HOUR_OF_DAY, 0);
+                dayCal.set(Calendar.MINUTE, 0);
+                dayCal.set(Calendar.SECOND, 0);
+                dayCal.set(Calendar.MILLISECOND, 0);
+                long dayKey = dayCal.getTimeInMillis();
+
+                DailyTransactionSummary summary = summaries.get(dayKey);
+                if (summary == null) {
+                    summaries.put(dayKey, new DailyTransactionSummary(t.getDate(), 1, t.getTotal()));
+                } else {
+                    summary.count += 1;
+                    summary.total += t.getTotal();
+                }
+            }
+
+            List<Long> sortedDays = new ArrayList<>(summaries.keySet());
+            sortedDays.sort((left, right) -> Long.compare(right, left));
+            for (Long dayKey : sortedDays) {
+                DailyTransactionSummary summary = summaries.get(dayKey);
+                if (summary == null) continue;
+                filtered.add(new ReportItem(summary.dateLabel, summary.count + " transaksi", "", summary.total));
+            }
+            return filtered;
+        }
+
         for (TransactionRecord t : getAll(context)) {
             Calendar trxCal = parseTransactionCalendar(t.getDate(), t.getTime());
             if (trxCal == null) continue;
-            boolean match = monthly
-                    ? trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
-                    && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
-                    : trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
+            boolean match = trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
                     && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
                     && trxCal.get(Calendar.DAY_OF_MONTH) == selectedCalendar.get(Calendar.DAY_OF_MONTH);
             if (match) filtered.add(new ReportItem(t.getId(), t.getDate(), t.getTime(), t.getTotal()));
@@ -118,6 +152,18 @@ public class TransactionRepository {
             return cal;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    private static class DailyTransactionSummary {
+        private final String dateLabel;
+        private int count;
+        private double total;
+
+        private DailyTransactionSummary(String dateLabel, int count, double total) {
+            this.dateLabel = dateLabel;
+            this.count = count;
+            this.total = total;
         }
     }
 }
