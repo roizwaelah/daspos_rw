@@ -29,4 +29,7 @@ public interface TransactionDao {
 
     @Query("SELECT COUNT(*) FROM transactions")
     int count();
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE timestamp >= :startTimestamp AND timestamp < :endTimestamp")
+    int countByTimestampRange(long startTimestamp, long endTimestamp);
 }
