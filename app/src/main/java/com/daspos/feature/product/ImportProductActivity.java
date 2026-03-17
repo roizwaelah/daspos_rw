@@ -84,24 +84,37 @@ public class ImportProductActivity extends BaseActivity {
     }
 
     private void createTemplateFile() {
-        String fileName = templateAsXlsx ? "daspos_template_produk.xlsx" : "daspos_template_produk.csv";
-        String mimeType = templateAsXlsx
-                ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                : "text/csv";
-        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, mimeType);
-        if (uri == null) {
-            showDownloadResultNotification(false, getString(R.string.export_failed));
-            return;
+        showProgressDialog("Sedang membuat template...");
+        boolean ok;
+        String successMessage;
+
+        if (templateAsXlsx) {
+            Uri xlsxUri = DownloadsUriHelper.createDownloadUri(this,
+                    "daspos_template_produk.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            ok = xlsxUri != null && ProductImportHelper.writeTemplateXlsx(this, xlsxUri);
+
+            if (ok) {
+                successMessage = getString(R.string.template_download_success) + "\nTersimpan di Download/DasPos";
+            } else {
+                Uri csvUri = DownloadsUriHelper.createDownloadUri(this,
+                        "daspos_template_produk.csv",
+                        "text/csv");
+                ok = csvUri != null && ProductImportHelper.writeTemplateCsv(this, csvUri);
+                successMessage = getString(R.string.template_download_success)
+                        + "\nTemplate disimpan sebagai CSV (kompatibel Excel)"
+                        + "\nTersimpan di Download/DasPos";
+            }
+        } else {
+            Uri csvUri = DownloadsUriHelper.createDownloadUri(this,
+                    "daspos_template_produk.csv",
+                    "text/csv");
+            ok = csvUri != null && ProductImportHelper.writeTemplateCsv(this, csvUri);
+            successMessage = getString(R.string.template_download_success) + "\nTersimpan di Download/DasPos";
         }
 
-        showProgressDialog("Sedang membuat template...");
-        boolean ok = templateAsXlsx
-                ? ProductImportHelper.writeTemplateXlsx(this, uri)
-                : ProductImportHelper.writeTemplateCsv(this, uri);
         hideProgressDialog();
-        showDownloadResultNotification(ok,
-                getString(ok ? R.string.template_download_success : R.string.export_failed)
-                        + (ok ? "\nTersimpan di Download/DasPos" : ""));
+        showDownloadResultNotification(ok, ok ? successMessage : getString(R.string.export_failed));
     }
 
     private void openImportFile() {
