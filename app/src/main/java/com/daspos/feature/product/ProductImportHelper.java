@@ -15,6 +15,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
+import com.daspos.shared.util.OutputStreamCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -170,7 +172,7 @@ public class ProductImportHelper {
     public static boolean writeTemplateCsv(Context context, Uri uri) {
         try {
             String csv = "nama,harga,stok\nKopi Susu,18000,20\nMie Instan,4500,50\n";
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(context, uri);
             if (out == null) return false;
             out.write(csv.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             out.flush();
@@ -195,7 +197,7 @@ public class ProductImportHelper {
             r2.createCell(0).setCellValue("Mie Instan");
             r2.createCell(1).setCellValue(4500);
             r2.createCell(2).setCellValue(50);
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(context, uri);
             if (out == null) {
                 wb.close();
                 return false;

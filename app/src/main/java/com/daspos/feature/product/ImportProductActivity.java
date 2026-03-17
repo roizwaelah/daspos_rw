@@ -28,6 +28,7 @@ import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
 import com.daspos.shared.util.DownloadsUriHelper;
 import com.daspos.shared.util.NotificationDialogHelper;
+import com.daspos.shared.util.OutputStreamCompat;
 import com.daspos.shared.util.ViewUtils;
 
 import java.io.OutputStream;
@@ -222,7 +223,7 @@ public class ImportProductActivity extends BaseActivity {
 
     private boolean writeImportLog(Uri uri, String content) {
         try {
-            OutputStream out = getContentResolver().openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(this, uri);
             if (out == null) return false;
             out.write(content.getBytes(StandardCharsets.UTF_8));
             out.flush();
