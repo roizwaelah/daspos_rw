@@ -34,17 +34,14 @@ public class UserViewModel extends AndroidViewModel {
 
     public void loadUsers() {
         usersUiState.setValue(ListUiState.loading());
-        try {
-            List<User> users = UserRepository.getAll(getApplication());
+        UserRepository.getAllAsync(getApplication(), users -> {
             usersLiveData.setValue(users);
             if (users == null || users.isEmpty()) {
                 usersUiState.setValue(ListUiState.empty("Belum ada user"));
             } else {
                 usersUiState.setValue(ListUiState.success(users));
             }
-        } catch (Exception e) {
-            usersUiState.setValue(ListUiState.error("Gagal memuat user"));
-        }
+        }, throwable -> usersUiState.setValue(ListUiState.error("Gagal memuat user")));
     }
 
     public boolean validateNewUser(String username, String password) {
@@ -61,8 +58,9 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void addUser(String username, String password, String role) {
-        UserRepository.add(getApplication(), username, password, role);
-        loadUsers();
-        uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan")));
+        UserRepository.addAsync(getApplication(), username, password, role, () -> {
+            loadUsers();
+            uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan")));
+        }, throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal menyimpan user"))));
     }
 }
