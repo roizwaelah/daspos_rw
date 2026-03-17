@@ -35,22 +35,19 @@ public class TransactionViewModel extends AndroidViewModel {
 
     public void searchProducts(String query) {
         searchUiState.setValue(ListUiState.loading());
-        try {
-            if (query == null || query.trim().isEmpty()) {
-                searchResults.setValue(new ArrayList<>());
-                searchUiState.setValue(ListUiState.success(new ArrayList<>()));
-                return;
-            }
-            List<Product> results = ProductRepository.search(getApplication(), query);
+        if (query == null || query.trim().isEmpty()) {
+            searchResults.setValue(new ArrayList<>());
+            searchUiState.setValue(ListUiState.success(new ArrayList<>()));
+            return;
+        }
+        ProductRepository.searchAsync(getApplication(), query, results -> {
             searchResults.setValue(results);
             if (results == null || results.isEmpty()) {
                 searchUiState.setValue(ListUiState.empty("Produk tidak ditemukan"));
             } else {
                 searchUiState.setValue(ListUiState.success(results));
             }
-        } catch (Exception e) {
-            searchUiState.setValue(ListUiState.error("Gagal mencari produk"));
-        }
+        }, throwable -> searchUiState.setValue(ListUiState.error("Gagal mencari produk")));
     }
 
     public void updateScreenState(List<CartItem> cartItems, String payText) {
@@ -91,22 +88,31 @@ public class TransactionViewModel extends AndroidViewModel {
             return;
         }
 
-        if (!ProductRepository.hasEnoughStock(getApplication(), cartItems)) {
-            screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Stok tidak mencukupi"));
-            uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Stok tidak mencukupi")));
-            return;
-        }
+        ProductRepository.hasEnoughStockAsync(getApplication(), cartItems, hasEnoughStock -> {
+            if (!hasEnoughStock) {
+                screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Stok tidak mencukupi"));
+                uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Stok tidak mencukupi")));
+                return;
+            }
 
-        if (pay < total) {
-            screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Nominal bayar kurang"));
-            uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Nominal bayar kurang")));
-            return;
-        }
+            if (pay < total) {
+                screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Nominal bayar kurang"));
+                uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Nominal bayar kurang")));
+                return;
+            }
 
-        screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.PROCESSING, "Memproses transaksi"));
-        String transactionId = TransactionRepository.save(getApplication(), new ArrayList<>(cartItems), total, pay, change);
-        screenState.setValue(TransactionScreenState.empty().withCheckout(TransactionScreenState.CheckoutStatus.SUCCESS, "Transaksi berhasil disimpan"));
-        uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.navigateToReceipt("Transaksi berhasil disimpan", transactionId)));
+            screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.PROCESSING, "Memproses transaksi"));
+            TransactionRepository.saveAsync(getApplication(), new ArrayList<>(cartItems), total, pay, change, transactionId -> {
+                screenState.setValue(TransactionScreenState.empty().withCheckout(TransactionScreenState.CheckoutStatus.SUCCESS, "Transaksi berhasil disimpan"));
+                uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.navigateToReceipt("Transaksi berhasil disimpan", transactionId)));
+            }, throwable -> {
+                screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Gagal menyimpan transaksi"));
+                uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Gagal menyimpan transaksi")));
+            });
+        }, throwable -> {
+            screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Gagal cek stok"));
+            uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Gagal cek stok")));
+        });
     }
 
     public void clearCheckoutStatus() {

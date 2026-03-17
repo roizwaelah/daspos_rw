@@ -42,12 +42,14 @@ public class ProductFormViewModel extends AndroidViewModel {
     }
 
     public void saveNew(String name, double price, int stock) {
-        ProductRepository.add(getApplication(), name, price, stock);
-        uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Produk berhasil ditambahkan")));
+        ProductRepository.addAsync(getApplication(), name, price, stock,
+                () -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Produk berhasil ditambahkan"))),
+                throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal menambah produk"))));
     }
 
     public void saveEdit(Product product) {
-        ProductRepository.update(getApplication(), product);
-        uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Produk berhasil diperbarui")));
+        ProductRepository.updateAsync(getApplication(), product,
+                () -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Produk berhasil diperbarui"))),
+                throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal memperbarui produk"))));
     }
 }

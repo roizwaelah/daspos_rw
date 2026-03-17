@@ -88,4 +88,57 @@ public class UserRepository {
     public static void delete(final Context context, final String username) {
         DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().deleteByUsername(username));
     }
+
+
+    public static void getAllAsync(final Context context, final DbExecutor.SuccessCallback<List<User>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getAll(context), onSuccess, onError);
+    }
+
+    public static void getByUsernameAsync(final Context context, final String username, final DbExecutor.SuccessCallback<User> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getByUsername(context, username), onSuccess, onError);
+    }
+
+    public static void usernameExistsAsync(final Context context, final String username, final DbExecutor.SuccessCallback<Boolean> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> usernameExists(context, username), onSuccess, onError);
+    }
+
+    public static void authenticateAsync(final Context context, final String username, final String password, final DbExecutor.SuccessCallback<Boolean> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> authenticate(context, username, password), onSuccess, onError);
+    }
+
+    public static void addAsync(final Context context, final String username, final String password, final String role, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            add(context, username, password, role);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void updateRoleAsync(final Context context, final String username, final String role, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            updateRole(context, username, role);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void updatePasswordAsync(final Context context, final String username, final String newPassword, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            updatePassword(context, username, newPassword);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void deleteAsync(final Context context, final String username, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            delete(context, username);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
 }
