@@ -130,7 +130,7 @@ public class ReportExportHelper {
             out.flush();
             out.close();
             return true;
-        } catch (Exception | org.apache.poi.javax.xml.stream.FactoryConfigurationError e) {
+        } catch (Throwable e) {
             return false;
         } finally {
             try { if (workbook != null) workbook.close(); } catch (Exception ignored) { }
