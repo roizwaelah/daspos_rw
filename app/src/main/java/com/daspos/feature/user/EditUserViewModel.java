@@ -23,16 +23,19 @@ public class EditUserViewModel extends AndroidViewModel {
     public MutableLiveData<ConsumableEvent<FormUiEffect>> getUiEffect() { return uiEffect; }
 
     public void loadUser(String username) {
-        userLiveData.setValue(UserRepository.getByUsername(getApplication(), username));
+        UserRepository.getByUsernameAsync(getApplication(), username, userLiveData::setValue,
+                throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal memuat user"))));
     }
 
     public void updateRole(String username, String role) {
-        UserRepository.updateRole(getApplication(), username, role);
-        uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan")));
+        UserRepository.updateRoleAsync(getApplication(), username, role,
+                () -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan"))),
+                throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal menyimpan data"))));
     }
 
     public void deleteUser(String username) {
-        UserRepository.delete(getApplication(), username);
-        uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("User dihapus")));
+        UserRepository.deleteAsync(getApplication(), username,
+                () -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("User dihapus"))),
+                throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal menghapus user"))));
     }
 }

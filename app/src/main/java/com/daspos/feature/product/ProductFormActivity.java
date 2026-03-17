@@ -53,12 +53,14 @@ public class ProductFormActivity extends BaseActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null) {
-            editingProduct = ProductRepository.getById(this, productId);
-            if (editingProduct != null) {
-                etName.setText(editingProduct.getName());
-                etPrice.setText(String.valueOf((int) editingProduct.getPrice()));
-                etStock.setText(String.valueOf(editingProduct.getStock()));
-            }
+            ProductRepository.getByIdAsync(this, productId, product -> {
+                editingProduct = product;
+                if (editingProduct != null) {
+                    etName.setText(editingProduct.getName());
+                    etPrice.setText(String.valueOf((int) editingProduct.getPrice()));
+                    etStock.setText(String.valueOf(editingProduct.getStock()));
+                }
+            }, throwable -> ViewUtils.toast(ProductFormActivity.this, "Gagal memuat data produk"));
         }
 
         btnCancel.setOnClickListener(new android.view.View.OnClickListener() {

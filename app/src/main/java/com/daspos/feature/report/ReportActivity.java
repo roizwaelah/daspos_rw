@@ -65,8 +65,7 @@ public class ReportActivity extends BaseActivity {
         final TextView tvState = findViewById(R.id.tvReportState);
 
         String today = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
-        tvTodayHistoryInfo.setText(today + " • " + TransactionRepository.getTodayCount(this) + " transaksi • " +
-                CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
+        bindTodayHistoryInfo(today);
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReportAdapter(new ReportAdapter.Listener() {
@@ -202,5 +201,14 @@ public class ReportActivity extends BaseActivity {
         if (monthly) tvSelectedDate.setText(new SimpleDateFormat("MMMM yyyy", new Locale("id", "ID")).format(selectedCalendar.getTime()));
         else tvSelectedDate.setText(new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(selectedCalendar.getTime()));
         viewModel.load(selectedCalendar, monthly);
+    }
+
+
+    private void bindTodayHistoryInfo(String today) {
+        TransactionRepository.getTodayCountAsync(this, count ->
+                TransactionRepository.getTodayIncomeAsync(this, income ->
+                                tvTodayHistoryInfo.setText(today + " • " + count + " transaksi • " + CurrencyUtils.formatRupiah(income)),
+                        throwable -> tvTodayHistoryInfo.setText(today + " • " + count + " transaksi • " + CurrencyUtils.formatRupiah(0))),
+                throwable -> tvTodayHistoryInfo.setText(today + " • 0 transaksi • " + CurrencyUtils.formatRupiah(0)));
     }
 }

@@ -105,16 +105,21 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void bindStats() {
-        ((TextView) findViewById(R.id.tvStatTransactions))
-                .setText(String.valueOf(TransactionRepository.getTodayCount(this)));
-        ((TextView) findViewById(R.id.tvStatIncome))
-                .setText(CurrencyUtils.formatRupiah(TransactionRepository.getTodayIncome(this)));
-        ((TextView) findViewById(R.id.tvStatProducts))
-                .setText(String.valueOf(ProductRepository.getAll(this).size()));
-        ((TextView) findViewById(R.id.tvStatIncomeMonth))
-                .setText(CurrencyUtils.formatRupiah(
-                        TransactionRepository.getIncomeByPeriod(this, Calendar.getInstance(), true)
-                ));
+        TransactionRepository.getTodayCountAsync(this, todayCount -> ((TextView) findViewById(R.id.tvStatTransactions))
+                .setText(String.valueOf(todayCount)), throwable -> ((TextView) findViewById(R.id.tvStatTransactions))
+                .setText("0"));
+
+        TransactionRepository.getTodayIncomeAsync(this, todayIncome -> ((TextView) findViewById(R.id.tvStatIncome))
+                .setText(CurrencyUtils.formatRupiah(todayIncome)), throwable -> ((TextView) findViewById(R.id.tvStatIncome))
+                .setText(CurrencyUtils.formatRupiah(0)));
+
+        ProductRepository.getAllAsync(this, products -> ((TextView) findViewById(R.id.tvStatProducts))
+                .setText(String.valueOf(products.size())), throwable -> ((TextView) findViewById(R.id.tvStatProducts))
+                .setText("0"));
+
+        TransactionRepository.getIncomeByPeriodAsync(this, Calendar.getInstance(), true, monthlyIncome -> ((TextView) findViewById(R.id.tvStatIncomeMonth))
+                .setText(CurrencyUtils.formatRupiah(monthlyIncome)), throwable -> ((TextView) findViewById(R.id.tvStatIncomeMonth))
+                .setText(CurrencyUtils.formatRupiah(0)));
     }
 
     @Override
