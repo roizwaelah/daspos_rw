@@ -128,19 +128,31 @@ public class ReportActivity extends BaseActivity {
     }
 
     private void startExportXlsx() {
-        String fileName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx");
-        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        if (uri == null) {
-            showExportResultNotification(false, getString(R.string.export_failed));
-            return;
+        showProgressDialog("Mengekspor laporan XLSX...");
+
+        int count = Integer.parseInt(tvSummaryTransactionCount.getText().toString());
+        double income = parseMoney(tvSummaryIncome.getText().toString());
+        boolean ok;
+        String message;
+
+        String xlsxName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx");
+        Uri xlsxUri = DownloadsUriHelper.createDownloadUri(this, xlsxName,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        ok = xlsxUri != null && ReportExportHelper.exportXlsx(this, xlsxUri, adapter.getItems(), count, income);
+
+        if (ok) {
+            message = getString(R.string.xlsx_export_success) + "\nTersimpan di Download/DasPos";
+        } else {
+            String csvName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "csv");
+            Uri csvUri = DownloadsUriHelper.createDownloadUri(this, csvName, "text/csv");
+            ok = csvUri != null && ReportExportHelper.exportCsv(this, csvUri, adapter.getItems());
+            message = getString(R.string.export_success)
+                    + "\nFile disimpan sebagai CSV (kompatibel Excel)"
+                    + "\nTersimpan di Download/DasPos";
         }
 
-        showProgressDialog("Mengekspor laporan XLSX...");
-        boolean ok = ReportExportHelper.exportXlsx(this, uri, adapter.getItems(),
-                Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
         hideProgressDialog();
-        showExportResultNotification(ok, getString(ok ? R.string.xlsx_export_success : R.string.export_failed)
-                + (ok ? "\nTersimpan di Download/DasPos" : ""));
+        showExportResultNotification(ok, ok ? message : getString(R.string.export_failed));
     }
 
 
