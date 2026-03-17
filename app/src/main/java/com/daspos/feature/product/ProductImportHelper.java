@@ -207,7 +207,7 @@ public class ProductImportHelper {
             out.close();
             wb.close();
             return true;
-        } catch (Exception | org.apache.poi.javax.xml.stream.FactoryConfigurationError e) { return false; }
+        } catch (Throwable e) { return false; }
     }
 
     private static ProductResult toProduct(String[] cells, int[] mapping) {
