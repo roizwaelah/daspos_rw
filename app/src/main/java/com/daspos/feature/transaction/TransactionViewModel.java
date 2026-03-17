@@ -81,6 +81,9 @@ public class TransactionViewModel extends AndroidViewModel {
 
         double change = Math.max(0, pay - total);
         TransactionScreenState base = TransactionScreenState.of(cartItems == null || cartItems.isEmpty(), total, pay, change);
+        final double finalTotal = total;
+        final double finalPay = pay;
+        final double finalChange = change;
 
         if (cartItems == null || cartItems.isEmpty()) {
             screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Keranjang masih kosong"));
@@ -95,14 +98,14 @@ public class TransactionViewModel extends AndroidViewModel {
                 return;
             }
 
-            if (pay < total) {
+            if (finalPay < finalTotal) {
                 screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.ERROR, "Nominal bayar kurang"));
                 uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.showMessage("Nominal bayar kurang")));
                 return;
             }
 
             screenState.setValue(base.withCheckout(TransactionScreenState.CheckoutStatus.PROCESSING, "Memproses transaksi"));
-            TransactionRepository.saveAsync(getApplication(), new ArrayList<>(cartItems), total, pay, change, transactionId -> {
+            TransactionRepository.saveAsync(getApplication(), new ArrayList<>(cartItems), finalTotal, finalPay, finalChange, transactionId -> {
                 screenState.setValue(TransactionScreenState.empty().withCheckout(TransactionScreenState.CheckoutStatus.SUCCESS, "Transaksi berhasil disimpan"));
                 uiEffect.setValue(new ConsumableEvent<>(TransactionUiEffect.navigateToReceipt("Transaksi berhasil disimpan", transactionId)));
             }, throwable -> {
