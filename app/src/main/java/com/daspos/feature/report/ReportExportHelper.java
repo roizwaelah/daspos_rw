@@ -1,6 +1,5 @@
 package com.daspos.feature.report;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
@@ -8,6 +7,7 @@ import android.net.Uri;
 
 import com.daspos.model.ReportItem;
 import com.daspos.shared.util.CurrencyUtils;
+import com.daspos.shared.util.OutputStreamCompat;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -61,8 +61,7 @@ public class ReportExportHelper {
             }
 
             document.finishPage(page);
-            ContentResolver resolver = context.getContentResolver();
-            OutputStream out = resolver.openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(context, uri);
             if (out == null) return false;
             document.writeTo(out);
             out.flush();
@@ -84,7 +83,7 @@ public class ReportExportHelper {
                 sb.append(item.getTime()).append(",");
                 sb.append(item.getTotal()).append("\n");
             }
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(context, uri);
             if (out == null) return false;
             out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
             out.flush();
@@ -125,7 +124,7 @@ public class ReportExportHelper {
             sheet.autoSizeColumn(1);
             sheet.autoSizeColumn(2);
 
-            OutputStream out = context.getContentResolver().openOutputStream(uri);
+            OutputStream out = OutputStreamCompat.openForWrite(context, uri);
             if (out == null) return false;
             workbook.write(out);
             out.flush();
