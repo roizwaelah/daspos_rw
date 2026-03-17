@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.daspos"
+    android:versionCode="1"
+    android:versionName="1.4.4" >
+
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="34" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <!-- Legacy storage permission untuk Android <= 12 -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- Android 13+ media access -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <permission
+        android:name="com.daspos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.daspos.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+
+    <application
+        android:name="com.daspos.DasPosApp"
+        android:allowBackup="true"
+        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+        android:debuggable="true"
+        android:extractNativeLibs="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:testOnly="true"
+        android:theme="@style/Theme.DasPos" >
+        <activity android:name="com.daspos.feature.printer.BluetoothScanActivity" />
+        <activity android:name="com.daspos.feature.user.UserListActivity" />
+        <activity android:name="com.daspos.feature.user.EditUserActivity" />
+        <activity android:name="com.daspos.feature.user.AddUserActivity" />
+        <activity android:name="com.daspos.feature.transaction.StrukActivity" />
+        <activity android:name="com.daspos.feature.settings.ReceiptPreviewActivity" />
+        <activity android:name="com.daspos.feature.product.ImportProductActivity" />
+        <activity android:name="com.daspos.feature.settings.SelectDatabaseActivity" />
+        <activity android:name="com.daspos.feature.settings.ContactUsActivity" />
+        <activity android:name="com.daspos.feature.settings.AppInfoActivity" />
+        <activity android:name="com.daspos.feature.settings.BackupRestoreActivity" />
+        <activity android:name="com.daspos.feature.printer.PrinterSettingActivity" />
+        <activity android:name="com.daspos.feature.settings.ReceiptSettingActivity" />
+        <activity android:name="com.daspos.feature.settings.StoreInfoActivity" />
+        <activity android:name="com.daspos.feature.settings.ChangePasswordActivity" />
+        <activity android:name="com.daspos.feature.settings.AccountSettingActivity" />
+        <activity android:name="com.daspos.feature.settings.SettingActivity" />
+        <activity android:name="com.daspos.feature.report.ReportActivity" />
+        <activity android:name="com.daspos.feature.product.ProductFormActivity" />
+        <activity android:name="com.daspos.feature.product.ProductActivity" />
+        <activity android:name="com.daspos.feature.transaction.TransactionActivity" />
+        <activity android:name="com.daspos.core.app.HomeActivity" />
+        <activity android:name="com.daspos.feature.auth.RegisterActivity" />
+        <activity android:name="com.daspos.feature.auth.LoginActivity" />
+        <activity
+            android:name="com.daspos.core.app.SplashActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="com.daspos.androidx-startup"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+        <service
+            android:name="androidx.room.MultiInstanceInvalidationService"
+            android:directBootAware="true"
+            android:exported="false" />
+
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            android:directBootAware="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.DUMP" >
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

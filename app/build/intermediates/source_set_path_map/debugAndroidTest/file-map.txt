@@ -1,0 +1,4 @@
+com.daspos.test.app-androidTest-0 C:\Users\AR\daspos_rw\app\build\generated\res\resValues\androidTest\debug
+com.daspos.test.app-mergeDebugAndroidTestResources-1 C:\Users\AR\daspos_rw\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.daspos.test.app-mergeDebugAndroidTestResources-2 C:\Users\AR\daspos_rw\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.daspos.test.app-merged_res-3 C:\Users\AR\daspos_rw\app\build\intermediates\merged_res\debugAndroidTest

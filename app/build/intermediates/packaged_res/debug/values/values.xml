@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="backup_interval_options">
+        <item>Harian</item>
+        <item>Mingguan</item>
+        <item>Bulanan</item>
+    </string-array>
+    <string-array name="product_sort_options">
+        <item>Nama A-Z</item>
+        <item>Nama Z-A</item>
+        <item>Harga Termurah</item>
+        <item>Harga Tertinggi</item>
+        <item>Stok Terbanyak</item>
+    </string-array>
+    <string-array name="role_options">
+        <item>Admin</item>
+        <item>Kasir</item>
+    </string-array>
+    <color name="accent_blue">#1976D2</color>
+    <color name="button_gray">#BDBDBD</color>
+    <color name="danger_magenta">#C2185B</color>
+    <color name="danger_red">#D32F2F</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="primary_green">#388E3C</color>
+    <color name="primary_green_dark">#2E7D32</color>
+    <color name="primary_green_light">#FF81C784</color>
+    <color name="stat_amber_text">#EF6C00</color>
+    <color name="stat_blue_text">#1565C0</color>
+    <color name="stat_green_text">#2E7D32</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#666666</color>
+    <color name="warm_gray">#F5F5F5</color>
+    <dimen name="orientation_card_width">340dp</dimen>
+    <string name="account">Akun</string>
+    <string name="account_info">Info Akun</string>
+    <string name="account_role_format">Role: %1$s</string>
+    <string name="account_role_placeholder">Role: -</string>
+    <string name="account_store_format">Toko: %1$s</string>
+    <string name="account_store_placeholder">Toko: -</string>
+    <string name="account_username_format">Username: %1$s</string>
+    <string name="account_username_placeholder">Username: -</string>
+    <string name="add">Tambah</string>
+    <string name="add_product">Tambah Produk</string>
+    <string name="add_user">Tambah User</string>
+    <string name="app_description">DasPos adalah aplikasi POS sederhana untuk toko ritel dengan fitur produk, transaksi, laporan, dan backup.</string>
+    <string name="app_info">Info</string>
+    <string name="app_info_data_note">Data disimpan secara lokal di perangkat dan dapat dicadangkan secara manual melalui menu Backup/Restore sesuai kebutuhan pengguna.</string>
+    <string name="app_info_features">Fitur utama aplikasi mencakup manajemen produk, transaksi kasir, laporan harian/bulanan, pengaturan struk, backup/restore data, dan dukungan printer Bluetooth maupun network.</string>
+    <string name="app_info_overview">DasPos adalah aplikasi kasir (Point of Sale) untuk membantu operasional toko harian, mulai dari pengelolaan produk, transaksi penjualan, hingga rekap laporan.</string>
+    <string name="app_name">DasPos</string>
+    <string name="app_settings">Pengaturan Aplikasi</string>
+    <string name="app_version">Versi</string>
+    <string name="app_version_build_format">Versi %1$s (Build %2$d)</string>
+    <string name="app_version_not_available">Versi tidak tersedia</string>
+    <string name="auto_backup">Backup Otomatis</string>
+    <string name="backup">Backup</string>
+    <string name="backup_desc">Simpan cadangan data untuk keamanan transaksi dan master data.</string>
+    <string name="backup_incompatible">Versi file backup tidak kompatibel</string>
+    <string name="backup_interval">Interval Backup</string>
+    <string name="backup_now">Backup Sekarang</string>
+    <string name="backup_restore">Backup/Restore</string>
+    <string name="backup_simulation">Simulasi backup sekarang</string>
+    <string name="backup_success">Backup berhasil disimpan</string>
+    <string name="bluetooth_permission_required">Izin bluetooth dibutuhkan untuk printer bluetooth</string>
+    <string name="bluetooth_scan">Pilih Printer Bluetooth</string>
+    <string name="business_info">Informasi Usaha</string>
+    <string name="cancel">Batal</string>
+    <string name="cart">Keranjang</string>
+    <string name="change">Kembalian</string>
+    <string name="change_password">Ganti Password</string>
+    <string name="changelog">Changelog</string>
+    <string name="chat_whatsapp">Chat via WhatsApp</string>
+    <string name="choose_bluetooth_printer">Pilih Printer Bluetooth</string>
+    <string name="choose_file">Pilih File</string>
+    <string name="close">Tutup</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="contact_help">Butuh bantuan atau ingin berdiskusi? Hubungi tim kami melalui WhatsApp.</string>
+    <string name="contact_help_text">Butuh bantuan atau ada pertanyaan?\nSilakan hubungi kami melalui WhatsApp.</string>
+    <string name="contact_us">Hubungi Kami</string>
+    <string name="copy_invalid">Copy Invalid</string>
+    <string name="create_account">Buat Akun Baru</string>
+    <string name="csv_import_detected">File CSV terdeteksi</string>
+    <string name="csv_separator_detected">Separator CSV terdeteksi otomatis</string>
+    <string name="daily">Harian</string>
+    <string name="database">Database</string>
+    <string name="delete">Hapus</string>
+    <string name="delete_product_message">Yakin ingin menghapus %1$s?</string>
+    <string name="delete_product_title">Hapus Produk</string>
+    <string name="delete_user_message">Hapus user %1$s?</string>
+    <string name="download">Unduh</string>
+    <string name="download_simulation">Simulasi unduh template Excel</string>
+    <string name="download_template">Download Template</string>
+    <string name="download_template_desc">Gunakan template resmi agar kolom produk terbaca dengan benar saat import.</string>
+    <string name="duplicate_info">Beberapa data duplikat akan ditandai sebelum proses import dilakukan.</string>
+    <string name="edit">Edit</string>
+    <string name="edit_user">Edit User</string>
+    <string name="empty_cart">Keranjang masih kosong</string>
+    <string name="empty_products">Produk tidak ditemukan</string>
+    <string name="empty_reports">Belum ada laporan pada periode ini</string>
+    <string name="empty_search_products">Produk tidak ditemukan</string>
+    <string name="empty_users">Belum ada user</string>
+    <string name="excel_compatible_csv">File CSV kompatibel Excel</string>
+    <string name="exit">Keluar</string>
+    <string name="exit_confirmation_message">Apakah Anda yakin ingin keluar dari aplikasi?</string>
+    <string name="exit_confirmation_title">Keluar Aplikasi</string>
+    <string name="export_excel">EXPORT EXCEL</string>
+    <string name="export_failed">Gagal menulis file</string>
+    <string name="export_log">Export Log</string>
+    <string name="export_pdf">EXPORT PDF</string>
+    <string name="export_success">File berhasil disimpan</string>
+    <string name="field_required">Field wajib diisi</string>
+    <string name="finish">Selesai</string>
+    <string name="has_account">Sudah punya akun? Masuk</string>
+    <string name="import_action">Import</string>
+    <string name="import_failed">Gagal membaca file import</string>
+    <string name="import_header_detected">Kolom import terdeteksi otomatis</string>
+    <string name="import_header_unknown">Header tidak dikenali, memakai urutan default</string>
+    <string name="import_log_saved">Log import berhasil disimpan</string>
+    <string name="import_preview">Preview Import</string>
+    <string name="import_product">Import Produk</string>
+    <string name="import_success">Import produk selesai</string>
+    <string name="income_this_month">Pendapatan Bulan Ini</string>
+    <string name="income_today">Pendapatan Hari Ini</string>
+    <string name="informasi_usaha">Informasi Usaha</string>
+    <string name="insert_address">Masukkan Alamat Toko</string>
+    <string name="insert_email">Masukkan Email</string>
+    <string name="insert_password">Masukkan Password</string>
+    <string name="insert_password_again">Masukkan Password Lagi</string>
+    <string name="insert_phone">Masukkan No Tlp</string>
+    <string name="insert_store_name">Masukkan Nama Toko</string>
+    <string name="insert_username">Masukkan Username</string>
+    <string name="invalid_preview">Preview Baris Invalid</string>
+    <string name="invalid_price">Harga tidak valid</string>
+    <string name="invalid_reason_empty_name">Nama produk kosong</string>
+    <string name="invalid_reason_price">Harga tidak valid</string>
+    <string name="invalid_reason_stock">Stok tidak valid</string>
+    <string name="invalid_row_format">Baris %1$d: %2$s</string>
+    <string name="invalid_rows_copied">Invalid rows disalin ke clipboard</string>
+    <string name="invalid_stock">Stok tidak valid</string>
+    <string name="ip_address">IP Address</string>
+    <string name="label_address">Alamat</string>
+    <string name="label_confirm_password">Konfirmasi Password</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="label_phone">Telepon</string>
+    <string name="label_store_name">Nama Toko</string>
+    <string name="label_username">Username</string>
+    <string name="load_named_preset">Muat Preset</string>
+    <string name="loading">Memuat...</string>
+    <string name="local_database">Local</string>
+    <string name="login">Masuk</string>
+    <string name="login_failed">Username atau password salah</string>
+    <string name="logo_hint">Ukuran logo yang disarankan 512x512 px.</string>
+    <string name="logout">Logout</string>
+    <string name="logout_confirm_message">Apakah Anda yakin ingin logout?</string>
+    <string name="manage_products">Atur Produk</string>
+    <string name="map_columns">Pemetaan Kolom</string>
+    <string name="map_name_column">Kolom Nama</string>
+    <string name="map_price_column">Kolom Harga</string>
+    <string name="map_stock_column">Kolom Stok</string>
+    <string name="mapping_duplicate_columns">Kolom Nama, Harga, dan Stok harus berbeda</string>
+    <string name="mapping_updated">Pemetaan kolom diperbarui</string>
+    <string name="menu">Daftar Menu</string>
+    <string name="monthly">Bulanan</string>
+    <string name="named_preset_loaded">Preset bernama berhasil dimuat</string>
+    <string name="named_preset_missing">Pilih preset yang tersedia</string>
+    <string name="named_preset_saved">Preset bernama berhasil disimpan</string>
+    <string name="network_print_started">Proses print network dimulai</string>
+    <string name="network_printer_connect_failed">Gagal terhubung ke printer network</string>
+    <string name="network_printer_invalid">IP atau port printer network tidak valid</string>
+    <string name="network_printer_saved">Printer network tersimpan</string>
+    <string name="network_test_failed">Tes printer network gagal</string>
+    <string name="network_test_success">Tes printer network berhasil</string>
+    <string name="new_password">Password Baru</string>
+    <string name="no_account">Belum punya akun? Daftar</string>
+    <string name="no_import_rows">Tidak ada baris valid untuk diimport</string>
+    <string name="no_invalid_rows">Tidak ada baris invalid</string>
+    <string name="old_password">Password Lama</string>
+    <string name="old_password_invalid">Password lama tidak sesuai</string>
+    <string name="password_not_match">Password tidak cocok</string>
+    <string name="password_required">Password wajib diisi</string>
+    <string name="password_updated">Password berhasil diperbarui</string>
+    <string name="pay">Bayar</string>
+    <string name="payment_insufficient">Nominal bayar kurang</string>
+    <string name="period_daily_format">%1$s</string>
+    <string name="period_monthly_format">%1$s %2$s</string>
+    <string name="port">Port</string>
+    <string name="preset_mapping_in_use">Preset mapping aktif untuk struktur kolom ini</string>
+    <string name="preset_mapping_loaded">Preset mapping import dimuat</string>
+    <string name="preset_mapping_reset">Preset mapping import direset</string>
+    <string name="preset_mapping_saved">Preset mapping import disimpan</string>
+    <string name="preset_name_hint">Nama preset mapping</string>
+    <string name="preset_name_required">Nama preset wajib diisi</string>
+    <string name="preview_receipt">Preview Struk</string>
+    <string name="price">Harga</string>
+    <string name="print_receipt">Cetak</string>
+    <string name="print_simulation">Simulasi cetak struk</string>
+    <string name="print_started">Proses print dimulai</string>
+    <string name="printer">Printer</string>
+    <string name="printer_bluetooth">Bluetooth</string>
+    <string name="printer_connection_failed">Gagal terhubung ke printer bluetooth</string>
+    <string name="printer_network">Network</string>
+    <string name="printer_none">Tidak pakai</string>
+    <string name="printer_not_configured">Printer bluetooth belum dipilih</string>
+    <string name="printer_saved">Pengaturan printer tersimpan</string>
+    <string name="printer_usb">USB</string>
+    <string name="printer_write_failed">Gagal mengirim data ke printer</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="product_form_title">Tambah/Edit Produk</string>
+    <string name="product_name">Nama Produk</string>
+    <string name="product_out_of_stock">Produk habis</string>
+    <string name="receipt">Struk</string>
+    <string name="receipt_footer">Footer Struk</string>
+    <string name="receipt_header">Header Struk</string>
+    <string name="receipt_preview">Preview Struk</string>
+    <string name="receipt_sample_footer">Terima kasih telah berbelanja</string>
+    <string name="receipt_sample_header">DASPOS STORE</string>
+    <string name="receipt_transaction_number">No. Transaksi: %1$s</string>
+    <string name="register">Daftar</string>
+    <string name="register_success">Akun berhasil dibuat</string>
+    <string name="remote_database">Remote</string>
+    <string name="remove_logo">Hapus</string>
+    <string name="reports">Laporan</string>
+    <string name="reset_data">Reset Semua Data</string>
+    <string name="reset_desc">Tindakan ini akan menghapus seluruh data transaksi dan master secara permanen.</string>
+    <string name="reset_preset">Reset Preset</string>
+    <string name="reset_success">Semua data berhasil dihapus</string>
+    <string name="reset_warning">Reset semua data hanya simulasi pada starter project ini.</string>
+    <string name="restore">Restore</string>
+    <string name="restore_confirm">Restore akan menimpa data saat ini. Lanjutkan?</string>
+    <string name="restore_desc">Pilih file backup sebelumnya untuk memulihkan data aplikasi.</string>
+    <string name="restore_invalid">File backup tidak valid</string>
+    <string name="restore_simulation">Simulasi pilih file restore</string>
+    <string name="restore_success">Restore berhasil dipulihkan</string>
+    <string name="role">Role</string>
+    <string name="row_stats">Baris valid: %1$d • invalid: %2$d</string>
+    <string name="sample_change">Rp 50.000</string>
+    <string name="sample_total">Rp 250.000</string>
+    <string name="save">Simpan</string>
+    <string name="save_named_preset">Simpan Preset</string>
+    <string name="saved_success">Data berhasil disimpan</string>
+    <string name="search">Cari</string>
+    <string name="search_failed">Gagal mencari produk</string>
+    <string name="search_product">Cari produk</string>
+    <string name="select_database">Pilih Database</string>
+    <string name="select_logo">Pilih Logo</string>
+    <string name="select_printer">Select Printer</string>
+    <string name="select_restore_file">Pilih File</string>
+    <string name="selected_printer">Printer terpilih</string>
+    <string name="settings">Pengaturan</string>
+    <string name="show_logo_receipt">Tampilkan Logo pada Struk</string>
+    <string name="sort">Sortir</string>
+    <string name="stock">Stok</string>
+    <string name="stock_not_enough">Stok tidak mencukupi</string>
+    <string name="store_logo">Logo Toko</string>
+    <string name="store_settings">Pengaturan Toko</string>
+    <string name="summary">Rekap</string>
+    <string name="template_download_success">Template berhasil dibuat</string>
+    <string name="test_connection">Tes Koneksi</string>
+    <string name="test_print">Tes Print</string>
+    <string name="test_print_success">Tes print dikirim</string>
+    <string name="theme">Tema</string>
+    <string name="time">Waktu</string>
+    <string name="today_transaction_history">Riwayat Transaksi Hari Ini</string>
+    <string name="total">Total</string>
+    <string name="total_income">Total pendapatan</string>
+    <string name="total_products">Total Produk</string>
+    <string name="total_transactions">Total Transaksi</string>
+    <string name="transaction_saved">Transaksi berhasil disimpan</string>
+    <string name="transactions">Transaksi</string>
+    <string name="transactions_today">Transaksi Hari Ini</string>
+    <string name="upload_excel">Upload Excel</string>
+    <string name="upload_excel_desc">Pilih file Excel untuk dipreview sebelum diimport ke sistem.</string>
+    <string name="user_list">Daftar User</string>
+    <string name="user_session_not_found">Sesi login tidak ditemukan, silakan login ulang</string>
+    <string name="username_already_exists">Username sudah terdaftar</string>
+    <string name="username_required">Username wajib diisi</string>
+    <string name="welcome_login">Masuk</string>
+    <string name="xlsx_export_success">File XLSX berhasil disimpan</string>
+    <string name="xlsx_import_detected">File XLSX terdeteksi</string>
+    <style name="DasPosAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="backgroundInsetStart">24dp</item>
+        <item name="backgroundInsetEnd">24dp</item>
+        <item name="backgroundInsetTop">24dp</item>
+        <item name="backgroundInsetBottom">24dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.DasPos.Dialog</item>
+    </style>
+    <style name="DasPosBlueButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/accent_blue</item>
+        <item name="android:textColor">@color/surface_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="DasPosDangerButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/danger_red</item>
+        <item name="android:textColor">@color/surface_white</item>
+        <item name="cornerRadius">8sp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="DasPosDialogDangerButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/danger_red</item>
+        <item name="android:textColor">@color/surface_white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="rippleColor">@color/surface_white</item>
+    </style>
+    <style name="DasPosDialogSecondaryButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="backgroundTint">@color/warm_gray</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+    <style name="DasPosFieldLabel">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="DasPosGrayButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/button_gray</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="DasPosOutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/primary_green</item>
+        <item name="android:textColor">@color/primary_green</item>
+        <item name="cornerRadius">8sp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="DasPosPrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary_green</item>
+        <item name="android:textColor">@color/surface_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="DasPosSectionCard">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">16dp</item>
+    </style>
+    <style name="DasPosSectionTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="DasPosTextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/primary_green</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+    </style>
+    <style name="DasPosToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/primary_green</item>
+        <item name="titleTextColor">@color/surface_white</item>
+        <item name="navigationIconTint">@color/surface_white</item>
+        <item name="contentInsetStartWithNavigation">2dp</item>
+        <item name="titleMarginStart">2dp</item>
+    </style>
+    <style name="ShapeAppearance.DasPos.Dialog" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="Theme.DasPos" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryVariant">@color/primary_green_dark</item>
+        <item name="colorOnPrimary">@color/surface_white</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="android:statusBarColor">@color/primary_green_dark</item>
+    </style>
+</resources>

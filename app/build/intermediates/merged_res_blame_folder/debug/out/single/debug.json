@@ -1,0 +1,434 @@
+[
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_divider_horizontal.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\divider_horizontal.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_divider_dashed_receipt.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\divider_dashed_receipt.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_eye.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_eye.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_home.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_home.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_menu.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_receipt_breadtalk.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_receipt_breadtalk.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_product.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_search.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_search.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_stat_green.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_stat_green.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_arrow_right.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_arrow_right.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_stat_amber.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_stat_amber.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_logout.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_logout.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_sun.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_sun.xml"
+    },
+    {
+        "merged": "com.daspos.app-merged_res-35:/layout_activity_receipt_setting.xml.flat",
+        "source": "com.daspos.app-main-37:/layout/activity_receipt_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_store.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_store.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_circle_warning_soft.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_circle_warning_soft.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_receipt_preview.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_receipt_preview.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_back.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_back.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_visibility_off.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_visibility_off.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_cart.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_cart.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_receipt.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_receipt.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_receipt_line.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_receipt_line.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_lock.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_lock.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_store_info.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_store_info.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_backup.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_backup.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_button_outline_green.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_button_outline_green.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_register.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_chart.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_chart.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_change_password.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_change_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_compact.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_compact.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_home.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_home.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_product.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_warning.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_warning.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_user_list.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_user_list.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_calendar.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_calendar.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_stat_blue.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_stat_blue.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_category.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_category.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_import_product.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_import_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_splash.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_splash.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_login.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_file_upload.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_file_upload.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_input.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_input.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_contact_us.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_contact_us.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_account_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_account_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_customer.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_customer.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_add_user.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_add_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_minus.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_minus.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_search.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_search.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_product.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_crescent_moon.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_crescent_moon.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_dialog_notification.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\dialog_notification.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_receipt_long.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_receipt_long.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_round_logo.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_round_logo.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_download.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_download.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_pencil.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_pencil.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_pk.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_pk.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_transaction.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_transaction.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_product_form.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_product_form.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_info.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_info.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_receipt_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_receipt_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_close.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_close.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_select_database.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_select_database.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_dialog_import_preview.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\dialog_import_preview.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_button_magenta.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_button_magenta.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_trash.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_trash.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_store_circle.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_store_circle.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_compact_horizontal.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_compact_horizontal.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_report_row.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_report_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_transaction.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_transaction.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_edit_user.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_edit_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_struk.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_struk.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_user.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_supplier.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_supplier.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_splash.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_splash.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_bluetooth_scan.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_bluetooth_scan.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_button_danger.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_button_danger.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_card_green_soft.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_card_green_soft.xml"
+    },
+    {
+        "merged": "com.daspos.app-merged_res-35:/layout_activity_receipt_preview.xml.flat",
+        "source": "com.daspos.app-main-37:/layout/activity_receipt_preview.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_restore.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_restore.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_button_outline_gray.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_button_outline_gray.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_plus.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_plus.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_whatsapp.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_whatsapp.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_arrow_forward.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\arrow_forward.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_database.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_database.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_inventori_2.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_inventori_2.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_check.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_check.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_dialog_notification.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_dialog_notification.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_bg_circle_green.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\bg_circle_green.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_printer.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_printer.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_printer_setting.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_printer_setting.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_report.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_report.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_upload.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_upload.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_edittext_border.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\edittext_border.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_arrow_left.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_arrow_left.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_sync.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_sync.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_printer.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_printer.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_logo.png.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\logo.png"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_account.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_account.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_item_product_search.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\item_product_search.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\drawable_ic_menu_report.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\drawable\\ic_menu_report.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_backup_restore.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_backup_restore.xml"
+    },
+    {
+        "merged": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-merged_res-35:\\layout_activity_app_info.xml.flat",
+        "source": "C:\\Users\\AR\\.gradle\\daemon\\8.2\\com.daspos.app-main-37:\\layout\\activity_app_info.xml"
+    }
+]
