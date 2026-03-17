@@ -49,7 +49,14 @@ public class UserRepository {
         return DbExecutor.runBlocking(() -> {
             UserEntity user = AppDatabase.getInstance(context).userDao().getByUsername(username);
             if (user == null) return false;
-            return PasswordHasher.verify(password, user.passwordHash);
+            boolean authenticated = PasswordHasher.verify(password, user.passwordHash);
+            if (!authenticated) return false;
+
+            if (PasswordHasher.needsRehash(user.passwordHash)) {
+                String upgradedHash = PasswordHasher.hash(password);
+                AppDatabase.getInstance(context).userDao().insert(new UserEntity(user.username, user.role, upgradedHash));
+            }
+            return true;
         });
     }
 
