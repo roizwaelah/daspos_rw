@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.daspos.R;
+import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
 
 public class SplashActivity extends BaseActivity {
@@ -16,7 +17,10 @@ public class SplashActivity extends BaseActivity {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override public void run() {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                Class<?> destination = AuthSessionStore.hasSession(SplashActivity.this)
+                        ? HomeActivity.class
+                        : LoginActivity.class;
+                startActivity(new Intent(SplashActivity.this, destination));
                 finish();
             }
         }, 1200);
