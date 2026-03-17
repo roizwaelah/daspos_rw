@@ -34,8 +34,7 @@ public class ProductViewModel extends AndroidViewModel {
 
     public void loadProducts(String query, int sortPosition) {
         productsUiState.setValue(ListUiState.<Product>loading());
-        try {
-            List<Product> products = ProductRepository.getAll(getApplication());
+        ProductRepository.getAllAsync(getApplication(), products -> {
             List<Product> filtered = new ArrayList<Product>();
 
             String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
@@ -53,9 +52,9 @@ public class ProductViewModel extends AndroidViewModel {
             } else {
                 productsUiState.setValue(ListUiState.success(filtered));
             }
-        } catch (Exception e) {
+        }, throwable -> {
             productsUiState.setValue(ListUiState.<Product>error("Gagal memuat produk"));
-        }
+        });
     }
 
     private void sortProducts(List<Product> filtered, int sortPosition) {

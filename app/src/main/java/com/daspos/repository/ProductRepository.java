@@ -76,4 +76,48 @@ public class ProductRepository {
             }
         });
     }
+
+
+    public static void getAllAsync(final Context context, final DbExecutor.SuccessCallback<List<Product>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getAll(context), onSuccess, onError);
+    }
+
+    public static void getByIdAsync(final Context context, final String id, final DbExecutor.SuccessCallback<Product> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getById(context, id), onSuccess, onError);
+    }
+
+    public static void searchAsync(final Context context, final String query, final DbExecutor.SuccessCallback<List<Product>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> search(context, query), onSuccess, onError);
+    }
+
+    public static void addAsync(final Context context, final String name, final double price, final int stock, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            add(context, name, price, stock);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void updateAsync(final Context context, final Product product, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            update(context, product);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void deleteAsync(final Context context, final String productId, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> {
+            delete(context, productId);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void hasEnoughStockAsync(final Context context, final List<CartItem> items, final DbExecutor.SuccessCallback<Boolean> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> hasEnoughStock(context, items), onSuccess, onError);
+    }
 }

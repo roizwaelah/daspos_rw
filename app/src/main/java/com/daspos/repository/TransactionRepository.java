@@ -203,4 +203,41 @@ public class TransactionRepository {
             this.total = total;
         }
     }
+
+
+    public static void saveAsync(final Context context, final List<CartItem> items, final double total, final double pay, final double change, final DbExecutor.SuccessCallback<String> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> save(context, items, total, pay, change), onSuccess, onError);
+    }
+
+    public static void getAllAsync(final Context context, final DbExecutor.SuccessCallback<List<TransactionRecord>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getAll(context), onSuccess, onError);
+    }
+
+    public static void getByIdAsync(final Context context, final String transactionId, final DbExecutor.SuccessCallback<TransactionRecord> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getById(context, transactionId), onSuccess, onError);
+    }
+
+    public static void getLastAsync(final Context context, final DbExecutor.SuccessCallback<TransactionRecord> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getLast(context), onSuccess, onError);
+    }
+
+    public static void getTodayCountAsync(final Context context, final DbExecutor.SuccessCallback<Integer> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getTodayCount(context), onSuccess, onError);
+    }
+
+    public static void getTodayIncomeAsync(final Context context, final DbExecutor.SuccessCallback<Double> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getTodayIncome(context), onSuccess, onError);
+    }
+
+    public static void getCountByPeriodAsync(final Context context, final Calendar cal, final boolean monthly, final DbExecutor.SuccessCallback<Integer> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getCountByPeriod(context, cal, monthly), onSuccess, onError);
+    }
+
+    public static void getIncomeByPeriodAsync(final Context context, final Calendar cal, final boolean monthly, final DbExecutor.SuccessCallback<Double> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getIncomeByPeriod(context, cal, monthly), onSuccess, onError);
+    }
+
+    public static void getReportItemsByPeriodAsync(final Context context, final Calendar selectedCalendar, final boolean monthly, final DbExecutor.SuccessCallback<List<ReportItem>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getReportItemsByPeriod(context, selectedCalendar, monthly), onSuccess, onError);
+    }
 }
