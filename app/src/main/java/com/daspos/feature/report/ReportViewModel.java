@@ -31,10 +31,12 @@ public class ReportViewModel extends AndroidViewModel {
 
     public void load(Calendar selectedCalendar, boolean monthly) {
         reportUiState.setValue(ReportUiState.loading());
-        try {
-            List<ReportItem> items = TransactionRepository.getReportItemsByPeriod(getApplication(), selectedCalendar, monthly);
-            int count = TransactionRepository.getCountByPeriod(getApplication(), selectedCalendar, monthly);
-            double income = TransactionRepository.getIncomeByPeriod(getApplication(), selectedCalendar, monthly);
+        TransactionRepository.getReportItemsByPeriodAsync(getApplication(), selectedCalendar, monthly, items -> {
+            int count = items == null ? 0 : items.size();
+            double income = 0;
+            if (items != null) {
+                for (ReportItem item : items) income += item.getTotal();
+            }
 
             reportItems.setValue(items);
             reportCount.setValue(count);
@@ -45,8 +47,6 @@ public class ReportViewModel extends AndroidViewModel {
             } else {
                 reportUiState.setValue(ReportUiState.success(items, count, income));
             }
-        } catch (Exception e) {
-            reportUiState.setValue(ReportUiState.error("Gagal memuat laporan"));
-        }
+        }, throwable -> reportUiState.setValue(ReportUiState.error("Gagal memuat laporan")));
     }
 }

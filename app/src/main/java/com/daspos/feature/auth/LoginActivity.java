@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.core.app.HomeActivity;
-import com.daspos.model.User;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.ViewUtils;
 import com.google.android.material.button.MaterialButton;
@@ -33,16 +32,19 @@ public class LoginActivity extends BaseActivity {
                     return;
                 }
 
-                if (UserRepository.authenticate(LoginActivity.this, user, pass)) {
-                    User loggedInUser = UserRepository.getByUsername(LoginActivity.this, user);
-                    String role = loggedInUser == null ? "" : loggedInUser.getRole();
-                    AuthSessionStore.saveSession(LoginActivity.this, user, role);
-                    AuthSessionStore.saveLastBackgroundAt(LoginActivity.this, 0L);
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    finish();
-                } else {
-                    ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed));
-                }
+                UserRepository.authenticateAsync(LoginActivity.this, user, pass, authenticated -> {
+                    if (!authenticated) {
+                        ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed));
+                        return;
+                    }
+                    UserRepository.getByUsernameAsync(LoginActivity.this, user, loggedInUser -> {
+                        String role = loggedInUser == null ? "" : loggedInUser.getRole();
+                        AuthSessionStore.saveSession(LoginActivity.this, user, role);
+                        AuthSessionStore.saveLastBackgroundAt(LoginActivity.this, 0L);
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        finish();
+                    }, throwable -> ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed)));
+                }, throwable -> ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed)));
             }
         });
         tvRegister.setOnClickListener(new View.OnClickListener() {
