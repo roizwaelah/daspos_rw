@@ -2,6 +2,7 @@ package com.daspos.feature.printer;
 
 import android.content.Context;
 
+import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
@@ -25,6 +26,8 @@ public class EscPosNetworkPrinterHelper {
     public static PrintResult printReceipt(Context context, String ip, int port, TransactionRecord trx) {
         if (trx == null || ip == null || ip.trim().isEmpty() || port <= 0) return PrintResult.INVALID_CONFIG;
 
+        String receiptHeader = ReceiptConfigStore.getHeader(context);
+        String receiptFooter = ReceiptConfigStore.getFooter(context);
         String storeName = StoreConfigStore.getStoreName(context);
         String addressLine = StoreConfigStore.getAddress(context);
         String phoneLine = StoreConfigStore.getPhone(context);
@@ -45,6 +48,7 @@ public class EscPosNetworkPrinterHelper {
 
             out.write(init);
             out.write(alignCenter);
+            if (!receiptHeader.isEmpty()) out.write((receiptHeader + "\n").getBytes(StandardCharsets.UTF_8));
             out.write((storeName + "\n").getBytes(StandardCharsets.UTF_8));
             if (!addressLine.isEmpty()) out.write((addressLine + "\n").getBytes(StandardCharsets.UTF_8));
             if (!phoneLine.isEmpty()) out.write((phoneLine + "\n").getBytes(StandardCharsets.UTF_8));
@@ -63,7 +67,7 @@ public class EscPosNetworkPrinterHelper {
             out.write(("Bayar: " + ((long) trx.getPay()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(("Kembali: " + ((long) trx.getChange()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(alignCenter);
-            out.write("Terima kasih".getBytes(StandardCharsets.UTF_8));
+            out.write((receiptFooter + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(cut);
             out.flush();
             return PrintResult.SUCCESS;

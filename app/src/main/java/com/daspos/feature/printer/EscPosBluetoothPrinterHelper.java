@@ -10,6 +10,7 @@ import android.os.Build;
 
 import androidx.core.app.ActivityCompat;
 
+import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.TransactionRecord;
@@ -39,6 +40,8 @@ public class EscPosBluetoothPrinterHelper {
 
         String address = PrinterConfigStore.getBluetoothAddress(context);
         String name = PrinterConfigStore.getBluetoothName(context);
+        String receiptHeader = ReceiptConfigStore.getHeader(context);
+        String receiptFooter = ReceiptConfigStore.getFooter(context);
         String storeName = StoreConfigStore.getStoreName(context);
         String addressLine = StoreConfigStore.getAddress(context);
         String phoneLine = StoreConfigStore.getPhone(context);
@@ -79,6 +82,7 @@ public class EscPosBluetoothPrinterHelper {
 
             out.write(init);
             out.write(alignCenter);
+            if (!receiptHeader.isEmpty()) out.write((receiptHeader + "\n").getBytes(StandardCharsets.UTF_8));
             out.write((storeName + "\n").getBytes(StandardCharsets.UTF_8));
             if (!addressLine.isEmpty()) out.write((addressLine + "\n").getBytes(StandardCharsets.UTF_8));
             if (!phoneLine.isEmpty()) out.write((phoneLine + "\n").getBytes(StandardCharsets.UTF_8));
@@ -97,7 +101,7 @@ public class EscPosBluetoothPrinterHelper {
             out.write(("Bayar: " + ((long) trx.getPay()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(("Kembali: " + ((long) trx.getChange()) + "\n\n").getBytes(StandardCharsets.UTF_8));
             out.write(alignCenter);
-            out.write("Terima kasih\n\n".getBytes(StandardCharsets.UTF_8));
+            out.write((receiptFooter + "\n\n").getBytes(StandardCharsets.UTF_8));
             out.write(cut);
             out.flush();
             return PrintResult.SUCCESS;

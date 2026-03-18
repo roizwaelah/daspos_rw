@@ -20,6 +20,7 @@ import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.printer.EscPosBluetoothPrinterHelper;
 import com.daspos.feature.printer.EscPosNetworkPrinterHelper;
 import com.daspos.feature.printer.PrinterConfigStore;
+import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.TransactionRecord;
@@ -125,6 +126,11 @@ public class StrukActivity extends BaseActivity {
         TransactionRecord transaction = currentTransaction;
         if (transaction == null) return;
 
+        String receiptHeader = ReceiptConfigStore.getHeader(this);
+        String receiptFooter = ReceiptConfigStore.getFooter(this);
+        boolean showLogo = ReceiptConfigStore.shouldShowLogo(this);
+
+        TextView headerView = findViewById(R.id.tvReceiptHeader);
         ((TextView) findViewById(R.id.tvReceiptStoreName)).setText(StoreConfigStore.getStoreName(this));
         ((TextView) findViewById(R.id.tvReceiptDate)).setText(transaction.getDate() + " " + transaction.getTime());
         ((TextView) findViewById(R.id.tvReceiptTransactionNumber)).setText(getString(R.string.receipt_transaction_number, transaction.getId()));
@@ -134,6 +140,10 @@ public class StrukActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tvTotalSummary)).setText("Total: " + CurrencyUtils.formatRupiah(transaction.getTotal()));
         ((TextView) findViewById(R.id.tvPaySummary)).setText("Bayar: " + CurrencyUtils.formatRupiah(transaction.getPay()));
         ((TextView) findViewById(R.id.tvChangeSummary)).setText("Kembalian: " + CurrencyUtils.formatRupiah(transaction.getChange()));
+        ((TextView) findViewById(R.id.tvReceiptFooter)).setText(receiptFooter);
+
+        headerView.setText(receiptHeader);
+        headerView.setVisibility(receiptHeader.isEmpty() ? View.GONE : View.VISIBLE);
 
         boolean hasIdentityLine = !StoreConfigStore.getAddress(this).isEmpty()
                 || !StoreConfigStore.getPhone(this).isEmpty()
@@ -142,7 +152,7 @@ public class StrukActivity extends BaseActivity {
 
         ImageView logo = findViewById(R.id.imgReceiptStoreLogo);
         String logoUri = StoreConfigStore.getLogoUri(this);
-        if (logoUri != null && !logoUri.trim().isEmpty()) {
+        if (showLogo && logoUri != null && !logoUri.trim().isEmpty()) {
             try {
                 logo.setImageURI(Uri.parse(logoUri));
                 logo.setVisibility(View.VISIBLE);

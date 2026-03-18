@@ -5,6 +5,7 @@ import android.print.PrintAttributes;
 import android.print.PrintManager;
 import android.webkit.WebView;
 
+import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.TransactionRecord;
@@ -13,8 +14,15 @@ import com.daspos.shared.util.CurrencyUtils;
 public class ReceiptPrintHelper {
     public static void print(Context context, TransactionRecord trx) {
         if (trx == null) return;
+        String receiptHeader = ReceiptConfigStore.getHeader(context);
+        String receiptFooter = ReceiptConfigStore.getFooter(context);
         StringBuilder html = new StringBuilder();
         html.append("<html><body style='font-family:sans-serif;padding:24px;'>");
+        if (!receiptHeader.isEmpty()) {
+            html.append("<div style='text-align:center;font-size:18px;font-weight:bold;margin-bottom:12px;'>")
+                    .append(receiptHeader)
+                    .append("</div>");
+        }
         html.append("<h2 style='text-align:center;'>").append(StoreConfigStore.getStoreName(context)).append("</h2>");
         if (!StoreConfigStore.getAddress(context).isEmpty()) {
             html.append("<div style='text-align:center;'>").append(StoreConfigStore.getAddress(context)).append("</div>");
@@ -37,6 +45,7 @@ public class ReceiptPrintHelper {
         html.append("<div>Total: ").append(CurrencyUtils.formatRupiah(trx.getTotal())).append("</div>");
         html.append("<div>Bayar: ").append(CurrencyUtils.formatRupiah(trx.getPay())).append("</div>");
         html.append("<div>Kembalian: ").append(CurrencyUtils.formatRupiah(trx.getChange())).append("</div>");
+        html.append("<div style='text-align:center;margin-top:16px;'>").append(receiptFooter).append("</div>");
         html.append("</body></html>");
 
         WebView webView = new WebView(context);
