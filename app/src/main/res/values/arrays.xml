@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="product_sort_options">
+        <item>@string/sort_placeholder</item>
         <item>Nama A-Z</item>
         <item>Nama Z-A</item>
         <item>Harga Termurah</item>
