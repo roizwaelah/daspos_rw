@@ -105,7 +105,7 @@
                     android:layout_marginBottom="6dp"
                     android:text="@string/cart"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <FrameLayout

@@ -176,7 +176,7 @@
             android:layout_marginBottom="10dp"
             android:text="@string/menu"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <include

@@ -15,7 +15,7 @@
         android:maxLines="2"
         android:text="Produk A x2"
         android:textColor="@color/text_primary"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvReceiptItemSubtotal"
@@ -23,6 +23,6 @@
         android:layout_height="wrap_content"
         android:text="Rp 10.000"
         android:textColor="@color/text_primary"
-        android:textSize="13sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 </LinearLayout>
