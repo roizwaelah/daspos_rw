@@ -5,6 +5,7 @@ import android.content.Context;
 import com.daspos.db.AppDatabase;
 import com.daspos.db.entity.TransactionEntity;
 import com.daspos.db.entity.TransactionItemEntity;
+import com.daspos.model.BestSellerItem;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
 import com.daspos.model.ReportItem;
@@ -157,6 +158,46 @@ public class TransactionRepository {
         return filtered;
     }
 
+
+    public static List<BestSellerItem> getBestSellerItems(Context context, Calendar selectedCalendar, boolean monthly) {
+        Map<String, BestSellerSummary> summaries = new HashMap<>();
+        for (TransactionRecord t : getAll(context)) {
+            Calendar trxCal = parseTransactionCalendar(t.getDate(), t.getTime());
+            if (trxCal == null) continue;
+            boolean match = monthly
+                    ? trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
+                    && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
+                    : trxCal.get(Calendar.YEAR) == selectedCalendar.get(Calendar.YEAR)
+                    && trxCal.get(Calendar.MONTH) == selectedCalendar.get(Calendar.MONTH)
+                    && trxCal.get(Calendar.DAY_OF_MONTH) == selectedCalendar.get(Calendar.DAY_OF_MONTH);
+            if (!match) continue;
+
+            for (CartItem item : t.getItems()) {
+                String productId = item.getProduct().getId();
+                BestSellerSummary summary = summaries.get(productId);
+                if (summary == null) {
+                    summary = new BestSellerSummary(productId, item.getProduct().getName());
+                    summaries.put(productId, summary);
+                }
+                summary.totalQty += item.getQty();
+                summary.totalRevenue += item.getProduct().getPrice() * item.getQty();
+            }
+        }
+
+        List<BestSellerItem> items = new ArrayList<>();
+        for (BestSellerSummary summary : summaries.values()) {
+            items.add(new BestSellerItem(summary.productId, summary.productName, summary.totalQty, summary.totalRevenue));
+        }
+        Collections.sort(items, (left, right) -> {
+            int byQty = Integer.compare(right.getTotalQty(), left.getTotalQty());
+            if (byQty != 0) return byQty;
+            int byRevenue = Double.compare(right.getTotalRevenue(), left.getTotalRevenue());
+            if (byRevenue != 0) return byRevenue;
+            return left.getProductName().compareToIgnoreCase(right.getProductName());
+        });
+        return items;
+    }
+
     public static int getTodayCount(Context context) {
         String today = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
         int total = 0;
@@ -192,6 +233,18 @@ public class TransactionRepository {
         }
     }
 
+    private static class BestSellerSummary {
+        private final String productId;
+        private final String productName;
+        private int totalQty;
+        private double totalRevenue;
+
+        private BestSellerSummary(String productId, String productName) {
+            this.productId = productId;
+            this.productName = productName;
+        }
+    }
+
     private static class DailyTransactionSummary {
         private final String dateLabel;
         private int count;
@@ -219,6 +272,11 @@ public class TransactionRepository {
 
     public static void getLastAsync(final Context context, final DbExecutor.SuccessCallback<TransactionRecord> onSuccess, final DbExecutor.ErrorCallback onError) {
         DbExecutor.runAsync(() -> getLast(context), onSuccess, onError);
+    }
+
+
+    public static void getBestSellerItemsAsync(final Context context, final Calendar selectedCalendar, final boolean monthly, final DbExecutor.SuccessCallback<List<BestSellerItem>> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> getBestSellerItems(context, selectedCalendar, monthly), onSuccess, onError);
     }
 
     public static void getTodayCountAsync(final Context context, final DbExecutor.SuccessCallback<Integer> onSuccess, final DbExecutor.ErrorCallback onError) {
