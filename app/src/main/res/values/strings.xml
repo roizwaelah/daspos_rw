@@ -262,6 +262,15 @@
     <string name="select_restore_file">Pilih File</string>
     <string name="contact_help_text">Butuh bantuan atau ada pertanyaan?\nSilakan hubungi kami melalui WhatsApp.</string>
     <string name="menu">Daftar Menu</string>
+    <string name="best_seller_title">Produk Terlaris</string>
+    <string name="best_seller_period_daily">Berdasarkan penjualan hari ini</string>
+    <string name="best_seller_period_monthly">Berdasarkan penjualan bulan ini</string>
+    <string name="best_seller_empty">Belum ada penjualan pada periode ini</string>
+    <string name="best_seller_page_format">Halaman %1$d dari %2$d</string>
+    <string name="best_seller_page_default">Halaman 0 dari 1</string>
+    <string name="best_seller_qty_format">Terjual %1$d pcs</string>
+    <string name="previous">Sebelumnya</string>
+    <string name="next">Berikutnya</string>
     <string name="time">Waktu</string>
     <string name="add">Tambah</string>
     <string name="database">Database</string>

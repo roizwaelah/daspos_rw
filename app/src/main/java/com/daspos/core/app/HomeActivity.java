@@ -7,8 +7,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.daspos.R;
 import com.daspos.feature.product.ProductActivity;
+import com.daspos.model.BestSellerItem;
 import com.daspos.feature.report.ReportActivity;
 import com.daspos.feature.settings.BackupRestoreActivity;
 import com.daspos.feature.settings.SettingActivity;
@@ -22,11 +27,28 @@ import com.daspos.shared.util.NotificationDialogHelper;
 import java.util.Calendar;
 
 public class HomeActivity extends BaseActivity {
+    private static final int BEST_SELLER_PAGE_SIZE = 10;
+
+    private final Calendar bestSellerCalendar = Calendar.getInstance();
+    private boolean bestSellerMonthly = false;
+    private int bestSellerPage = 0;
+    private java.util.List<BestSellerItem> bestSellerItems = new java.util.ArrayList<>();
+
+    private BestSellerAdapter bestSellerAdapter;
+    private TextView tvBestSellerPeriod;
+    private TextView tvBestSellerEmpty;
+    private TextView tvBestSellerPage;
+    private View btnBestSellerDaily;
+    private View btnBestSellerMonthly;
+    private View btnBestSellerPrev;
+    private View btnBestSellerNext;
+
     @Override
     protected void onResume() {
         super.onResume();
         bindStoreIdentity();
         bindStats();
+        loadBestSellerItems();
     }
 
     @Override
@@ -36,6 +58,7 @@ public class HomeActivity extends BaseActivity {
 
         ImageView btnSettings = findViewById(R.id.btnSettings);
 
+        setupBestSellerSection();
         bindStoreIdentity();
 
         btnSettings.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +102,99 @@ public class HomeActivity extends BaseActivity {
         bindHomeMenu(R.id.menuBackup, R.string.backup_restore, R.drawable.ic_upload);
 
         bindStats();
+        loadBestSellerItems();
+    }
+
+    private void setupBestSellerSection() {
+        RecyclerView rvBestSeller = findViewById(R.id.rvBestSeller);
+        rvBestSeller.setLayoutManager(new LinearLayoutManager(this));
+        rvBestSeller.setNestedScrollingEnabled(false);
+        bestSellerAdapter = new BestSellerAdapter();
+        rvBestSeller.setAdapter(bestSellerAdapter);
+
+        tvBestSellerPeriod = findViewById(R.id.tvBestSellerPeriod);
+        tvBestSellerEmpty = findViewById(R.id.tvBestSellerEmpty);
+        tvBestSellerPage = findViewById(R.id.tvBestSellerPage);
+        btnBestSellerDaily = findViewById(R.id.btnBestSellerDaily);
+        btnBestSellerMonthly = findViewById(R.id.btnBestSellerMonthly);
+        btnBestSellerPrev = findViewById(R.id.btnBestSellerPrev);
+        btnBestSellerNext = findViewById(R.id.btnBestSellerNext);
+
+        btnBestSellerDaily.setOnClickListener(v -> switchBestSellerPeriod(false));
+        btnBestSellerMonthly.setOnClickListener(v -> switchBestSellerPeriod(true));
+        btnBestSellerPrev.setOnClickListener(v -> {
+            if (bestSellerPage > 0) {
+                bestSellerPage--;
+                renderBestSellerItems();
+            }
+        });
+        btnBestSellerNext.setOnClickListener(v -> {
+            int totalPages = getBestSellerTotalPages();
+            if (bestSellerPage < totalPages - 1) {
+                bestSellerPage++;
+                renderBestSellerItems();
+            }
+        });
+
+        updateBestSellerToggleState();
+    }
+
+    private void switchBestSellerPeriod(boolean monthly) {
+        if (bestSellerMonthly == monthly) return;
+        bestSellerMonthly = monthly;
+        bestSellerPage = 0;
+        updateBestSellerToggleState();
+        loadBestSellerItems();
+    }
+
+    private void loadBestSellerItems() {
+        TransactionRepository.getBestSellerItemsAsync(this, bestSellerCalendar, bestSellerMonthly, items -> {
+            bestSellerItems = items;
+            bestSellerPage = 0;
+            renderBestSellerItems();
+        }, throwable -> {
+            bestSellerItems = new java.util.ArrayList<>();
+            bestSellerPage = 0;
+            renderBestSellerItems();
+        });
+    }
+
+    private void renderBestSellerItems() {
+        if (tvBestSellerPeriod == null) return;
+        tvBestSellerPeriod.setText(getString(bestSellerMonthly ? R.string.best_seller_period_monthly : R.string.best_seller_period_daily));
+
+        int totalPages = getBestSellerTotalPages();
+        if (bestSellerPage >= totalPages) bestSellerPage = Math.max(0, totalPages - 1);
+
+        int fromIndex = bestSellerPage * BEST_SELLER_PAGE_SIZE;
+        int toIndex = Math.min(fromIndex + BEST_SELLER_PAGE_SIZE, bestSellerItems.size());
+        java.util.List<BestSellerItem> pageItems = fromIndex < toIndex
+                ? new java.util.ArrayList<>(bestSellerItems.subList(fromIndex, toIndex))
+                : new java.util.ArrayList<>();
+
+        bestSellerAdapter.submit(pageItems);
+
+        boolean isEmpty = bestSellerItems.isEmpty();
+        tvBestSellerEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        findViewById(R.id.rvBestSeller).setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        tvBestSellerPage.setText(getString(R.string.best_seller_page_format, isEmpty ? 0 : (bestSellerPage + 1), totalPages));
+        btnBestSellerPrev.setEnabled(bestSellerPage > 0);
+        btnBestSellerNext.setEnabled(bestSellerPage < totalPages - 1);
+        btnBestSellerPrev.setAlpha(btnBestSellerPrev.isEnabled() ? 1f : 0.4f);
+        btnBestSellerNext.setAlpha(btnBestSellerNext.isEnabled() ? 1f : 0.4f);
+    }
+
+    private int getBestSellerTotalPages() {
+        return Math.max(1, (int) Math.ceil(bestSellerItems.size() / (double) BEST_SELLER_PAGE_SIZE));
+    }
+
+    private void updateBestSellerToggleState() {
+        btnBestSellerDaily.setSelected(!bestSellerMonthly);
+        btnBestSellerMonthly.setSelected(bestSellerMonthly);
+        btnBestSellerDaily.setBackgroundResource(bestSellerMonthly ? R.drawable.bg_best_seller_tab_inactive : R.drawable.bg_best_seller_tab_active);
+        btnBestSellerMonthly.setBackgroundResource(bestSellerMonthly ? R.drawable.bg_best_seller_tab_active : R.drawable.bg_best_seller_tab_inactive);
+        ((TextView) btnBestSellerDaily).setTextColor(ContextCompat.getColor(this, bestSellerMonthly ? R.color.text_primary : android.R.color.white));
+        ((TextView) btnBestSellerMonthly).setTextColor(ContextCompat.getColor(this, bestSellerMonthly ? android.R.color.white : R.color.text_primary));
     }
 
 
