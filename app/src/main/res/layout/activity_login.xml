@@ -34,7 +34,7 @@
                 android:layout_marginTop="18dp"
                 android:text="@string/label_username"
                 android:textColor="@color/text_secondary"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUsername"
@@ -54,7 +54,7 @@
                 android:layout_marginTop="12dp"
                 android:text="@string/label_password"
                 android:textColor="@color/text_secondary"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"

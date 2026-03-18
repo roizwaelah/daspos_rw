@@ -108,7 +108,7 @@
                         android:layout_weight="1"
                         android:text="No. Transaksi: PREVIEW"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvReceiptDate"
@@ -118,7 +118,7 @@
                         android:text="14 Mar 2026 10:45"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <View
@@ -140,7 +140,7 @@
                         android:text="ITEM"
                         android:textAllCaps="true"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -148,7 +148,7 @@
                         android:text="TOTAL"
                         android:textAllCaps="true"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -163,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:text="Kopi Susu x1      Rp 18.000"
                         android:textColor="@color/text_primary"
-                        android:textSize="13sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <View
@@ -180,7 +180,7 @@
                     android:gravity="end"
                     android:text="Total: Rp 18.000"
                     android:textColor="@color/text_primary"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -191,7 +191,7 @@
                     android:gravity="center"
                     android:text="Terima kasih"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

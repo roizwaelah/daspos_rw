@@ -46,7 +46,7 @@
                     style="@style/DasPosFieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/receipt_header" />
 
                 <EditText
@@ -64,7 +64,7 @@
                     style="@style/DasPosFieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/receipt_footer" />
 
                 <EditText
@@ -84,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:minHeight="48dp"
+                    android:textSize="16sp"
                     android:text="@string/show_logo_receipt" />
 
                 <LinearLayout

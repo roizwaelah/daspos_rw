@@ -70,7 +70,7 @@
 
             <Spinner
                 android:id="@+id/spSort"
-                android:layout_width="112dp"
+                android:layout_width="104dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:textSize="14sp"
