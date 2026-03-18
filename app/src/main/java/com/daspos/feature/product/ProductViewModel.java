@@ -58,7 +58,7 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     private void sortProducts(List<Product> filtered, int sortPosition) {
-        if (sortPosition == 1) {
+        if (sortPosition == 0 || sortPosition == 1) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
