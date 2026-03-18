@@ -184,6 +184,32 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvPaySummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="end"
+                    android:text="Bayar: Rp 0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvChangeSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="end"
+                    android:text="Kembalian: Rp 0"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/divider_dashed_receipt" />
+
+                <TextView
                     android:id="@+id/tvReceiptFooter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
