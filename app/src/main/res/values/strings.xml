@@ -35,6 +35,7 @@
     <string name="add_product">Tambah Produk</string>
     <string name="import_product">Import Produk</string>
     <string name="sort">Sortir</string>
+    <string name="sort_placeholder">Urutkan</string>
     <string name="product_name">Nama Produk</string>
     <string name="price">Harga</string>
     <string name="stock">Stok</string>
