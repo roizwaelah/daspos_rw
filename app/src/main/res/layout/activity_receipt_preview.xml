@@ -35,19 +35,29 @@
                 android:orientation="vertical"
                 android:padding="18dp">
 
-                <ImageView
-                    android:id="@+id/imgReceiptStoreLogo"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@android:drawable/sym_def_app_icon"
-                    android:visibility="gone"
-                    app:tint="@color/text_primary" />
+            <ImageView
+                android:id="@+id/imgReceiptStoreLogo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@android:drawable/sym_def_app_icon"
+                android:visibility="gone"
+                app:tint="@color/text_primary" />
 
-                <TextView
-                    android:id="@+id/tvReceiptStoreName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+            <TextView
+                android:id="@+id/tvReceiptHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvReceiptStoreName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.12"
                     android:text="DASPOS STORE"

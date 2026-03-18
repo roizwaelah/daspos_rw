@@ -31,6 +31,16 @@
                 app:tint="@color/text_primary" />
 
             <TextView
+                android:id="@+id/tvReceiptHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/tvReceiptStoreName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
