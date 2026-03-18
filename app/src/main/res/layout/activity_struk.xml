@@ -82,10 +82,12 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/divider_dashed_receipt" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvReceiptDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:gravity="center"
                 android:text="14 Mar 2026 10:45"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
