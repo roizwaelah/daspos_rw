@@ -58,35 +58,35 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     private void sortProducts(List<Product> filtered, int sortPosition) {
-        if (sortPosition == 0) {
+        if (sortPosition == 1) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
                     return a.getName().compareToIgnoreCase(b.getName());
                 }
             });
-        } else if (sortPosition == 1) {
+        } else if (sortPosition == 2) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
                     return b.getName().compareToIgnoreCase(a.getName());
                 }
             });
-        } else if (sortPosition == 2) {
+        } else if (sortPosition == 3) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
                     return Double.compare(a.getPrice(), b.getPrice());
                 }
             });
-        } else if (sortPosition == 3) {
+        } else if (sortPosition == 4) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
                     return Double.compare(b.getPrice(), a.getPrice());
                 }
             });
-        } else if (sortPosition == 4) {
+        } else if (sortPosition == 5) {
             Collections.sort(filtered, new Comparator<Product>() {
                 @Override
                 public int compare(Product a, Product b) {
