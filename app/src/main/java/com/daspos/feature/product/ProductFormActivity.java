@@ -1,8 +1,10 @@
 package com.daspos.feature.product;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
@@ -10,6 +12,7 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
+import com.daspos.shared.util.LoadingDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.state.ConsumableEvent;
 import com.daspos.ui.state.FormUiEffect;
@@ -18,6 +21,7 @@ import com.google.android.material.button.MaterialButton;
 
 public class ProductFormActivity extends BaseActivity {
     private Product editingProduct;
+    private AlertDialog loadingDialog;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,7 @@ public class ProductFormActivity extends BaseActivity {
         final EditText etStock = findViewById(R.id.etStock);
         MaterialButton btnCancel = findViewById(R.id.btnCancel);
         MaterialButton btnSave = findViewById(R.id.btnSave);
+        View formContent = findViewById(R.id.layoutProductFormContent);
 
         final ProductFormViewModel viewModel = ViewModelFactoryHelper.get(this, ProductFormViewModel.class);
         viewModel.getValidationState().observe(this, new Observer<com.daspos.ui.state.ValidationState>() {
@@ -53,6 +58,7 @@ public class ProductFormActivity extends BaseActivity {
 
         String productId = getIntent().getStringExtra("product_id");
         if (productId != null) {
+            setLoading(true, btnSave, btnCancel, formContent);
             ProductRepository.getByIdAsync(this, productId, product -> {
                 editingProduct = product;
                 if (editingProduct != null) {
@@ -60,7 +66,11 @@ public class ProductFormActivity extends BaseActivity {
                     etPrice.setText(String.valueOf((int) editingProduct.getPrice()));
                     etStock.setText(String.valueOf(editingProduct.getStock()));
                 }
-            }, throwable -> ViewUtils.toast(ProductFormActivity.this, "Gagal memuat data produk"));
+                setLoading(false, btnSave, btnCancel, formContent);
+            }, throwable -> {
+                setLoading(false, btnSave, btnCancel, formContent);
+                ViewUtils.toast(ProductFormActivity.this, "Gagal memuat data produk");
+            });
         }
 
         btnCancel.setOnClickListener(new android.view.View.OnClickListener() {
@@ -83,5 +93,17 @@ public class ProductFormActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void setLoading(boolean isLoading, MaterialButton btnSave, MaterialButton btnCancel, View formContent) {
+        btnSave.setEnabled(!isLoading);
+        btnCancel.setEnabled(!isLoading);
+        formContent.setAlpha(isLoading ? 0.6f : 1f);
+        if (isLoading) {
+            loadingDialog = LoadingDialogHelper.show(this, getString(R.string.loading));
+        } else {
+            LoadingDialogHelper.dismiss(loadingDialog);
+            loadingDialog = null;
+        }
     }
 }

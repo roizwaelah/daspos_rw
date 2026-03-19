@@ -164,6 +164,7 @@
     <string name="login_failed">Username atau password salah</string>
     <string name="username_already_exists">Username sudah terdaftar</string>
     <string name="register_success">Akun berhasil dibuat</string>
+    <string name="register_failed">Pendaftaran gagal</string>
 
 
     <string name="loading">Memuat...</string>
@@ -286,6 +287,7 @@
     <string name="insert_phone">Masukkan No Tlp</string>
     <string name="insert_email">Masukkan Email</string>
     <string name="password_updated">Password berhasil diperbarui</string>
+    <string name="password_update_failed">Gagal memperbarui password</string>
     <string name="old_password_invalid">Password lama tidak sesuai</string>
     <string name="user_session_not_found">Sesi login tidak ditemukan, silakan login ulang</string>
 

@@ -81,22 +81,50 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvBestSeller"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_marginTop="12dp">
 
-                <TextView
-                    android:id="@+id/tvBestSellerEmpty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center"
-                    android:text="@string/best_seller_empty"
-                    android:textColor="@color/text_secondary"
-                    android:visibility="gone" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvBestSeller"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutBestSellerLoading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="24dp"
+                        android:paddingBottom="24dp"
+                        android:visibility="gone">
+
+                        <ProgressBar
+                            android:id="@+id/progressBestSeller"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:indeterminate="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/loading"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvBestSellerEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/best_seller_empty"
+                        android:textColor="@color/text_secondary"
+                        android:visibility="gone" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
