@@ -35,4 +35,10 @@ public interface TransactionDao {
 
     @Query("SELECT COUNT(*) FROM transactions WHERE timestamp >= :startTimestamp AND timestamp < :endTimestamp")
     int countByTimestampRange(long startTimestamp, long endTimestamp);
+
+    @Query("DELETE FROM transaction_items WHERE transactionId = :transactionId")
+    void deleteItemsByTransactionId(String transactionId);
+
+    @Query("DELETE FROM transactions WHERE id = :transactionId")
+    void deleteTransactionById(String transactionId);
 }

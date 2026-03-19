@@ -289,4 +289,10 @@
     <string name="old_password_invalid">Password lama tidak sesuai</string>
     <string name="user_session_not_found">Sesi login tidak ditemukan, silakan login ulang</string>
 
+    <string name="today_transaction_history_hint">Tap untuk lihat daftar transaksi hari ini</string>
+    <string name="delete_receipt">Hapus Struk</string>
+    <string name="delete_receipt_confirmation">Struk ini akan dihapus dan stok produk akan dikembalikan. Lanjutkan?</string>
+    <string name="delete_receipt_success">Struk berhasil dihapus</string>
+    <string name="delete_receipt_failed">Gagal menghapus struk</string>
+    <string name="show_today_transactions">Menampilkan daftar transaksi hari ini</string>
 </resources>
