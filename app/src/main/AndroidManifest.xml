@@ -44,6 +44,7 @@
         <activity android:name=".feature.product.ProductActivity" />
         <activity android:name=".feature.transaction.TransactionActivity" />
         <activity android:name=".core.app.HomeActivity" />
+        <activity android:name=".core.app.BestSellerActivity" />
         <activity android:name=".feature.auth.RegisterActivity" />
         <activity android:name=".feature.auth.LoginActivity" />
         <activity
