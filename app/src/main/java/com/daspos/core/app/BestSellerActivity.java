@@ -2,9 +2,9 @@ package com.daspos.core.app;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daspos.R;
 import com.daspos.model.BestSellerItem;
 import com.daspos.repository.TransactionRepository;
+import com.daspos.shared.util.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,9 +40,8 @@ public class BestSellerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_best_seller);
 
-        ((TextView) findViewById(R.id.tvPageTitle)).setText(R.string.best_seller_title);
-        ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.best_seller_title));
 
         setupBestSellerSection();
         loadBestSellerItems();
