@@ -183,15 +183,15 @@
             android:textStyle="bold" />
 
         <include
+            android:id="@+id/menuTransaction"
+            layout="@layout/item_menu" />
+
+        <include
             android:id="@+id/menuProduct"
             layout="@layout/item_menu" />
 
         <include
             android:id="@+id/menuBestSeller"
-            layout="@layout/item_menu" />
-
-        <include
-            android:id="@+id/menuTransaction"
             layout="@layout/item_menu" />
 
         <include
