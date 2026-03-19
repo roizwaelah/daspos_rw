@@ -110,6 +110,37 @@ public class TransactionRepository {
         return list.isEmpty() ? null : list.get(0);
     }
 
+    public static boolean deleteById(final Context context, final String transactionId) {
+        if (transactionId == null || transactionId.trim().isEmpty()) return false;
+        return DbExecutor.runBlocking(() -> {
+            AppDatabase db = AppDatabase.getInstance(context);
+            TransactionEntity transaction = db.transactionDao().getTransactionById(transactionId);
+            if (transaction == null) return false;
+
+            List<TransactionItemEntity> itemEntities = db.transactionDao().getItemsByTransactionId(transactionId);
+            List<CartItem> items = new ArrayList<>();
+            for (TransactionItemEntity item : itemEntities) {
+                items.add(new CartItem(
+                        new Product(item.productId, item.productName, item.price, 0),
+                        item.qty
+                ));
+            }
+
+            db.runInTransaction(() -> {
+                for (CartItem item : items) {
+                    com.daspos.db.entity.ProductEntity product = db.productDao().getById(item.getProduct().getId());
+                    if (product != null) {
+                        product.stock = product.stock + item.getQty();
+                        db.productDao().update(product);
+                    }
+                }
+                db.transactionDao().deleteItemsByTransactionId(transactionId);
+                db.transactionDao().deleteTransactionById(transactionId);
+            });
+            return true;
+        });
+    }
+
     public static List<ReportItem> getReportItemsByPeriod(Context context, Calendar selectedCalendar, boolean monthly) {
         List<ReportItem> filtered = new ArrayList<>();
         if (monthly) {
@@ -272,6 +303,10 @@ public class TransactionRepository {
 
     public static void getLastAsync(final Context context, final DbExecutor.SuccessCallback<TransactionRecord> onSuccess, final DbExecutor.ErrorCallback onError) {
         DbExecutor.runAsync(() -> getLast(context), onSuccess, onError);
+    }
+
+    public static void deleteByIdAsync(final Context context, final String transactionId, final DbExecutor.SuccessCallback<Boolean> onSuccess, final DbExecutor.ErrorCallback onError) {
+        DbExecutor.runAsync(() -> deleteById(context, transactionId), onSuccess, onError);
     }
 
 

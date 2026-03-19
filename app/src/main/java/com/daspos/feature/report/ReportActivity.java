@@ -1,5 +1,7 @@
 package com.daspos.feature.report;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class ReportActivity extends BaseActivity {
+    private static final int REQ_VIEW_RECEIPT = 901;
     private final Calendar selectedCalendar = Calendar.getInstance();
     private ReportAdapter adapter;
     private TextView tvTodayHistoryInfo;
@@ -66,12 +69,15 @@ public class ReportActivity extends BaseActivity {
 
         String today = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
         bindTodayHistoryInfo(today);
+        findViewById(R.id.cardTodayHistory).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { showTodayTransactions(); }
+        });
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReportAdapter(new ReportAdapter.Listener() {
             @Override public void onReportItemClicked(ReportItem item) {
                 if (item == null || isMonthlyMode()) return;
-                startActivity(StrukActivity.createIntent(ReportActivity.this, item.getId()));
+                startActivityForResult(StrukActivity.createIntent(ReportActivity.this, item.getId()), REQ_VIEW_RECEIPT);
             }
         });
         rv.setAdapter(adapter);
@@ -109,6 +115,28 @@ public class ReportActivity extends BaseActivity {
         btnExcel.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { startExportXlsx(); } });
 
         refreshReport();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_VIEW_RECEIPT && resultCode == Activity.RESULT_OK) {
+            bindTodayHistoryInfo(new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date()));
+            refreshReport();
+        }
+    }
+
+    private void showTodayTransactions() {
+        selectedCalendar.setTime(new Date());
+        rgRecap.check(R.id.rbDaily);
+        refreshReport();
+        findViewById(R.id.rvReport).post(new Runnable() {
+            @Override public void run() {
+                findViewById(R.id.rvReport).requestFocus();
+                ViewUtils.toast(ReportActivity.this, getString(R.string.show_today_transactions));
+            }
+        });
     }
 
     private void startExportPdf() {

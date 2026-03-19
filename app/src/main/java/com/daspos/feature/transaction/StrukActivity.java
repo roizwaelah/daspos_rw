@@ -1,6 +1,7 @@
 package com.daspos.feature.transaction;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import com.daspos.model.TransactionRecord;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.ViewUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class StrukActivity extends BaseActivity {
     public static final String EXTRA_TRANSACTION_ID = "extra_transaction_id";
@@ -52,6 +54,9 @@ public class StrukActivity extends BaseActivity {
 
         findViewById(R.id.btnPrintReceipt).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { printReceipt(); }
+        });
+        findViewById(R.id.btnDeleteReceipt).setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { confirmDeleteReceipt(); }
         });
         findViewById(R.id.btnFinish).setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { finish(); }
@@ -120,6 +125,44 @@ public class StrukActivity extends BaseActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) printBluetooth();
             else ViewUtils.toast(this, getString(R.string.bluetooth_permission_required));
         }
+    }
+
+    private void confirmDeleteReceipt() {
+        if (currentTransaction == null) {
+            ViewUtils.toast(this, getString(R.string.delete_receipt_failed));
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.delete_receipt))
+                .setMessage(getString(R.string.delete_receipt_confirmation))
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteReceipt())
+                .show();
+    }
+
+    private void deleteReceipt() {
+        if (currentTransaction == null) {
+            ViewUtils.toast(this, getString(R.string.delete_receipt_failed));
+            return;
+        }
+
+        String transactionId = currentTransaction.getId();
+        TransactionRepository.deleteByIdAsync(this, transactionId, deleted -> runOnUiThread(new Runnable() {
+            @Override public void run() {
+                if (Boolean.TRUE.equals(deleted)) {
+                    setResult(Activity.RESULT_OK);
+                    ViewUtils.toast(StrukActivity.this, getString(R.string.delete_receipt_success));
+                    finish();
+                } else {
+                    ViewUtils.toast(StrukActivity.this, getString(R.string.delete_receipt_failed));
+                }
+            }
+        }), throwable -> runOnUiThread(new Runnable() {
+            @Override public void run() {
+                ViewUtils.toast(StrukActivity.this, getString(R.string.delete_receipt_failed));
+            }
+        }));
     }
 
     private void renderLastTransaction() {
