@@ -2,6 +2,7 @@ package com.daspos.core.app;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -28,6 +29,8 @@ public class BestSellerActivity extends BaseActivity {
 
     private BestSellerAdapter bestSellerAdapter;
     private TextView tvBestSellerPeriod;
+    private View layoutBestSellerLoading;
+    private ProgressBar progressBestSeller;
     private TextView tvBestSellerEmpty;
     private TextView tvBestSellerPage;
     private View btnBestSellerDaily;
@@ -61,6 +64,8 @@ public class BestSellerActivity extends BaseActivity {
         rvBestSeller.setAdapter(bestSellerAdapter);
 
         tvBestSellerPeriod = findViewById(R.id.tvBestSellerPeriod);
+        layoutBestSellerLoading = findViewById(R.id.layoutBestSellerLoading);
+        progressBestSeller = findViewById(R.id.progressBestSeller);
         tvBestSellerEmpty = findViewById(R.id.tvBestSellerEmpty);
         tvBestSellerPage = findViewById(R.id.tvBestSellerPage);
         btnBestSellerDaily = findViewById(R.id.btnBestSellerDaily);
@@ -96,15 +101,26 @@ public class BestSellerActivity extends BaseActivity {
     }
 
     private void loadBestSellerItems() {
+        setBestSellerLoading(true);
         TransactionRepository.getBestSellerItemsAsync(this, bestSellerCalendar, bestSellerMonthly, items -> {
             bestSellerItems = items;
             bestSellerPage = 0;
+            setBestSellerLoading(false);
             renderBestSellerItems();
         }, throwable -> {
             bestSellerItems = new ArrayList<>();
             bestSellerPage = 0;
+            setBestSellerLoading(false);
             renderBestSellerItems();
         });
+    }
+
+    private void setBestSellerLoading(boolean isLoading) {
+        if (layoutBestSellerLoading == null || progressBestSeller == null) return;
+        layoutBestSellerLoading.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        progressBestSeller.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        findViewById(R.id.rvBestSeller).setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        tvBestSellerEmpty.setVisibility(View.GONE);
     }
 
     private void renderBestSellerItems() {
@@ -123,6 +139,8 @@ public class BestSellerActivity extends BaseActivity {
         bestSellerAdapter.submit(pageItems);
 
         boolean isEmpty = bestSellerItems.isEmpty();
+        layoutBestSellerLoading.setVisibility(View.GONE);
+        progressBestSeller.setVisibility(View.GONE);
         tvBestSellerEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         findViewById(R.id.rvBestSeller).setVisibility(isEmpty ? View.GONE : View.VISIBLE);
         tvBestSellerPage.setText(getString(R.string.best_seller_page_format, isEmpty ? 0 : (bestSellerPage + 1), totalPages));
