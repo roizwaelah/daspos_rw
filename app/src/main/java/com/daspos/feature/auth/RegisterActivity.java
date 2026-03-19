@@ -5,15 +5,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.repository.UserRepository;
+import com.daspos.shared.util.LoadingDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends BaseActivity {
+    private AlertDialog loadingDialog;
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
@@ -44,27 +49,50 @@ public class RegisterActivity extends BaseActivity {
                     return;
                 }
 
-                if (UserRepository.usernameExists(RegisterActivity.this, username)) {
-                    ViewUtils.toast(RegisterActivity.this, getString(R.string.username_already_exists));
-                    return;
-                }
+                setLoading(true, btnRegister, tvLogin);
+                UserRepository.usernameExistsAsync(RegisterActivity.this, username, exists -> {
+                    if (exists) {
+                        setLoading(false, btnRegister, tvLogin);
+                        ViewUtils.toast(RegisterActivity.this, getString(R.string.username_already_exists));
+                        return;
+                    }
 
-                StoreConfigStore.save(
-                        RegisterActivity.this,
-                        storeName,
-                        StoreConfigStore.getAddress(RegisterActivity.this),
-                        StoreConfigStore.getPhone(RegisterActivity.this),
-                        StoreConfigStore.getEmail(RegisterActivity.this)
-                );
+                    StoreConfigStore.save(
+                            RegisterActivity.this,
+                            storeName,
+                            StoreConfigStore.getAddress(RegisterActivity.this),
+                            StoreConfigStore.getPhone(RegisterActivity.this),
+                            StoreConfigStore.getEmail(RegisterActivity.this)
+                    );
 
-                UserRepository.add(RegisterActivity.this, username, password, "Kasir");
-                ViewUtils.toast(RegisterActivity.this, getString(R.string.register_success));
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                finish();
+                    UserRepository.addAsync(RegisterActivity.this, username, password, "Kasir", () -> {
+                        setLoading(false, btnRegister, tvLogin);
+                        ViewUtils.toast(RegisterActivity.this, getString(R.string.register_success));
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    }, throwable -> {
+                        setLoading(false, btnRegister, tvLogin);
+                        ViewUtils.toast(RegisterActivity.this, getString(R.string.register_failed));
+                    });
+                }, throwable -> {
+                    setLoading(false, btnRegister, tvLogin);
+                    ViewUtils.toast(RegisterActivity.this, getString(R.string.register_failed));
+                });
             }
         });
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { finish(); }
         });
+    }
+
+    private void setLoading(boolean isLoading, MaterialButton btnRegister, TextView tvLogin) {
+        btnRegister.setEnabled(!isLoading);
+        tvLogin.setEnabled(!isLoading);
+        if (isLoading) {
+            loadingDialog = LoadingDialogHelper.show(this, getString(R.string.loading));
+        } else {
+            LoadingDialogHelper.dismiss(loadingDialog);
+            loadingDialog = null;
+        }
     }
 }

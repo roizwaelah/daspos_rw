@@ -20,6 +20,8 @@ import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.NotificationDialogHelper;
 
 public class HomeActivity extends BaseActivity {
+    private int pendingStatRequests;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -110,21 +112,52 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void bindStats() {
-        TransactionRepository.getTodayCountAsync(this, todayCount -> ((TextView) findViewById(R.id.tvStatTransactions))
-                .setText(String.valueOf(todayCount)), throwable -> ((TextView) findViewById(R.id.tvStatTransactions))
-                .setText("0"));
+        pendingStatRequests = 4;
+        setStatsLoading(true);
 
-        TransactionRepository.getTodayIncomeAsync(this, todayIncome -> ((TextView) findViewById(R.id.tvStatIncome))
-                .setText(CurrencyUtils.formatRupiah(todayIncome)), throwable -> ((TextView) findViewById(R.id.tvStatIncome))
-                .setText(CurrencyUtils.formatRupiah(0)));
+        TransactionRepository.getTodayCountAsync(this, todayCount -> {
+                    ((TextView) findViewById(R.id.tvStatTransactions)).setText(String.valueOf(todayCount));
+                    onStatLoaded();
+                }, throwable -> {
+                    ((TextView) findViewById(R.id.tvStatTransactions)).setText("0");
+                    onStatLoaded();
+                });
 
-        ProductRepository.getAllAsync(this, products -> ((TextView) findViewById(R.id.tvStatProducts))
-                .setText(String.valueOf(products.size())), throwable -> ((TextView) findViewById(R.id.tvStatProducts))
-                .setText("0"));
+        TransactionRepository.getTodayIncomeAsync(this, todayIncome -> {
+                    ((TextView) findViewById(R.id.tvStatIncome)).setText(CurrencyUtils.formatRupiah(todayIncome));
+                    onStatLoaded();
+                }, throwable -> {
+                    ((TextView) findViewById(R.id.tvStatIncome)).setText(CurrencyUtils.formatRupiah(0));
+                    onStatLoaded();
+                });
 
-        TransactionRepository.getIncomeByPeriodAsync(this, java.util.Calendar.getInstance(), true, monthlyIncome -> ((TextView) findViewById(R.id.tvStatIncomeMonth))
-                .setText(CurrencyUtils.formatRupiah(monthlyIncome)), throwable -> ((TextView) findViewById(R.id.tvStatIncomeMonth))
-                .setText(CurrencyUtils.formatRupiah(0)));
+        ProductRepository.getAllAsync(this, products -> {
+                    ((TextView) findViewById(R.id.tvStatProducts)).setText(String.valueOf(products.size()));
+                    onStatLoaded();
+                }, throwable -> {
+                    ((TextView) findViewById(R.id.tvStatProducts)).setText("0");
+                    onStatLoaded();
+                });
+
+        TransactionRepository.getIncomeByPeriodAsync(this, java.util.Calendar.getInstance(), true, monthlyIncome -> {
+                    ((TextView) findViewById(R.id.tvStatIncomeMonth)).setText(CurrencyUtils.formatRupiah(monthlyIncome));
+                    onStatLoaded();
+                }, throwable -> {
+                    ((TextView) findViewById(R.id.tvStatIncomeMonth)).setText(CurrencyUtils.formatRupiah(0));
+                    onStatLoaded();
+                });
+    }
+
+    private void onStatLoaded() {
+        pendingStatRequests = Math.max(0, pendingStatRequests - 1);
+        if (pendingStatRequests == 0) {
+            setStatsLoading(false);
+        }
+    }
+
+    private void setStatsLoading(boolean isLoading) {
+        findViewById(R.id.layoutHomeStatsLoading).setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        findViewById(R.id.layoutHomeStatsContent).setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
 
     @Override
