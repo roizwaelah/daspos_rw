@@ -35,7 +35,7 @@
                     style="@style/DasPosFieldLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_username"
+                    android:text="@string/label_email"
                     android:textSize="16sp"/>
 
                 <TextView
@@ -62,6 +62,43 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_input" />
+
+                <TextView
+                    style="@style/DasPosFieldLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/menu_access_settings" />
+
+                <CheckBox
+                    android:id="@+id/cbEditMenuTransaction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_access_transaction" />
+
+                <CheckBox
+                    android:id="@+id/cbEditMenuProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_access_product" />
+
+                <CheckBox
+                    android:id="@+id/cbEditMenuBestSeller"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_access_best_seller" />
+
+                <CheckBox
+                    android:id="@+id/cbEditMenuReport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_access_report" />
+
+                <CheckBox
+                    android:id="@+id/cbEditMenuBackup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_access_backup" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

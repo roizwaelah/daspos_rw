@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.MenuAccessGuard;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.Product;
 import com.daspos.repository.ProductRepository;
 import com.daspos.shared.util.NotificationDialogHelper;
@@ -42,6 +44,7 @@ public class ProductActivity extends BaseActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MenuAccessGuard.ensureAccess(this, MenuAccessStore.MENU_PRODUCT)) return;
         setContentView(R.layout.activity_product);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

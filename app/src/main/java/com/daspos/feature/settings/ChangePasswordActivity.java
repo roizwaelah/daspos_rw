@@ -13,6 +13,7 @@ import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.LoadingDialogHelper;
+import com.daspos.shared.util.PasswordFieldToggleHelper;
 import com.daspos.shared.util.ViewUtils;
 
 public class ChangePasswordActivity extends BaseActivity {
@@ -26,6 +27,9 @@ public class ChangePasswordActivity extends BaseActivity {
         final EditText oldPass = findViewById(R.id.etOldPassword);
         final EditText newPass = findViewById(R.id.etNewPassword);
         final EditText confirmPass = findViewById(R.id.etConfirmPassword);
+        PasswordFieldToggleHelper.attach(oldPass);
+        PasswordFieldToggleHelper.attach(newPass);
+        PasswordFieldToggleHelper.attach(confirmPass);
         View btnSave = findViewById(R.id.btnSave);
         View btnCancel = findViewById(R.id.btnCancel);
         btnSave.setOnClickListener(new View.OnClickListener() {

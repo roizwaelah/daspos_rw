@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
+import com.daspos.feature.auth.MenuAccessGuard;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.BestSellerItem;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.ViewUtils;
@@ -41,6 +43,7 @@ public class BestSellerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MenuAccessGuard.ensureAccess(this, MenuAccessStore.MENU_BEST_SELLER)) return;
         setContentView(R.layout.activity_best_seller);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -136,7 +139,7 @@ public class BestSellerActivity extends BaseActivity {
                 ? new ArrayList<>(bestSellerItems.subList(fromIndex, toIndex))
                 : new ArrayList<>();
 
-        bestSellerAdapter.submit(pageItems);
+        bestSellerAdapter.submit(pageItems, fromIndex);
 
         boolean isEmpty = bestSellerItems.isEmpty();
         layoutBestSellerLoading.setVisibility(View.GONE);

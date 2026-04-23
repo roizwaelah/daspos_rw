@@ -65,6 +65,14 @@
                     android:text="@string/account_store_placeholder"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvDebugInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -77,6 +85,8 @@
 
                 <include android:id="@+id/itemChangePassword" layout="@layout/item_setting" />
                 <include android:id="@+id/itemAccountLogout" layout="@layout/item_setting" />
+                <include android:id="@+id/itemDeleteAccount" layout="@layout/item_setting" />
+                <include android:id="@+id/itemDeleteOutletPurge" layout="@layout/item_setting" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

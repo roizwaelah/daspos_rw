@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.MenuAccessGuard;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.feature.product.ProductSearchAdapter;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
@@ -48,6 +50,7 @@ public class TransactionActivity extends BaseActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MenuAccessGuard.ensureAccess(this, MenuAccessStore.MENU_TRANSACTION)) return;
         setContentView(R.layout.activity_transaction);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

@@ -41,4 +41,10 @@ public interface TransactionDao {
 
     @Query("DELETE FROM transactions WHERE id = :transactionId")
     void deleteTransactionById(String transactionId);
+
+    @Query("DELETE FROM transaction_items")
+    void deleteAllItems();
+
+    @Query("DELETE FROM transactions")
+    void deleteAllTransactions();
 }

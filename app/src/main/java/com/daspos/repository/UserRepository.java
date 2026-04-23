@@ -4,9 +4,14 @@ import android.content.Context;
 
 import com.daspos.db.AppDatabase;
 import com.daspos.db.entity.UserEntity;
+import com.daspos.feature.auth.AuthSessionStore;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.User;
 import com.daspos.shared.util.DbExecutor;
+import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.PasswordHasher;
+import com.daspos.supabase.SupabaseAuthService;
+import com.daspos.supabase.SupabaseConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +19,7 @@ import java.util.List;
 public class UserRepository {
     public static List<User> getAll(final Context context) {
         return DbExecutor.runBlocking(() -> {
+            syncRemoteCashiersIfNeeded(context);
             List<User> models = new ArrayList<>();
             for (UserEntity e : AppDatabase.getInstance(context).userDao().getAll()) {
                 models.add(new User(e.username, e.role));
@@ -34,8 +40,34 @@ public class UserRepository {
         return DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().getByUsername(username) != null);
     }
 
-    public static void add(final Context context, final String username, final String password, final String role) {
+    public static void add(
+            final Context context,
+            final String username,
+            final String password,
+            final String role,
+            final List<String> allowedMenus
+    ) {
         DbExecutor.runBlocking(() -> {
+            if (shouldCreateSupabaseCashier(context, role)) {
+                if (!NetworkUtils.isOnline(context)) {
+                    throw new IllegalStateException("Tambah kasir butuh koneksi internet");
+                }
+                SupabaseAuthService.SignupResult result = SupabaseAuthService.signupCashierByAdmin(
+                        safe(AuthSessionStore.getAccessToken(context)),
+                        safe(AuthSessionStore.getOutletId(context)),
+                        username,
+                        password,
+                        defaultDisplayName(username),
+                        allowedMenus
+                );
+                if (!result.success) {
+                    String msg = result.message == null || result.message.trim().isEmpty()
+                            ? "Gagal menambah kasir ke Supabase"
+                            : result.message;
+                    throw new IllegalStateException(msg);
+                }
+            }
+
             String passwordHash = PasswordHasher.hash(password);
             AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, role, passwordHash));
         });
@@ -89,6 +121,50 @@ public class UserRepository {
         DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().deleteByUsername(username));
     }
 
+    private static boolean shouldCreateSupabaseCashier(Context context, String role) {
+        return SupabaseConfig.isConfigured()
+                && "supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))
+                && !safe(AuthSessionStore.getAccessToken(context)).isEmpty()
+                && !safe(AuthSessionStore.getOutletId(context)).isEmpty()
+                && "kasir".equalsIgnoreCase(safe(role));
+    }
+
+    private static void syncRemoteCashiersIfNeeded(Context context) {
+        if (!SupabaseConfig.isConfigured()) return;
+        if (!NetworkUtils.isOnline(context)) return;
+        if (!"supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))) return;
+        String role = safe(AuthSessionStore.getRole(context));
+        if (!"admin".equalsIgnoreCase(role) && !"owner".equalsIgnoreCase(role)) return;
+
+        String accessToken = safe(AuthSessionStore.getAccessToken(context));
+        if (accessToken.isEmpty()) return;
+
+        SupabaseAuthService.ListCashiersResult result = SupabaseAuthService.listCashiersByAdmin(accessToken);
+        if (!result.success) return;
+
+        for (SupabaseAuthService.CashierUser cashier : result.users) {
+            String email = safe(cashier.email);
+            if (email.isEmpty()) continue;
+            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(email);
+            String passwordHash = existing == null ? "" : safe(existing.passwordHash);
+            String cashierRole = safe(cashier.role).isEmpty() ? "Kasir" : cashier.role;
+            AppDatabase.getInstance(context).userDao().insert(new UserEntity(email, cashierRole, passwordHash));
+            MenuAccessStore.saveForUser(context, email, cashier.allowedMenus);
+        }
+    }
+
+    private static String defaultDisplayName(String email) {
+        String safeEmail = safe(email);
+        int at = safeEmail.indexOf('@');
+        String base = at > 0 ? safeEmail.substring(0, at) : safeEmail;
+        if (base.trim().isEmpty()) return "Kasir";
+        return base.trim();
+    }
+
+    private static String safe(String value) {
+        return value == null ? "" : value.trim();
+    }
+
 
     public static void getAllAsync(final Context context, final DbExecutor.SuccessCallback<List<User>> onSuccess, final DbExecutor.ErrorCallback onError) {
         DbExecutor.runAsync(() -> getAll(context), onSuccess, onError);
@@ -108,7 +184,24 @@ public class UserRepository {
 
     public static void addAsync(final Context context, final String username, final String password, final String role, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
         DbExecutor.runAsync(() -> {
-            add(context, username, password, role);
+            add(context, username, password, role, null);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void addAsync(
+            final Context context,
+            final String username,
+            final String password,
+            final String role,
+            final List<String> allowedMenus,
+            final Runnable onSuccess,
+            final DbExecutor.ErrorCallback onError
+    ) {
+        DbExecutor.runAsync(() -> {
+            add(context, username, password, role, allowedMenus);
             return null;
         }, ignored -> {
             if (onSuccess != null) onSuccess.run();

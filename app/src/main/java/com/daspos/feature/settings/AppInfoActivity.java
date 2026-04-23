@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.daspos.BuildConfig;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.AuthSessionStore;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -15,6 +16,11 @@ public class AppInfoActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!AuthSessionStore.isAdmin(this)) {
+            ViewUtils.toast(this, getString(R.string.admin_only_feature));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_app_info);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

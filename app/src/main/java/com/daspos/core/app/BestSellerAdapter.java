@@ -17,10 +17,16 @@ import java.util.List;
 
 public class BestSellerAdapter extends RecyclerView.Adapter<BestSellerAdapter.VH> {
     private final List<BestSellerItem> items = new ArrayList<>();
+    private int startRank = 0;
 
     public void submit(List<BestSellerItem> list) {
+        submit(list, 0);
+    }
+
+    public void submit(List<BestSellerItem> list, int startRank) {
         items.clear();
         if (list != null) items.addAll(list);
+        this.startRank = Math.max(0, startRank);
         notifyDataSetChanged();
     }
 
@@ -33,7 +39,7 @@ public class BestSellerAdapter extends RecyclerView.Adapter<BestSellerAdapter.VH
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         BestSellerItem item = items.get(position);
-        holder.tvRank.setText(String.valueOf(position + 1));
+        holder.tvRank.setText(String.valueOf(startRank + position + 1));
         holder.tvName.setText(item.getProductName());
         holder.tvQty.setText(holder.itemView.getContext().getString(R.string.best_seller_qty_format, item.getTotalQty()));
         holder.tvRevenue.setText(CurrencyUtils.formatRupiah(item.getTotalRevenue()));
