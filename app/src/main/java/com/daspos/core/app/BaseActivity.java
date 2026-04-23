@@ -8,10 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
+import com.daspos.repository.ProductRepository;
+import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.ThemeManager;
 
 public class BaseActivity extends AppCompatActivity {
-    private static final long AUTO_LOGOUT_TIMEOUT_MS = 5 * 60 * 1000L;
+    private static final long AUTO_LOGOUT_TIMEOUT_MS = 60 * 60 * 1000L;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        ProductRepository.triggerSyncIfPossible(this);
+        TransactionRepository.triggerSyncIfPossible(this);
         if (!shouldTrackBackgroundTime()) {
             return;
         }

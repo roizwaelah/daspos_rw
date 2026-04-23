@@ -10,6 +10,7 @@ import com.daspos.db.entity.TransactionEntity;
 import com.daspos.db.entity.TransactionItemEntity;
 import com.daspos.db.entity.UserEntity;
 import com.daspos.feature.printer.PrinterConfigStore;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
 import com.daspos.model.TransactionRecord;
@@ -18,6 +19,7 @@ import com.daspos.repository.ProductRepository;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.DbExecutor;
+import com.daspos.shared.util.RestoreStateStore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,8 +29,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+import java.text.SimpleDateFormat;
 
 public class BackupRestoreHelper {
     private static final String TAG = "BackupRestoreHelper";
@@ -38,7 +43,7 @@ public class BackupRestoreHelper {
             JSONObject root = new JSONObject();
 
             JSONObject meta = new JSONObject();
-            meta.put("formatVersion", 2);
+            meta.put("formatVersion", 3);
             meta.put("app", "DasPos");
             meta.put("createdAt", System.currentTimeMillis());
             root.put("meta", meta);
@@ -50,6 +55,21 @@ public class BackupRestoreHelper {
             printer.put("ip", PrinterConfigStore.getIp(context));
             printer.put("port", PrinterConfigStore.getPort(context));
             root.put("printer", printer);
+
+            JSONObject store = new JSONObject();
+            store.put("name", StoreConfigStore.getStoreName(context));
+            store.put("address", StoreConfigStore.getAddress(context));
+            store.put("phone", StoreConfigStore.getPhone(context));
+            store.put("email", StoreConfigStore.getEmail(context));
+            store.put("hasLogo", StoreConfigStore.hasLogo(context));
+            store.put("logoUri", StoreConfigStore.getLogoUri(context));
+            root.put("store", store);
+
+            JSONObject receipt = new JSONObject();
+            receipt.put("header", ReceiptConfigStore.getHeader(context));
+            receipt.put("footer", ReceiptConfigStore.getFooter(context));
+            receipt.put("showLogo", ReceiptConfigStore.shouldShowLogo(context));
+            root.put("receipt", receipt);
 
             JSONArray products = new JSONArray();
             for (Product p : ProductRepository.getAll(context)) {
@@ -72,12 +92,27 @@ public class BackupRestoreHelper {
             }
             root.put("users", users);
 
+            JSONArray menuAccess = new JSONArray();
+            for (User u : UserRepository.getAll(context)) {
+                JSONObject o = new JSONObject();
+                o.put("username", u.getUsername());
+                JSONArray menus = new JSONArray();
+                for (String menu : MenuAccessStore.getForUser(context, u.getUsername(), u.getRole())) {
+                    menus.put(menu);
+                }
+                o.put("menus", menus);
+                menuAccess.put(o);
+            }
+            root.put("menuAccess", menuAccess);
+
             JSONArray transactions = new JSONArray();
             for (TransactionRecord t : TransactionRepository.getAll(context)) {
                 JSONObject o = new JSONObject();
                 o.put("id", t.getId());
                 o.put("date", t.getDate());
                 o.put("time", t.getTime());
+                TransactionEntity tx = AppDatabase.getInstance(context).transactionDao().getTransactionById(t.getId());
+                o.put("timestamp", tx == null ? toTimestamp(t.getDate(), t.getTime()) : tx.timestamp);
                 o.put("total", t.getTotal());
                 o.put("pay", t.getPay());
                 o.put("change", t.getChange());
@@ -125,7 +160,7 @@ public class BackupRestoreHelper {
 
             int version = 1;
             if (root.has("meta")) version = root.getJSONObject("meta").optInt("formatVersion", 1);
-            if (version > 2) {
+            if (version > 3) {
                 Log.e(TAG, "Restore incompatible version: " + version);
                 return RestoreStatus.INCOMPATIBLE_VERSION;
             }
@@ -160,6 +195,49 @@ public class BackupRestoreHelper {
                         printer.optString("port", "")
                 );
             }
+            if (root.has("store")) {
+                JSONObject store = root.getJSONObject("store");
+                StoreConfigStore.save(
+                        context,
+                        store.optString("name", StoreConfigStore.getStoreName(context)),
+                        store.optString("address", ""),
+                        store.optString("phone", ""),
+                        store.optString("email", "")
+                );
+                if (store.optBoolean("hasLogo", false)) {
+                    StoreConfigStore.saveLogoUri(context, store.optString("logoUri", ""));
+                } else {
+                    StoreConfigStore.clearLogo(context);
+                }
+            }
+            if (root.has("receipt")) {
+                JSONObject receipt = root.getJSONObject("receipt");
+                ReceiptConfigStore.save(
+                        context,
+                        receipt.optString("header", ""),
+                        receipt.optString("footer", ""),
+                        receipt.optBoolean("showLogo", true)
+                );
+            }
+            if (root.has("menuAccess")) {
+                MenuAccessStore.clearAll(context);
+                JSONArray menuAccess = root.getJSONArray("menuAccess");
+                for (int i = 0; i < menuAccess.length(); i++) {
+                    JSONObject o = menuAccess.optJSONObject(i);
+                    if (o == null) continue;
+                    String username = o.optString("username", "");
+                    JSONArray menus = o.optJSONArray("menus");
+                    List<String> allowedMenus = new ArrayList<>();
+                    if (menus != null) {
+                        for (int j = 0; j < menus.length(); j++) {
+                            String menu = menus.optString(j, "");
+                            if (!menu.trim().isEmpty()) allowedMenus.add(menu);
+                        }
+                    }
+                    MenuAccessStore.saveForUser(context, username, allowedMenus);
+                }
+            }
+            RestoreStateStore.markRestored(context);
 
             return RestoreStatus.SUCCESS;
         } catch (Exception e) {
@@ -197,7 +275,8 @@ public class BackupRestoreHelper {
             for (int i = 0; i < transactions.length(); i++) {
                 JSONObject o = transactions.getJSONObject(i);
                 String id = o.getString("id");
-                long ts = System.currentTimeMillis();
+                long ts = o.optLong("timestamp", 0L);
+                if (ts <= 0L) ts = toTimestamp(o.getString("date"), o.getString("time"));
                 payload.transactionEntities.add(new TransactionEntity(
                         id,
                         o.getString("date"),
@@ -227,6 +306,15 @@ public class BackupRestoreHelper {
         } catch (Exception e) {
             Log.e(TAG, "Parse payload restore gagal", e);
             return null;
+        }
+    }
+
+    private static long toTimestamp(String date, String time) {
+        try {
+            Date parsed = new SimpleDateFormat("dd MMM yyyy HH:mm", new Locale("id", "ID")).parse(date + " " + time);
+            return parsed == null ? System.currentTimeMillis() : parsed.getTime();
+        } catch (Exception ignored) {
+            return System.currentTimeMillis();
         }
     }
 

@@ -63,10 +63,10 @@
     <string name="exit_confirmation_title">Keluar Aplikasi</string>
     <string name="exit_confirmation_message">Apakah Anda yakin ingin keluar dari aplikasi?</string>
     <string name="account_info">Info Akun</string>
-    <string name="account_username_format">Username: %1$s</string>
+    <string name="account_username_format">Email: %1$s</string>
     <string name="account_role_format">Role: %1$s</string>
     <string name="account_store_format">Toko: %1$s</string>
-    <string name="account_username_placeholder">Username: -</string>
+    <string name="account_username_placeholder">Email: -</string>
     <string name="account_role_placeholder">Role: -</string>
     <string name="account_store_placeholder">Toko: -</string>
     <string name="role">Role</string>
@@ -158,13 +158,19 @@
 
     <string name="invalid_price">Harga tidak valid</string>
     <string name="invalid_stock">Stok tidak valid</string>
-    <string name="username_required">Username wajib diisi</string>
+    <string name="username_required">Email wajib diisi</string>
+    <string name="email_required">Email wajib diisi</string>
     <string name="password_required">Password wajib diisi</string>
 
-    <string name="login_failed">Username atau password salah</string>
-    <string name="username_already_exists">Username sudah terdaftar</string>
+    <string name="login_failed">Email atau password salah</string>
+    <string name="username_already_exists">Email sudah terdaftar</string>
+    <string name="email_already_exists">Email sudah terdaftar</string>
     <string name="register_success">Akun berhasil dibuat</string>
     <string name="register_failed">Pendaftaran gagal</string>
+    <string name="invalid_email">Format email tidak valid</string>
+    <string name="register_need_internet">Pendaftaran akun email membutuhkan koneksi internet</string>
+    <string name="register_activation_sent">Akun dibuat. Cek email untuk aktivasi sebelum login.</string>
+    <string name="admin_only_feature">Fitur ini hanya untuk admin</string>
 
 
     <string name="loading">Memuat...</string>
@@ -282,7 +288,7 @@
 
     <string name="delete_product_title">Hapus Produk</string>
     <string name="delete_product_message">Yakin ingin menghapus %1$s?</string>
-    <string name="delete_user_message">Hapus user %1$s?</string>
+    <string name="delete_user_message">Hapus email %1$s?</string>
     <string name="insert_address">Masukkan Alamat Toko</string>
     <string name="insert_phone">Masukkan No Tlp</string>
     <string name="insert_email">Masukkan Email</string>
@@ -297,4 +303,30 @@
     <string name="delete_receipt_success">Struk berhasil dihapus</string>
     <string name="delete_receipt_failed">Gagal menghapus struk</string>
     <string name="show_today_transactions">Menampilkan daftar transaksi hari ini</string>
+    <string name="menu_access_settings">Akses Menu Kasir</string>
+    <string name="menu_access_transaction">Transaksi</string>
+    <string name="menu_access_product">Produk</string>
+    <string name="menu_access_best_seller">Produk Terlaris</string>
+    <string name="menu_access_report">Laporan</string>
+    <string name="menu_access_backup">Backup/Restore</string>
+    <string name="menu_access_required">Pilih minimal satu akses menu</string>
+    <string name="menu_access_denied">Akses menu tidak diizinkan</string>
+    <string name="no_menu_assigned">Akun ini belum memiliki akses menu</string>
+    <string name="auth_email_verify_success">Email berhasil diverifikasi. Silakan login.</string>
+    <string name="auth_email_verify_failed">Verifikasi email gagal atau tautan sudah tidak valid.</string>
+    <string name="resend_verification_email">Kirim Ulang Email Verifikasi</string>
+    <string name="resend_verification_success">Email verifikasi dikirim ulang. Silakan cek inbox.</string>
+    <string name="resend_verification_failed">Gagal mengirim ulang email verifikasi.</string>
+    <string name="supabase_only_feature">Fitur ini hanya tersedia saat Supabase aktif.</string>
+    <string name="delete_account">Hapus Akun</string>
+    <string name="delete_account_confirm_message">Akun yang sedang login akan dihapus permanen. Lanjutkan?</string>
+    <string name="delete_account_success">Akun berhasil dihapus.</string>
+    <string name="delete_account_failed">Gagal menghapus akun.</string>
+    <string name="delete_account_need_internet">Hapus akun membutuhkan koneksi internet.</string>
+    <string name="purge_outlet">Hapus Outlet + Data</string>
+    <string name="purge_outlet_confirm_message">Semua data outlet ini (akun kasir, produk, transaksi, shift) akan dihapus permanen. Lanjutkan?</string>
+    <string name="purge_outlet_success">Outlet dan seluruh data berhasil dihapus.</string>
+    <string name="purge_outlet_failed">Gagal menghapus outlet dan data.</string>
+    <string name="saved_local_sync_pending">Data tersimpan lokal. Sinkron ke Supabase menunggu koneksi internet.</string>
+    <string name="saved_local_sync_failed">Data tersimpan lokal, tetapi sinkron ke Supabase gagal.</string>
 </resources>

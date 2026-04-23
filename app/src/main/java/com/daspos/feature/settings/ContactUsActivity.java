@@ -9,11 +9,17 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.shared.util.ViewUtils;
 
 public class ContactUsActivity extends BaseActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!AuthSessionStore.isAdmin(this)) {
+            ViewUtils.toast(this, getString(R.string.admin_only_feature));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_contact_us);
         Toolbar toolbar = findViewById(R.id.toolbar);
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.contact_us));

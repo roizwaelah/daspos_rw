@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-60:12
-INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-60:12
-INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-60:12
-INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-60:12
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-70:12
+INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-70:12
+INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-70:12
+INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:2:1-70:12
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\AR\.gradle\caches\8.14.4\transforms\4f2bb93f9f1113372b390612c9f2288b\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\AR\.gradle\caches\8.14.4\transforms\d4db019da95ca2feb669f7dc363bdd4e\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\AR\.gradle\caches\8.14.4\transforms\fa3386decfd965617f6641ba6d3f12e6\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
@@ -61,41 +61,45 @@ uses-permission#android.permission.INTERNET
 ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:4:5-67
 	android:name
 		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:4:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:5:5-79
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:5:22-76
 uses-permission#android.permission.BLUETOOTH
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:5:5-68
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:6:5-68
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:5:22-65
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:6:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:6:5-74
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:7:5-74
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:6:22-71
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:7:22-71
 uses-permission#android.permission.BLUETOOTH_CONNECT
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:7:5-76
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:8:5-76
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:7:22-73
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:8:22-73
 uses-permission#android.permission.BLUETOOTH_SCAN
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:8:5-73
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:9:5-73
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:8:22-70
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:9:22-70
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:11:5-107
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:5-107
 	android:maxSdkVersion
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:11:78-104
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:78-104
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:11:22-77
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:22-77
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:5-108
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:13:5-108
 	android:maxSdkVersion
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:79-105
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:13:79-105
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:12:22-78
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:13:22-78
 uses-permission#android.permission.READ_MEDIA_IMAGES
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:15:5-76
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:16:5-76
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:15:22-73
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:16:22-73
 application
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:17:5-58:19
-INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:17:5-58:19
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:18:5-68:19
+INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:18:5-68:19
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\AR\.gradle\caches\8.14.4\transforms\4f2bb93f9f1113372b390612c9f2288b\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\AR\.gradle\caches\8.14.4\transforms\4f2bb93f9f1113372b390612c9f2288b\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\AR\.gradle\caches\8.14.4\transforms\d4db019da95ca2feb669f7dc363bdd4e\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -119,133 +123,155 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\AR\.gradle\caches\
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] C:\Users\AR\.gradle\caches\8.14.4\transforms\93d717755f156a5556cd749269592087\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:22:9-35
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:23:9-35
 	android:label
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:21:9-41
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:22:9-41
 	android:icon
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:20:9-38
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:21:9-38
 	android:allowBackup
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:19:9-35
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:20:9-35
 	android:theme
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:23:9-44
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:24:9-44
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:18:9-34
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:19:9-34
 activity#com.daspos.feature.printer.BluetoothScanActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:25:9-75
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:26:9-75
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:25:19-72
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:26:19-72
 activity#com.daspos.feature.user.UserListActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:26:9-67
-	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:26:19-64
-activity#com.daspos.feature.user.EditUserActivity
 ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:27:9-67
 	android:name
 		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:27:19-64
+activity#com.daspos.feature.user.EditUserActivity
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:28:9-67
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:28:19-64
 activity#com.daspos.feature.user.AddUserActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:28:9-66
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:29:9-66
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:28:19-63
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:29:19-63
 activity#com.daspos.feature.transaction.StrukActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:29:9-71
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:30:9-71
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:29:19-68
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:30:19-68
 activity#com.daspos.feature.settings.ReceiptPreviewActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:30:9-77
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:31:9-77
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:30:19-74
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:31:19-74
 activity#com.daspos.feature.product.ImportProductActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:31:9-75
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:32:9-75
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:31:19-72
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:32:19-72
 activity#com.daspos.feature.settings.SelectDatabaseActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:32:9-77
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:33:9-77
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:32:19-74
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:33:19-74
 activity#com.daspos.feature.settings.ContactUsActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:33:9-72
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:34:9-72
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:33:19-69
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:34:19-69
 activity#com.daspos.feature.settings.AppInfoActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:34:9-70
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:35:9-70
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:34:19-67
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:35:19-67
 activity#com.daspos.feature.settings.BackupRestoreActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:35:9-76
-	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:35:19-73
-activity#com.daspos.feature.printer.PrinterSettingActivity
 ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:36:9-76
 	android:name
 		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:36:19-73
+activity#com.daspos.feature.printer.PrinterSettingActivity
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:37:9-76
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:37:19-73
 activity#com.daspos.feature.settings.ReceiptSettingActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:37:9-77
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:38:9-77
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:37:19-74
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:38:19-74
 activity#com.daspos.feature.settings.StoreInfoActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:38:9-72
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:39:9-72
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:38:19-69
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:39:19-69
 activity#com.daspos.feature.settings.ChangePasswordActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:39:9-77
-	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:39:19-74
-activity#com.daspos.feature.settings.AccountSettingActivity
 ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:40:9-77
 	android:name
 		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:40:19-74
+activity#com.daspos.feature.settings.AccountSettingActivity
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:41:9-77
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:41:19-74
 activity#com.daspos.feature.settings.SettingActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:41:9-70
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:42:9-70
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:41:19-67
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:42:19-67
 activity#com.daspos.feature.report.ReportActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:42:9-67
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:43:9-67
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:42:19-64
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:43:19-64
 activity#com.daspos.feature.product.ProductFormActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:43:9-73
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:44:9-73
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:43:19-70
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:44:19-70
 activity#com.daspos.feature.product.ProductActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:44:9-69
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:45:9-69
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:44:19-66
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:45:19-66
 activity#com.daspos.feature.transaction.TransactionActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:45:9-77
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:46:9-77
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:45:19-74
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:46:19-74
 activity#com.daspos.core.app.HomeActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:46:9-59
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:47:9-59
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:46:19-56
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:47:19-56
 activity#com.daspos.core.app.BestSellerActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:47:9-65
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:48:9-65
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:47:19-62
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:48:19-62
 activity#com.daspos.feature.auth.RegisterActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:48:9-67
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:49:9-67
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:48:19-64
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:49:19-64
 activity#com.daspos.feature.auth.LoginActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:49:9-64
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:50:9-64
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:49:19-61
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:50:19-61
 activity#com.daspos.core.app.SplashActivity
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:50:9-57:20
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:51:9-67:20
 	android:exported
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:52:13-36
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:53:13-36
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:51:13-52
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:52:13-52
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:53:13-56:29
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:54:13-57:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:54:17-69
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:55:17-69
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:54:25-66
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:55:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:55:17-77
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:56:17-77
 	android:name
-		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:55:27-74
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:56:27-74
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:auth+data:pathPrefix:/callback+data:scheme:daspos
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:58:13-66:29
+action#android.intent.action.VIEW
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:59:17-69
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:59:25-66
+category#android.intent.category.DEFAULT
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:60:17-76
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:60:27-73
+category#android.intent.category.BROWSABLE
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:61:17-78
+	android:name
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:61:27-75
+data
+ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:62:17-65:54
+	android:host
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:64:21-40
+	android:scheme
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:63:21-44
+	android:pathPrefix
+		ADDED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml:65:21-51
 uses-sdk
 INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\AR\daspos_rw\app\src\main\AndroidManifest.xml

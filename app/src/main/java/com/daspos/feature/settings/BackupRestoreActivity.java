@@ -11,6 +11,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.MenuAccessGuard;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
@@ -24,6 +26,7 @@ public class BackupRestoreActivity extends BaseActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MenuAccessGuard.ensureAccess(this, MenuAccessStore.MENU_BACKUP)) return;
         setContentView(R.layout.activity_backup_restore);
         Toolbar toolbar = findViewById(R.id.toolbar);
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.backup_restore));

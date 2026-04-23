@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.daspos.R;
 import com.daspos.feature.product.ProductActivity;
+import com.daspos.feature.auth.AuthSessionStore;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.feature.report.ReportActivity;
 import com.daspos.feature.settings.BackupRestoreActivity;
 import com.daspos.feature.settings.SettingActivity;
@@ -18,15 +20,23 @@ import com.daspos.repository.ProductRepository;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.NotificationDialogHelper;
+import com.daspos.shared.util.ViewUtils;
+
+import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends BaseActivity {
+    private static final long STATS_REFRESH_INTERVAL_MS = 30_000L;
     private int pendingStatRequests;
+    private long lastStatsLoadedAtMs = 0L;
+    private boolean statsLoadedOnce = false;
+    private boolean statsLoading = false;
 
     @Override
     protected void onResume() {
         super.onResume();
         bindStoreIdentity();
-        bindStats();
+        bindStats(false);
     }
 
     @Override
@@ -85,24 +95,37 @@ public class HomeActivity extends BaseActivity {
         bindHomeMenu(R.id.menuTransaction, R.string.transactions, R.drawable.ic_menu_transaction);
         bindHomeMenu(R.id.menuReport, R.string.reports, R.drawable.ic_menu_report);
         bindHomeMenu(R.id.menuBackup, R.string.backup_restore, R.drawable.ic_upload);
+        applyMenuAccess();
 
-        bindStats();
+        bindStats(true);
     }
 
     private void bindStoreIdentity() {
-        ((TextView) findViewById(R.id.tvStoreName)).setText(StoreConfigStore.getStoreName(this));
+        String storeName = StoreConfigStore.getStoreName(this);
+        ((TextView) findViewById(R.id.tvStoreName)).setText(storeName);
 
         ImageView imgStoreLogo = findViewById(R.id.imgStoreLogo);
+        TextView tvStoreLogoInitial = findViewById(R.id.tvStoreLogoInitial);
         String logoUri = StoreConfigStore.getLogoUri(this);
         if (logoUri != null && !logoUri.trim().isEmpty()) {
             try {
                 imgStoreLogo.setImageURI(Uri.parse(logoUri));
+                tvStoreLogoInitial.setVisibility(View.GONE);
                 return;
             } catch (Exception ignored) {
                 // fallback to default icon
             }
         }
-        imgStoreLogo.setImageResource(R.drawable.ic_store);
+        imgStoreLogo.setImageDrawable(null);
+        tvStoreLogoInitial.setText(extractStoreInitial(storeName));
+        tvStoreLogoInitial.setVisibility(View.VISIBLE);
+    }
+
+    private String extractStoreInitial(String storeName) {
+        if (storeName == null) return "D";
+        String trimmed = storeName.trim();
+        if (trimmed.isEmpty()) return "D";
+        return trimmed.substring(0, 1).toUpperCase(Locale.ROOT);
     }
 
     private void bindHomeMenu(int menuId, int titleRes, int iconRes) {
@@ -111,7 +134,12 @@ public class HomeActivity extends BaseActivity {
         ((ImageView) menu.findViewById(R.id.imgMenu)).setImageResource(iconRes);
     }
 
-    private void bindStats() {
+    private void bindStats(boolean force) {
+        long now = System.currentTimeMillis();
+        if (!force && statsLoading) return;
+        if (!force && statsLoadedOnce && (now - lastStatsLoadedAtMs) < STATS_REFRESH_INTERVAL_MS) return;
+
+        statsLoading = true;
         pendingStatRequests = 4;
         setStatsLoading(true);
 
@@ -151,6 +179,9 @@ public class HomeActivity extends BaseActivity {
     private void onStatLoaded() {
         pendingStatRequests = Math.max(0, pendingStatRequests - 1);
         if (pendingStatRequests == 0) {
+            statsLoadedOnce = true;
+            statsLoading = false;
+            lastStatsLoadedAtMs = System.currentTimeMillis();
             setStatsLoading(false);
         }
     }
@@ -158,6 +189,33 @@ public class HomeActivity extends BaseActivity {
     private void setStatsLoading(boolean isLoading) {
         findViewById(R.id.layoutHomeStatsLoading).setVisibility(isLoading ? View.VISIBLE : View.GONE);
         findViewById(R.id.layoutHomeStatsContent).setVisibility(isLoading ? View.GONE : View.VISIBLE);
+    }
+
+    private void applyMenuAccess() {
+        String username = AuthSessionStore.getUsername(this);
+        String role = AuthSessionStore.getRole(this);
+        List<String> allowed = MenuAccessStore.getForUser(this, username, role);
+
+        applyMenuVisibility(R.id.menuTransaction, allowed.contains(MenuAccessStore.MENU_TRANSACTION));
+        applyMenuVisibility(R.id.menuProduct, allowed.contains(MenuAccessStore.MENU_PRODUCT));
+        applyMenuVisibility(R.id.menuBestSeller, allowed.contains(MenuAccessStore.MENU_BEST_SELLER));
+        applyMenuVisibility(R.id.menuReport, allowed.contains(MenuAccessStore.MENU_REPORT));
+        applyMenuVisibility(R.id.menuBackup, allowed.contains(MenuAccessStore.MENU_BACKUP));
+
+        if (!allowed.contains(MenuAccessStore.MENU_TRANSACTION)
+                && !allowed.contains(MenuAccessStore.MENU_PRODUCT)
+                && !allowed.contains(MenuAccessStore.MENU_BEST_SELLER)
+                && !allowed.contains(MenuAccessStore.MENU_REPORT)
+                && !allowed.contains(MenuAccessStore.MENU_BACKUP)) {
+            ViewUtils.toast(this, getString(R.string.no_menu_assigned));
+        }
+    }
+
+    private void applyMenuVisibility(int menuId, boolean visible) {
+        View menu = findViewById(menuId);
+        if (menu == null) return;
+        menu.setVisibility(visible ? View.VISIBLE : View.GONE);
+        menu.setEnabled(visible);
     }
 
     @Override

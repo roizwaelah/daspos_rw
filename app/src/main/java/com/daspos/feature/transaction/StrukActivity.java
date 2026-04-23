@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.printer.EscPosBluetoothPrinterHelper;
 import com.daspos.feature.printer.EscPosNetworkPrinterHelper;
 import com.daspos.feature.printer.PrinterConfigStore;
@@ -67,6 +68,8 @@ public class StrukActivity extends BaseActivity {
                 @Override public void run() { printReceipt(); }
             });
         }
+
+        findViewById(R.id.btnDeleteReceipt).setVisibility(canDeleteTransaction() ? View.VISIBLE : View.GONE);
     }
 
     private void printReceipt() {
@@ -128,6 +131,10 @@ public class StrukActivity extends BaseActivity {
     }
 
     private void confirmDeleteReceipt() {
+        if (!canDeleteTransaction()) {
+            ViewUtils.toast(this, getString(R.string.menu_access_denied));
+            return;
+        }
         if (currentTransaction == null) {
             ViewUtils.toast(this, getString(R.string.delete_receipt_failed));
             return;
@@ -142,6 +149,10 @@ public class StrukActivity extends BaseActivity {
     }
 
     private void deleteReceipt() {
+        if (!canDeleteTransaction()) {
+            ViewUtils.toast(this, getString(R.string.menu_access_denied));
+            return;
+        }
         if (currentTransaction == null) {
             ViewUtils.toast(this, getString(R.string.delete_receipt_failed));
             return;
@@ -163,6 +174,11 @@ public class StrukActivity extends BaseActivity {
                 ViewUtils.toast(StrukActivity.this, getString(R.string.delete_receipt_failed));
             }
         }));
+    }
+
+    private boolean canDeleteTransaction() {
+        String role = AuthSessionStore.getRole(this);
+        return "admin".equalsIgnoreCase(role) || "owner".equalsIgnoreCase(role);
     }
 
     private void renderLastTransaction() {

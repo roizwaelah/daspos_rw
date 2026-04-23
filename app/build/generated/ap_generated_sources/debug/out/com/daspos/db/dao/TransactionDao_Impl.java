@@ -33,6 +33,10 @@ public final class TransactionDao_Impl implements TransactionDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteTransactionById;
 
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllItems;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAllTransactions;
+
   public TransactionDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfTransactionEntity = new EntityInsertionAdapter<TransactionEntity>(__db) {
@@ -116,6 +120,22 @@ public final class TransactionDao_Impl implements TransactionDao {
         return _query;
       }
     };
+    this.__preparedStmtOfDeleteAllItems = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM transaction_items";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeleteAllTransactions = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM transactions";
+        return _query;
+      }
+    };
   }
 
   @Override
@@ -185,6 +205,40 @@ public final class TransactionDao_Impl implements TransactionDao {
       }
     } finally {
       __preparedStmtOfDeleteTransactionById.release(_stmt);
+    }
+  }
+
+  @Override
+  public void deleteAllItems() {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllItems.acquire();
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfDeleteAllItems.release(_stmt);
+    }
+  }
+
+  @Override
+  public void deleteAllTransactions() {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAllTransactions.acquire();
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfDeleteAllTransactions.release(_stmt);
     }
   }
 

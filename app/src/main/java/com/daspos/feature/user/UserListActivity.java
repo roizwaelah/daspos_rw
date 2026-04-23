@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.model.User;
 import com.daspos.shared.util.ViewUtils;
 import com.daspos.ui.UiStateRenderer;
@@ -29,6 +30,11 @@ public class UserListActivity extends BaseActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!AuthSessionStore.isAdmin(this)) {
+            ViewUtils.toast(this, getString(R.string.admin_only_feature));
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_user_list);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

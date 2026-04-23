@@ -31,6 +31,8 @@ public final class ProductDao_Impl implements ProductDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteById;
 
+  private final SharedSQLiteStatement __preparedStmtOfDeleteAll;
+
   public ProductDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfProductEntity = new EntityInsertionAdapter<ProductEntity>(__db) {
@@ -94,6 +96,14 @@ public final class ProductDao_Impl implements ProductDao {
         return _query;
       }
     };
+    this.__preparedStmtOfDeleteAll = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM products";
+        return _query;
+      }
+    };
   }
 
   @Override
@@ -152,6 +162,23 @@ public final class ProductDao_Impl implements ProductDao {
       }
     } finally {
       __preparedStmtOfDeleteById.release(_stmt);
+    }
+  }
+
+  @Override
+  public void deleteAll() {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteAll.acquire();
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfDeleteAll.release(_stmt);
     }
   }
 

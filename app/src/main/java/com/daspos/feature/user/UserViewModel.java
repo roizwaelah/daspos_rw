@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.User;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.FormValidator;
@@ -44,9 +45,13 @@ public class UserViewModel extends AndroidViewModel {
         }, throwable -> usersUiState.setValue(ListUiState.error("Gagal memuat user")));
     }
 
-    public boolean validateNewUser(String username, String password) {
-        if (FormValidator.isBlank(username)) {
-            validationState.setValue(new ValidationState("USERNAME_REQUIRED", "Username wajib diisi"));
+    public boolean validateNewUser(String email, String password) {
+        if (FormValidator.isBlank(email)) {
+            validationState.setValue(new ValidationState("EMAIL_REQUIRED", "Email wajib diisi"));
+            return false;
+        }
+        if (!email.contains("@")) {
+            validationState.setValue(new ValidationState("EMAIL_INVALID", "Format email tidak valid"));
             return false;
         }
         if (FormValidator.isBlank(password)) {
@@ -57,10 +62,16 @@ public class UserViewModel extends AndroidViewModel {
         return true;
     }
 
-    public void addUser(String username, String password, String role) {
-        UserRepository.addAsync(getApplication(), username, password, role, () -> {
+    public void addUser(String email, String password, String role, List<String> allowedMenus) {
+        UserRepository.addAsync(getApplication(), email, password, role, allowedMenus, () -> {
+            MenuAccessStore.saveForUser(getApplication(), email, allowedMenus);
             loadUsers();
             uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.closeScreen("Data berhasil disimpan")));
-        }, throwable -> uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage("Gagal menyimpan user"))));
+        }, throwable -> {
+            String msg = throwable == null || throwable.getMessage() == null || throwable.getMessage().trim().isEmpty()
+                    ? "Gagal menyimpan user"
+                    : throwable.getMessage().trim();
+            uiEffect.setValue(new ConsumableEvent<>(FormUiEffect.showMessage(msg)));
+        });
     }
 }

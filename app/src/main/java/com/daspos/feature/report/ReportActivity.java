@@ -19,9 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
+import com.daspos.feature.auth.MenuAccessGuard;
+import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.feature.transaction.StrukActivity;
 import com.daspos.model.ReportItem;
 import com.daspos.repository.TransactionRepository;
+import com.daspos.shared.util.DbExecutor;
 import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.DownloadsUriHelper;
 import com.daspos.shared.util.ViewUtils;
@@ -31,8 +34,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,7 +43,6 @@ public class ReportActivity extends BaseActivity {
     private static final int REQ_VIEW_RECEIPT = 901;
     private final Calendar selectedCalendar = Calendar.getInstance();
     private ReportAdapter adapter;
-    private TextView tvTodayHistoryInfo;
     private TextView tvSelectedDate;
     private TextView tvSummaryTransactionCount;
     private TextView tvSummaryIncome;
@@ -51,12 +53,12 @@ public class ReportActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MenuAccessGuard.ensureAccess(this, MenuAccessStore.MENU_REPORT)) return;
         setContentView(R.layout.activity_report);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.reports));
 
-        tvTodayHistoryInfo = findViewById(R.id.tvTodayHistoryInfo);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
         tvSummaryTransactionCount = findViewById(R.id.tvSummaryTransactionCount);
         tvSummaryIncome = findViewById(R.id.tvSummaryIncome);
@@ -66,12 +68,6 @@ public class ReportActivity extends BaseActivity {
         final View layoutState = findViewById(R.id.layoutReportState);
         final ProgressBar progress = findViewById(R.id.progressReport);
         final TextView tvState = findViewById(R.id.tvReportState);
-
-        String today = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date());
-        bindTodayHistoryInfo(today);
-        findViewById(R.id.cardTodayHistory).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showTodayTransactions(); }
-        });
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReportAdapter(new ReportAdapter.Listener() {
@@ -122,65 +118,48 @@ public class ReportActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_VIEW_RECEIPT && resultCode == Activity.RESULT_OK) {
-            bindTodayHistoryInfo(new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date()));
             refreshReport();
         }
     }
 
-    private void showTodayTransactions() {
-        selectedCalendar.setTime(new Date());
-        rgRecap.check(R.id.rbDaily);
-        refreshReport();
-        findViewById(R.id.rvReport).post(new Runnable() {
-            @Override public void run() {
-                findViewById(R.id.rvReport).requestFocus();
-                ViewUtils.toast(ReportActivity.this, getString(R.string.show_today_transactions));
+    private void startExportPdf() {
+        showProgressDialog("Mengekspor laporan PDF...");
+        exportWithCurrentFilter(new ExportAction() {
+            @Override public ExportResult run(List<ReportItem> items, int count, double income, String title) {
+                String fileName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "pdf");
+                Uri uri = DownloadsUriHelper.createDownloadUri(ReportActivity.this, fileName, "application/pdf");
+                if (uri == null) return ExportResult.failed();
+                boolean ok = ReportExportHelper.exportPdf(ReportActivity.this, uri, title, items, count, income);
+                return ok
+                        ? ExportResult.success(getString(R.string.export_success) + "\nTersimpan di Download/DasPos")
+                        : ExportResult.failed();
             }
         });
     }
 
-    private void startExportPdf() {
-        String fileName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "pdf");
-        Uri uri = DownloadsUriHelper.createDownloadUri(this, fileName, "application/pdf");
-        if (uri == null) {
-            showExportResultNotification(false, getString(R.string.export_failed));
-            return;
-        }
-
-        showProgressDialog("Mengekspor laporan PDF...");
-        boolean ok = ReportExportHelper.exportPdf(this, uri, tvSelectedDate.getText().toString(), adapter.getItems(),
-                Integer.parseInt(tvSummaryTransactionCount.getText().toString()), parseMoney(tvSummaryIncome.getText().toString()));
-        hideProgressDialog();
-        showExportResultNotification(ok, getString(ok ? R.string.export_success : R.string.export_failed)
-                + (ok ? "\nTersimpan di Download/DasPos" : ""));
-    }
-
     private void startExportXlsx() {
         showProgressDialog("Mengekspor laporan XLSX...");
+        exportWithCurrentFilter(new ExportAction() {
+            @Override public ExportResult run(List<ReportItem> items, int count, double income, String title) {
+                String xlsxName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx");
+                Uri xlsxUri = DownloadsUriHelper.createDownloadUri(ReportActivity.this, xlsxName,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                boolean ok = xlsxUri != null && ReportExportHelper.exportXlsx(ReportActivity.this, xlsxUri, items, count, income);
+                if (ok) {
+                    return ExportResult.success(getString(R.string.xlsx_export_success) + "\nTersimpan di Download/DasPos");
+                }
 
-        int count = Integer.parseInt(tvSummaryTransactionCount.getText().toString());
-        double income = parseMoney(tvSummaryIncome.getText().toString());
-        boolean ok;
-        String message;
-
-        String xlsxName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "xlsx");
-        Uri xlsxUri = DownloadsUriHelper.createDownloadUri(this, xlsxName,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        ok = xlsxUri != null && ReportExportHelper.exportXlsx(this, xlsxUri, adapter.getItems(), count, income);
-
-        if (ok) {
-            message = getString(R.string.xlsx_export_success) + "\nTersimpan di Download/DasPos";
-        } else {
-            String csvName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "csv");
-            Uri csvUri = DownloadsUriHelper.createDownloadUri(this, csvName, "text/csv");
-            ok = csvUri != null && ReportExportHelper.exportCsv(this, csvUri, adapter.getItems());
-            message = getString(R.string.export_success)
-                    + "\nFile disimpan sebagai CSV (kompatibel Excel)"
-                    + "\nTersimpan di Download/DasPos";
-        }
-
-        hideProgressDialog();
-        showExportResultNotification(ok, ok ? message : getString(R.string.export_failed));
+                String csvName = ReportExportHelper.buildSuggestedFileName("laporan_daspos", "csv");
+                Uri csvUri = DownloadsUriHelper.createDownloadUri(ReportActivity.this, csvName, "text/csv");
+                boolean csvOk = csvUri != null && ReportExportHelper.exportCsv(ReportActivity.this, csvUri, items);
+                if (!csvOk) return ExportResult.failed();
+                return ExportResult.success(
+                        getString(R.string.export_success)
+                                + "\nFile disimpan sebagai CSV (kompatibel Excel)"
+                                + "\nTersimpan di Download/DasPos"
+                );
+            }
+        });
     }
 
 
@@ -224,8 +203,50 @@ public class ReportActivity extends BaseActivity {
                 .show();
     }
 
-    private double parseMoney(String displayed) {
-        try { return Double.parseDouble(displayed.replaceAll("[^0-9]", "")); } catch (Exception e) { return 0; }
+    private void exportWithCurrentFilter(ExportAction action) {
+        boolean monthly = isMonthlyMode();
+        Calendar exportCalendar = (Calendar) selectedCalendar.clone();
+        String exportTitle = tvSelectedDate.getText().toString();
+
+        DbExecutor.runAsync(() -> TransactionRepository.getReportItemsByPeriod(ReportActivity.this, exportCalendar, monthly), items -> {
+            List<ReportItem> safeItems = items == null ? new ArrayList<>() : items;
+            int count = safeItems.size();
+            double income = 0;
+            for (ReportItem item : safeItems) income += item.getTotal();
+
+            ExportResult result = action.run(safeItems, count, income, exportTitle);
+            hideProgressDialog();
+            boolean ok = result != null && result.success;
+            String message = ok
+                    ? result.message
+                    : getString(R.string.export_failed);
+            showExportResultNotification(ok, message);
+        }, throwable -> {
+            hideProgressDialog();
+            showExportResultNotification(false, getString(R.string.export_failed));
+        });
+    }
+
+    private interface ExportAction {
+        ExportResult run(List<ReportItem> items, int count, double income, String title);
+    }
+
+    private static final class ExportResult {
+        private final boolean success;
+        private final String message;
+
+        private ExportResult(boolean success, String message) {
+            this.success = success;
+            this.message = message == null ? "" : message;
+        }
+
+        private static ExportResult success(String message) {
+            return new ExportResult(true, message);
+        }
+
+        private static ExportResult failed() {
+            return new ExportResult(false, "");
+        }
     }
 
     private void shiftPeriod(int diff) {
@@ -241,14 +262,5 @@ public class ReportActivity extends BaseActivity {
         if (monthly) tvSelectedDate.setText(new SimpleDateFormat("MMMM yyyy", new Locale("id", "ID")).format(selectedCalendar.getTime()));
         else tvSelectedDate.setText(new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(selectedCalendar.getTime()));
         viewModel.load(selectedCalendar, monthly);
-    }
-
-
-    private void bindTodayHistoryInfo(String today) {
-        TransactionRepository.getTodayCountAsync(this, count ->
-                TransactionRepository.getTodayIncomeAsync(this, income ->
-                                tvTodayHistoryInfo.setText(today + " • " + count + " transaksi • " + CurrencyUtils.formatRupiah(income)),
-                        throwable -> tvTodayHistoryInfo.setText(today + " • " + count + " transaksi • " + CurrencyUtils.formatRupiah(0))),
-                throwable -> tvTodayHistoryInfo.setText(today + " • 0 transaksi • " + CurrencyUtils.formatRupiah(0)));
     }
 }

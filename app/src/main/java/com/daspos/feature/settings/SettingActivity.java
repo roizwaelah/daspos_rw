@@ -12,6 +12,7 @@ import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
+import com.daspos.feature.user.UserListActivity;
 import com.daspos.shared.util.NotificationDialogHelper;
 import com.daspos.shared.util.ViewUtils;
 
@@ -23,14 +24,21 @@ public class SettingActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         ViewUtils.setupBackToolbar(this, toolbar, getString(R.string.settings));
+        boolean isAdmin = AuthSessionStore.isAdmin(this);
 
         bindSettingItem(R.id.itemStoreInfo, R.string.business_info, R.drawable.ic_store);
         bindSettingItem(R.id.itemPrinter, R.string.printer, R.drawable.ic_menu_printer);
         bindSettingItem(R.id.itemReceipt, R.string.receipt, R.drawable.ic_receipt);
         bindSettingItem(R.id.itemAccount, R.string.account, R.drawable.ic_user);
         bindSettingItem(R.id.itemContact, R.string.contact_us, R.drawable.ic_whatsapp);
+        bindSettingItem(R.id.itemManageUsers, R.string.user_list, R.drawable.ic_user_group);
         bindSettingItem(R.id.itemSelectDatabase, R.string.select_database, R.drawable.ic_menu_database);
         bindSettingItem(R.id.itemAppInfo, R.string.app_info, R.drawable.ic_info);
+        findViewById(R.id.itemManageUsers).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        findViewById(R.id.itemStoreInfo).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        findViewById(R.id.itemContact).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        findViewById(R.id.itemSelectDatabase).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        findViewById(R.id.itemAppInfo).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
 
         findViewById(R.id.itemStoreInfo).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +72,13 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(SettingActivity.this, ContactUsActivity.class));
+            }
+        });
+
+        findViewById(R.id.itemManageUsers).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingActivity.this, UserListActivity.class));
             }
         });
 

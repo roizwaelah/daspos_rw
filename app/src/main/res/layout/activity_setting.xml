@@ -62,6 +62,7 @@
 
                 <include android:id="@+id/itemAccount" layout="@layout/item_setting" />
                 <include android:id="@+id/itemContact" layout="@layout/item_setting" />
+                <include android:id="@+id/itemManageUsers" layout="@layout/item_setting" />
                 <include android:id="@+id/itemSelectDatabase" layout="@layout/item_setting" />
                 <include android:id="@+id/itemAppInfo" layout="@layout/item_setting" />
             </LinearLayout>

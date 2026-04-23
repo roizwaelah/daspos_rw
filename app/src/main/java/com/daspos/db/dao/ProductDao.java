@@ -30,6 +30,9 @@ public interface ProductDao {
     @Query("DELETE FROM products WHERE id = :id")
     void deleteById(String id);
 
+    @Query("DELETE FROM products")
+    void deleteAll();
+
     @Query("SELECT COUNT(*) FROM products")
     int count();
 }
