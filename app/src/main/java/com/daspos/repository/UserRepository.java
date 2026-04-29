@@ -7,11 +7,11 @@ import com.daspos.db.entity.UserEntity;
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.User;
+import com.daspos.remote.RemoteDataProvider;
+import com.daspos.remote.RemoteDataProviderFactory;
 import com.daspos.shared.util.DbExecutor;
 import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.PasswordHasher;
-import com.daspos.supabase.SupabaseAuthService;
-import com.daspos.supabase.SupabaseConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +52,19 @@ public class UserRepository {
                 if (!NetworkUtils.isOnline(context)) {
                     throw new IllegalStateException("Tambah kasir butuh koneksi internet");
                 }
-                SupabaseAuthService.SignupResult result = SupabaseAuthService.signupCashierByAdmin(
-                        safe(AuthSessionStore.getAccessToken(context)),
-                        safe(AuthSessionStore.getOutletId(context)),
-                        username,
-                        password,
-                        defaultDisplayName(username),
-                        allowedMenus
-                );
+                RemoteDataProvider.CreateCashierResult result;
+                try {
+                    result = getRemoteProvider(context).createCashierByAdmin(
+                            safe(AuthSessionStore.getAccessToken(context)),
+                            safe(AuthSessionStore.getOutletId(context)),
+                            username,
+                            password,
+                            defaultDisplayName(username),
+                            allowedMenus
+                    );
+                } catch (Exception e) {
+                    throw new IllegalStateException("Gagal menambah kasir ke remote provider", e);
+                }
                 if (!result.success) {
                     String msg = result.message == null || result.message.trim().isEmpty()
                             ? "Gagal menambah kasir ke Supabase"
@@ -122,7 +127,8 @@ public class UserRepository {
     }
 
     private static boolean shouldCreateSupabaseCashier(Context context, String role) {
-        return SupabaseConfig.isConfigured()
+        if (AuthSessionStore.isLocalDatabaseMode(context)) return false;
+        return getRemoteProvider(context).isConfigured(context)
                 && "supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))
                 && !safe(AuthSessionStore.getAccessToken(context)).isEmpty()
                 && !safe(AuthSessionStore.getOutletId(context)).isEmpty()
@@ -130,7 +136,8 @@ public class UserRepository {
     }
 
     private static void syncRemoteCashiersIfNeeded(Context context) {
-        if (!SupabaseConfig.isConfigured()) return;
+        if (AuthSessionStore.isLocalDatabaseMode(context)) return;
+        if (!getRemoteProvider(context).isConfigured(context)) return;
         if (!NetworkUtils.isOnline(context)) return;
         if (!"supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))) return;
         String role = safe(AuthSessionStore.getRole(context));
@@ -139,10 +146,15 @@ public class UserRepository {
         String accessToken = safe(AuthSessionStore.getAccessToken(context));
         if (accessToken.isEmpty()) return;
 
-        SupabaseAuthService.ListCashiersResult result = SupabaseAuthService.listCashiersByAdmin(accessToken);
+        RemoteDataProvider.ListCashiersResult result;
+        try {
+            result = getRemoteProvider(context).listCashiersByAdmin(accessToken);
+        } catch (Exception ignored) {
+            return;
+        }
         if (!result.success) return;
 
-        for (SupabaseAuthService.CashierUser cashier : result.users) {
+        for (RemoteDataProvider.RemoteCashier cashier : result.users) {
             String email = safe(cashier.email);
             if (email.isEmpty()) continue;
             UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(email);
@@ -163,6 +175,10 @@ public class UserRepository {
 
     private static String safe(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private static RemoteDataProvider getRemoteProvider(Context context) {
+        return RemoteDataProviderFactory.getProvider(context);
     }
 
 

@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tvReceiptPhone"
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tvReceiptEmail"
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textColor="@color/text_secondary"
-                    android:textSize="11sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <View
@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_weight="1"
-                    android:text="No. Transaksi: PREVIEW"
+                    android:text="No. Trx: PREVIEW"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
@@ -166,6 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_gravity="end"
                 android:gravity="end"
                 android:text="Total: Rp 0"
                 android:textColor="@color/text_primary"
@@ -188,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:gravity="end"
-                android:text="Kembalian: Rp 0"
+                android:text="Kembali: Rp 0"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp" />
 
@@ -206,14 +207,14 @@
                 android:gravity="center"
                 android:text="Terima kasih"
                 android:textColor="@color/text_secondary"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:gravity="end"
+            android:gravity="center"
             android:orientation="horizontal" >
 
             <com.google.android.material.button.MaterialButton
@@ -221,6 +222,7 @@
                 style="@style/DasPosDangerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
                 android:text="@string/delete_receipt" />
 
             <com.google.android.material.button.MaterialButton
@@ -229,6 +231,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="@string/print_receipt" />
 
             <com.google.android.material.button.MaterialButton
@@ -236,7 +239,7 @@
                 style="@style/DasPosPrimaryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="0dp"
                 android:text="@string/finish" />
 
         </LinearLayout>

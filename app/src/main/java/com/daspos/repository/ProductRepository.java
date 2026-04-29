@@ -9,15 +9,18 @@ import com.daspos.db.entity.ProductEntity;
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
+import com.daspos.model.SalesUnit;
+import com.daspos.remote.RemoteDataProvider;
+import com.daspos.remote.RemoteDataProviderFactory;
 import com.daspos.shared.util.DbExecutor;
 import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.RestoreStateStore;
-import com.daspos.supabase.SupabaseConfig;
-import com.daspos.supabase.SupabaseProductService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 public class ProductRepository {
@@ -46,18 +49,98 @@ public class ProductRepository {
     }
 
     public static void add(final Context context, final String name, final double price, final int stock) {
+        add(
+                context,
+                name,
+                stock,
+                price,
+                price * SalesUnit.defaultFactor(SalesUnit.RENTENG),
+                price * SalesUnit.defaultFactor(SalesUnit.PAK),
+                price * SalesUnit.defaultFactor(SalesUnit.KARTON),
+                SalesUnit.defaultFactor(SalesUnit.RENTENG),
+                SalesUnit.defaultFactor(SalesUnit.PAK),
+                SalesUnit.defaultFactor(SalesUnit.KARTON)
+        );
+    }
+
+    public static void add(
+            final Context context,
+            final String name,
+            final int stock,
+            final double priceEcer,
+            final double priceRenteng,
+            final double pricePak,
+            final double priceKarton
+    ) {
+        add(
+                context,
+                name,
+                stock,
+                priceEcer,
+                priceRenteng,
+                pricePak,
+                priceKarton,
+                SalesUnit.defaultFactor(SalesUnit.RENTENG),
+                SalesUnit.defaultFactor(SalesUnit.PAK),
+                SalesUnit.defaultFactor(SalesUnit.KARTON)
+        );
+    }
+
+    public static void add(
+            final Context context,
+            final String name,
+            final int stock,
+            final double priceEcer,
+            final double priceRenteng,
+            final double pricePak,
+            final double priceKarton,
+            final int factorRenteng,
+            final int factorPak,
+            final int factorKarton
+    ) {
         DbExecutor.runBlocking(() -> {
             String normalizedName = normalizeProductName(name);
+            String productId = UUID.randomUUID().toString();
+            int safeFactorRenteng = factorRenteng <= 0 ? SalesUnit.defaultFactor(SalesUnit.RENTENG) : factorRenteng;
+            int safeFactorPak = factorPak <= 0 ? SalesUnit.defaultFactor(SalesUnit.PAK) : factorPak;
+            int safeFactorKarton = factorKarton <= 0 ? SalesUnit.defaultFactor(SalesUnit.KARTON) : factorKarton;
+            Product product = new Product(
+                    productId,
+                    normalizedName,
+                    Math.max(0, priceEcer),
+                    stock,
+                    Math.max(0, priceEcer),
+                    Math.max(0, priceRenteng),
+                    Math.max(0, pricePak),
+                    Math.max(0, priceKarton),
+                    safeFactorRenteng,
+                    safeFactorPak,
+                    safeFactorKarton
+            );
             if (shouldUseSupabase(context)) {
                 try {
                     if (NetworkUtils.isOnline(context)) {
-                        SupabaseProductService.add(getOutletId(context), getAccessToken(context), normalizedName, price, stock);
-                        refreshProductsNow(context);
+                        getRemoteProvider(context).addProduct(getOutletId(context), getAccessToken(context), product);
+                        upsertLocalProduct(context, product);
+                        ProductUnitPriceStore.save(context, product);
+                        triggerSyncIfPossible(context);
                     } else {
-                        String localId = UUID.randomUUID().toString();
-                        Product local = new Product(localId, normalizedName, price, stock);
-                        upsertLocalProduct(context, local);
-                        PendingSyncStore.enqueueProductAdd(context, localId, normalizedName, price, stock);
+                        upsertLocalProduct(context, product);
+                        ProductUnitPriceStore.save(context, product);
+                        PendingSyncStore.enqueueProductAdd(
+                                context,
+                                productId,
+                                normalizedName,
+                                product.getPriceEcer(),
+                                stock,
+                                product.getPriceEcer(),
+                                product.getPriceRenteng(),
+                                product.getPricePak(),
+                                product.getPriceKarton(),
+                                product.getFactorRenteng(),
+                                product.getFactorPak(),
+                                product.getFactorKarton()
+                        );
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -65,7 +148,8 @@ public class ProductRepository {
                 return;
             }
             AppDatabase.getInstance(context).productDao()
-                    .insert(new ProductEntity(UUID.randomUUID().toString(), normalizedName, price, stock));
+                    .insert(new ProductEntity(productId, normalizedName, product.getPriceEcer(), stock));
+            ProductUnitPriceStore.save(context, product);
         });
     }
 
@@ -75,23 +159,38 @@ public class ProductRepository {
                     product.getId(),
                     normalizeProductName(product.getName()),
                     product.getPrice(),
-                    product.getStock()
+                    product.getStock(),
+                    product.getPriceEcer(),
+                    product.getPriceRenteng(),
+                    product.getPricePak(),
+                    product.getPriceKarton(),
+                    product.getFactorRenteng(),
+                    product.getFactorPak(),
+                    product.getFactorKarton()
             );
             if (shouldUseSupabase(context)) {
                 try {
                     if (NetworkUtils.isOnline(context)) {
                         syncPendingProductOpsNow(context);
-                        SupabaseProductService.update(getOutletId(context), getAccessToken(context), normalizedProduct);
+                        getRemoteProvider(context).updateProduct(getOutletId(context), getAccessToken(context), normalizedProduct);
                     } else {
                         PendingSyncStore.enqueueProductUpdate(
                                 context,
                                 normalizedProduct.getId(),
                                 normalizedProduct.getName(),
                                 normalizedProduct.getPrice(),
-                                normalizedProduct.getStock()
+                                normalizedProduct.getStock(),
+                                normalizedProduct.getPriceEcer(),
+                                normalizedProduct.getPriceRenteng(),
+                                normalizedProduct.getPricePak(),
+                                normalizedProduct.getPriceKarton(),
+                                normalizedProduct.getFactorRenteng(),
+                                normalizedProduct.getFactorPak(),
+                                normalizedProduct.getFactorKarton()
                         );
                     }
                     upsertLocalProduct(context, normalizedProduct);
+                    ProductUnitPriceStore.save(context, normalizedProduct);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -104,6 +203,7 @@ public class ProductRepository {
                             normalizedProduct.getPrice(),
                             normalizedProduct.getStock()
                     ));
+            ProductUnitPriceStore.save(context, normalizedProduct);
         });
     }
 
@@ -113,7 +213,7 @@ public class ProductRepository {
                 try {
                     if (NetworkUtils.isOnline(context)) {
                         syncPendingProductOpsNow(context);
-                        SupabaseProductService.delete(getOutletId(context), getAccessToken(context), productId);
+                        getRemoteProvider(context).deleteProduct(getOutletId(context), getAccessToken(context), productId);
                     } else {
                         PendingSyncStore.enqueueProductDelete(context, productId);
                     }
@@ -129,11 +229,12 @@ public class ProductRepository {
 
     public static boolean hasEnoughStock(Context context, List<CartItem> items) {
         if (shouldUseSupabase(context)) {
-            return DbExecutor.runBlocking(() -> SupabaseProductService.hasEnoughStock(getOutletId(context), getAccessToken(context), items));
+            return DbExecutor.runBlocking(() -> getRemoteProvider(context).hasEnoughStock(getOutletId(context), getAccessToken(context), items));
         }
-        for (CartItem item : items) {
-            Product p = getById(context, item.getProduct().getId());
-            if (p == null || p.getStock() < item.getQty()) return false;
+        Map<String, Integer> requiredBaseQty = aggregateBaseQty(items);
+        for (Map.Entry<String, Integer> entry : requiredBaseQty.entrySet()) {
+            Product p = getById(context, entry.getKey());
+            if (p == null || p.getStock() < entry.getValue()) return false;
         }
         return true;
     }
@@ -142,7 +243,7 @@ public class ProductRepository {
         DbExecutor.runBlocking(() -> {
             if (shouldUseSupabase(context)) {
                 try {
-                    SupabaseProductService.reduceStock(getOutletId(context), getAccessToken(context), items);
+                    getRemoteProvider(context).reduceStock(getOutletId(context), getAccessToken(context), items);
                     applyLocalStockDelta(context, items, -1);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -152,7 +253,7 @@ public class ProductRepository {
             for (CartItem item : items) {
                 ProductEntity p = AppDatabase.getInstance(context).productDao().getById(item.getProduct().getId());
                 if (p != null) {
-                    p.stock = Math.max(0, p.stock - item.getQty());
+                    p.stock = Math.max(0, p.stock - item.getBaseQty());
                     AppDatabase.getInstance(context).productDao().update(p);
                 }
             }
@@ -163,7 +264,7 @@ public class ProductRepository {
         DbExecutor.runBlocking(() -> {
             if (shouldUseSupabase(context)) {
                 try {
-                    SupabaseProductService.increaseStock(getOutletId(context), getAccessToken(context), items);
+                    getRemoteProvider(context).increaseStock(getOutletId(context), getAccessToken(context), items);
                     applyLocalStockDelta(context, items, 1);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -173,7 +274,7 @@ public class ProductRepository {
             for (CartItem item : items) {
                 ProductEntity p = AppDatabase.getInstance(context).productDao().getById(item.getProduct().getId());
                 if (p != null) {
-                    p.stock = p.stock + item.getQty();
+                    p.stock = p.stock + item.getBaseQty();
                     AppDatabase.getInstance(context).productDao().update(p);
                 }
             }
@@ -186,9 +287,12 @@ public class ProductRepository {
             triggerProductsBackgroundRefreshIfNeeded(context);
             if (!cached.isEmpty()) return cached;
             syncPendingProductOpsNow(context);
-            List<Product> remote = SupabaseProductService.getAll(getOutletId(context), getAccessToken(context));
+            List<Product> remote = getRemoteProvider(context).getAllProducts(getOutletId(context), getAccessToken(context));
             replaceLocalProductCache(context, remote);
             markProductsRefreshed(context);
+            for (Product product : remote) {
+                ProductUnitPriceStore.save(context, product);
+            }
             return remote;
         }
         return getAllLocalProducts(context);
@@ -197,24 +301,20 @@ public class ProductRepository {
     private static Product getByIdInternal(Context context, String id) throws Exception {
         if (shouldUseSupabase(context)) {
             Product local = getByIdLocalProduct(context, id);
-            if (!NetworkUtils.isOnline(context)) return local;
-            try {
-                Product remote = SupabaseProductService.getById(getOutletId(context), getAccessToken(context), id);
-                if (remote != null) {
-                    upsertLocalProduct(context, remote);
-                    return remote;
-                }
-            } catch (Exception ignored) {
-                // Fallback to local cache when remote check fails.
-            }
-            return local;
+            if (local != null) return local;
+            Product remote = getRemoteProvider(context).getProductById(getOutletId(context), getAccessToken(context), id);
+            if (remote != null) upsertLocalProduct(context, remote);
+            if (remote != null) ProductUnitPriceStore.save(context, remote);
+            return remote;
         }
         return getByIdLocalProduct(context, id);
     }
 
     private static boolean shouldUseSupabase(Context context) {
-        boolean active = SupabaseConfig.isConfigured()
-                && "supabase".equalsIgnoreCase(AuthSessionStore.getSource(context))
+        if (AuthSessionStore.isLocalDatabaseMode(context)) return false;
+        RemoteDataProvider provider = getRemoteProvider(context);
+        boolean active = provider != null
+                && provider.isConfigured(context)
                 && !getAccessToken(context).isEmpty()
                 && !getOutletId(context).isEmpty();
         if (active) {
@@ -240,7 +340,9 @@ public class ProductRepository {
     private static List<Product> getAllLocalProducts(Context context) {
         List<Product> models = new ArrayList<>();
         for (ProductEntity e : AppDatabase.getInstance(context).productDao().getAll()) {
-            models.add(new Product(e.id, e.name, e.price, e.stock));
+            Product model = new Product(e.id, e.name, e.price, e.stock);
+            ProductUnitPriceStore.apply(context, model);
+            models.add(model);
         }
         return models;
     }
@@ -248,7 +350,9 @@ public class ProductRepository {
     private static Product getByIdLocalProduct(Context context, String id) {
         ProductEntity e = AppDatabase.getInstance(context).productDao().getById(id);
         if (e == null) return null;
-        return new Product(e.id, e.name, e.price, e.stock);
+        Product model = new Product(e.id, e.name, e.price, e.stock);
+        ProductUnitPriceStore.apply(context, model);
+        return model;
     }
 
     private static void replaceLocalProductCache(Context context, List<Product> products) {
@@ -272,7 +376,7 @@ public class ProductRepository {
         for (CartItem item : items) {
             ProductEntity p = AppDatabase.getInstance(context).productDao().getById(item.getProduct().getId());
             if (p == null) continue;
-            int delta = item.getQty() * direction;
+            int delta = item.getBaseQty() * direction;
             p.stock = direction < 0 ? Math.max(0, p.stock + delta) : p.stock + delta;
             AppDatabase.getInstance(context).productDao().update(p);
         }
@@ -280,6 +384,20 @@ public class ProductRepository {
 
     static void applyLocalCheckoutStockReduction(Context context, List<CartItem> items) {
         applyLocalStockDelta(context, items, -1);
+    }
+
+    private static Map<String, Integer> aggregateBaseQty(List<CartItem> items) {
+        Map<String, Integer> out = new HashMap<>();
+        if (items == null) return out;
+        for (CartItem item : items) {
+            if (item == null || item.getProduct() == null) continue;
+            String productId = item.getProduct().getId();
+            if (productId == null || productId.trim().isEmpty()) continue;
+            int baseQty = Math.max(0, item.getBaseQty());
+            int previous = out.containsKey(productId) ? out.get(productId) : 0;
+            out.put(productId, previous + baseQty);
+        }
+        return out;
     }
 
     private static void triggerProductsBackgroundRefreshIfNeeded(Context context) {
@@ -302,8 +420,11 @@ public class ProductRepository {
     }
 
     private static void refreshProductsNow(Context context) throws Exception {
-        List<Product> remote = SupabaseProductService.getAll(getOutletId(context), getAccessToken(context));
+        List<Product> remote = getRemoteProvider(context).getAllProducts(getOutletId(context), getAccessToken(context));
         replaceLocalProductCache(context, remote);
+        for (Product product : remote) {
+            ProductUnitPriceStore.save(context, product);
+        }
     }
 
     private static void markProductsRefreshed(Context context) {
@@ -357,36 +478,45 @@ public class ProductRepository {
 
         for (PendingSyncStore.ProductSyncOp op : ops) {
             if ("add".equals(op.op)) {
-                SupabaseProductService.addWithId(
-                        getOutletId(context),
-                        getAccessToken(context),
-                        op.id,
-                        op.name,
-                        op.price,
-                        op.stock
-                );
+                getRemoteProvider(context).addProduct(getOutletId(context), getAccessToken(context), toProduct(op));
             } else if ("update".equals(op.op)) {
                 try {
-                    SupabaseProductService.update(
-                            getOutletId(context),
-                            getAccessToken(context),
-                            new Product(op.id, op.name, op.price, op.stock)
-                    );
+                    getRemoteProvider(context).updateProduct(getOutletId(context), getAccessToken(context), toProduct(op));
                 } catch (Exception e) {
-                    SupabaseProductService.addWithId(
-                            getOutletId(context),
-                            getAccessToken(context),
-                            op.id,
-                            op.name,
-                            op.price,
-                            op.stock
-                    );
+                    getRemoteProvider(context).addProduct(getOutletId(context), getAccessToken(context), toProduct(op));
                 }
             } else if ("delete".equals(op.op)) {
-                SupabaseProductService.delete(getOutletId(context), getAccessToken(context), op.id);
+                getRemoteProvider(context).deleteProduct(getOutletId(context), getAccessToken(context), op.id);
             }
             PendingSyncStore.removeFirstProductOp(context);
         }
+    }
+
+    private static RemoteDataProvider getRemoteProvider(Context context) {
+        return RemoteDataProviderFactory.getProvider(context);
+    }
+
+    private static Product toProduct(PendingSyncStore.ProductSyncOp op) {
+        double priceEcer = op.priceEcer > 0 ? op.priceEcer : op.price;
+        int factorRenteng = op.factorRenteng <= 0 ? 10 : op.factorRenteng;
+        int factorPak = op.factorPak <= 0 ? 20 : op.factorPak;
+        int factorKarton = op.factorKarton <= 0 ? 100 : op.factorKarton;
+        double priceRenteng = op.priceRenteng > 0 ? op.priceRenteng : priceEcer * factorRenteng;
+        double pricePak = op.pricePak > 0 ? op.pricePak : priceEcer * factorPak;
+        double priceKarton = op.priceKarton > 0 ? op.priceKarton : priceEcer * factorKarton;
+        return new Product(
+                op.id,
+                op.name,
+                priceEcer,
+                op.stock,
+                priceEcer,
+                priceRenteng,
+                pricePak,
+                priceKarton,
+                factorRenteng,
+                factorPak,
+                factorKarton
+        );
     }
 
 
@@ -405,6 +535,55 @@ public class ProductRepository {
     public static void addAsync(final Context context, final String name, final double price, final int stock, final Runnable onSuccess, final DbExecutor.ErrorCallback onError) {
         DbExecutor.runAsync(() -> {
             add(context, name, price, stock);
+            return null;
+        }, ignored -> {
+            if (onSuccess != null) onSuccess.run();
+        }, onError);
+    }
+
+    public static void addAsync(
+            final Context context,
+            final String name,
+            final int stock,
+            final double priceEcer,
+            final double priceRenteng,
+            final double pricePak,
+            final double priceKarton,
+            final Runnable onSuccess,
+            final DbExecutor.ErrorCallback onError
+    ) {
+        addAsync(
+                context,
+                name,
+                stock,
+                priceEcer,
+                priceRenteng,
+                pricePak,
+                priceKarton,
+                SalesUnit.defaultFactor(SalesUnit.RENTENG),
+                SalesUnit.defaultFactor(SalesUnit.PAK),
+                SalesUnit.defaultFactor(SalesUnit.KARTON),
+                onSuccess,
+                onError
+        );
+    }
+
+    public static void addAsync(
+            final Context context,
+            final String name,
+            final int stock,
+            final double priceEcer,
+            final double priceRenteng,
+            final double pricePak,
+            final double priceKarton,
+            final int factorRenteng,
+            final int factorPak,
+            final int factorKarton,
+            final Runnable onSuccess,
+            final DbExecutor.ErrorCallback onError
+    ) {
+        DbExecutor.runAsync(() -> {
+            add(context, name, stock, priceEcer, priceRenteng, pricePak, priceKarton, factorRenteng, factorPak, factorKarton);
             return null;
         }, ignored -> {
             if (onSuccess != null) onSuccess.run();
