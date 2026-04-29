@@ -40,7 +40,11 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
     public void onBindViewHolder(@NonNull VH holder, int position) {
         final Product p = items.get(position);
         holder.tvName.setText(p.getName());
-        holder.tvInfo.setText(CurrencyUtils.formatRupiah(p.getPrice()) + " • stok " + p.getStock());
+        if (p.isTierPricingEnabled()) {
+            holder.tvInfo.setText("Ecer " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + " | Renteng " + CurrencyUtils.formatRupiah(p.getPriceRenteng()) + " | stok " + p.getStock() + " ecer");
+        } else {
+            holder.tvInfo.setText("Harga " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + " | stok " + p.getStock());
+        }
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { listener.onAdd(p); }
         });
@@ -59,3 +63,4 @@ public class ProductSearchAdapter extends RecyclerView.Adapter<ProductSearchAdap
         }
     }
 }
+

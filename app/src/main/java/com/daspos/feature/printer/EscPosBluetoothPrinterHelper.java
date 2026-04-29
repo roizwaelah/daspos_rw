@@ -13,7 +13,9 @@ import androidx.core.app.ActivityCompat;
 import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
+import com.daspos.model.SalesUnit;
 import com.daspos.model.TransactionRecord;
+import com.daspos.shared.util.CurrencyUtils;
 
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +32,6 @@ public class EscPosBluetoothPrinterHelper {
     }
 
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
     public static PrintResult printReceipt(Context context, TransactionRecord trx) {
         if (trx == null) return PrintResult.WRITE_FAILED;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
@@ -78,6 +79,7 @@ public class EscPosBluetoothPrinterHelper {
             byte[] init = new byte[]{0x1B, 0x40};
             byte[] alignCenter = new byte[]{0x1B, 0x61, 0x01};
             byte[] alignLeft = new byte[]{0x1B, 0x61, 0x00};
+            byte[] alignRight = new byte[]{0x1B, 0x61, 0x02};
             byte[] cut = new byte[]{0x1D, 0x56, 0x41, 0x10};
 
             out.write(init);
@@ -87,19 +89,43 @@ public class EscPosBluetoothPrinterHelper {
             if (!addressLine.isEmpty()) out.write((addressLine + "\n").getBytes(StandardCharsets.UTF_8));
             if (!phoneLine.isEmpty()) out.write((phoneLine + "\n").getBytes(StandardCharsets.UTF_8));
             if (!emailLine.isEmpty()) out.write((emailLine + "\n").getBytes(StandardCharsets.UTF_8));
-            out.write((trx.getDate() + " " + trx.getTime() + "\n").getBytes(StandardCharsets.UTF_8));
             out.write("--------------------------------\n".getBytes(StandardCharsets.UTF_8));
             out.write(alignLeft);
+            out.write(("No. Transaksi: " + trx.getId() + "\n").getBytes(StandardCharsets.UTF_8));
+            out.write((trx.getDate() + " " + trx.getTime() + "\n").getBytes(StandardCharsets.UTF_8));
+            out.write("--------------------------------\n".getBytes(StandardCharsets.UTF_8));
 
             for (CartItem item : trx.getItems()) {
-                String line = item.getProduct().getName() + " x" + item.getQty() + "  " + ((long) item.getSubtotal()) + "\n";
-                out.write(line.getBytes(StandardCharsets.UTF_8));
+                byte[] boldOn = new byte[]{0x1B, 0x45, 0x01};
+                byte[] boldOff = new byte[]{0x1B, 0x45, 0x00};
+                out.write(boldOn);
+                String nameLine = item.getProduct().getName() + "\n";
+                out.write(nameLine.getBytes(StandardCharsets.UTF_8));
+                out.write(boldOff);
+                boolean tierEnabled = item.getProduct() != null && item.getProduct().isTierPricingEnabled();
+                String detailLine = tierEnabled
+                        ? item.getQty()
+                        + " x "
+                        + SalesUnit.displayName(item.getUnitCode())
+                        + " @ "
+                        + CurrencyUtils.formatRupiah(item.getUnitPrice())
+                        + "\n"
+                        : item.getQty()
+                        + " x "
+                        + CurrencyUtils.formatRupiah(item.getUnitPrice())
+                        + "\n";
+                out.write(detailLine.getBytes(StandardCharsets.UTF_8));
+                out.write(alignRight);
+                out.write((CurrencyUtils.formatRupiah(item.getSubtotal()) + "\n").getBytes(StandardCharsets.UTF_8));
+                out.write(alignLeft);
+                out.write("\n".getBytes(StandardCharsets.UTF_8));
             }
 
             out.write("--------------------------------\n".getBytes(StandardCharsets.UTF_8));
-            out.write(("Total: " + ((long) trx.getTotal()) + "\n").getBytes(StandardCharsets.UTF_8));
-            out.write(("Bayar: " + ((long) trx.getPay()) + "\n").getBytes(StandardCharsets.UTF_8));
-            out.write(("Kembali: " + ((long) trx.getChange()) + "\n\n").getBytes(StandardCharsets.UTF_8));
+            out.write(alignRight);
+            out.write(("Total: " + CurrencyUtils.formatRupiah(trx.getTotal()) + "\n").getBytes(StandardCharsets.UTF_8));
+            out.write(("Bayar: " + CurrencyUtils.formatRupiah(trx.getPay()) + "\n").getBytes(StandardCharsets.UTF_8));
+            out.write(("Kembalian: " + CurrencyUtils.formatRupiah(trx.getChange()) + "\n\n").getBytes(StandardCharsets.UTF_8));
             out.write(alignCenter);
             out.write((receiptFooter + "\n\n").getBytes(StandardCharsets.UTF_8));
             out.write(cut);

@@ -10,8 +10,8 @@ android {
         applicationId "com.daspos"
         minSdk 22
         targetSdk 34
-        versionCode 5
-        versionName "1.9"
+        versionCode 1
+        versionName "3.0"
         buildConfigField "String", "SUPABASE_URL", "\"${project.findProperty("SUPABASE_URL") ?: ""}\""
         buildConfigField "String", "SUPABASE_ANON_KEY", "\"${project.findProperty("SUPABASE_ANON_KEY") ?: ""}\""
         buildConfigField "String", "SUPABASE_DELETE_ACCOUNT_FUNCTION", "\"${project.findProperty("SUPABASE_DELETE_ACCOUNT_FUNCTION") ?: "delete-account"}\""

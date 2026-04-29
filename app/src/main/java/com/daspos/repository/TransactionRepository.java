@@ -12,12 +12,13 @@ import com.daspos.model.BestSellerItem;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
 import com.daspos.model.ReportItem;
+import com.daspos.model.SalesUnit;
 import com.daspos.model.TransactionRecord;
+import com.daspos.remote.RemoteDataProvider;
+import com.daspos.remote.RemoteDataProviderFactory;
 import com.daspos.shared.util.DbExecutor;
 import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.RestoreStateStore;
-import com.daspos.supabase.SupabaseConfig;
-import com.daspos.supabase.SupabaseTransactionService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class TransactionRepository {
         return DbExecutor.runBlocking(() -> {
             if (shouldUseSupabase(context)) {
                 if (NetworkUtils.isOnline(context)) {
-                    String transactionId = SupabaseTransactionService.save(
+                    String transactionId = getRemoteProvider(context).saveTransaction(
                             getOutletId(context),
                             getUserId(context),
                             getAccessToken(context),
@@ -51,6 +52,7 @@ public class TransactionRepository {
                     );
                     // Keep local stock responsive right after successful remote checkout.
                     ProductRepository.applyLocalCheckoutStockReduction(context, items);
+                    cacheSavedSupabaseTransaction(context, transactionId, items, total, pay, change);
                     ProductRepository.triggerSyncIfPossible(context);
                     triggerTransactionsBackgroundRefresh(context, true);
                     return transactionId;
@@ -71,7 +73,7 @@ public class TransactionRepository {
                 List<TransactionRecord> cached = getAllLocal(context);
                 triggerTransactionsBackgroundRefresh(context, false);
                 if (!cached.isEmpty()) return cached;
-                List<TransactionRecord> remote = SupabaseTransactionService.getAll(getOutletId(context), getAccessToken(context));
+                List<TransactionRecord> remote = getRemoteProvider(context).getAllTransactions(getOutletId(context), getAccessToken(context));
                 replaceLocalTransactionCache(context, remote);
                 markTransactionsRefreshed(context);
                 return remote;
@@ -89,7 +91,7 @@ public class TransactionRepository {
                     triggerTransactionsBackgroundRefresh(context, false);
                     return local;
                 }
-                TransactionRecord remote = SupabaseTransactionService.getById(getOutletId(context), getAccessToken(context), transactionId);
+                TransactionRecord remote = getRemoteProvider(context).getTransactionById(getOutletId(context), getAccessToken(context), transactionId);
                 if (remote != null) upsertLocalTransaction(context, remote);
                 return remote;
             }
@@ -184,7 +186,7 @@ public class TransactionRepository {
 
     private static List<TransactionRecord> getAllFreshForReport(Context context) {
         try {
-            List<TransactionRecord> remote = SupabaseTransactionService.getAll(getOutletId(context), getAccessToken(context));
+            List<TransactionRecord> remote = getRemoteProvider(context).getAllTransactions(getOutletId(context), getAccessToken(context));
             replaceLocalTransactionCache(context, remote);
             markTransactionsRefreshed(context);
             return remote;
@@ -195,7 +197,7 @@ public class TransactionRepository {
 
     private static List<TransactionRecord> getReportSourceRecords(Context context, Calendar selectedCalendar, boolean monthly) {
         try {
-            return SupabaseTransactionService.getForReportPeriod(
+            return getRemoteProvider(context).getTransactionsForReportPeriod(
                     getOutletId(context),
                     getAccessToken(context),
                     selectedCalendar,
@@ -230,8 +232,8 @@ public class TransactionRepository {
                     summary = new BestSellerSummary(productId, item.getProduct().getName());
                     summaries.put(productId, summary);
                 }
-                summary.totalQty += item.getQty();
-                summary.totalRevenue += item.getProduct().getPrice() * item.getQty();
+                summary.totalQty += item.getBaseQty();
+                summary.totalRevenue += item.getSubtotal();
             }
         }
 
@@ -329,8 +331,8 @@ public class TransactionRepository {
                     UUID.randomUUID().toString(),
                     id,
                     item.getProduct().getId(),
-                    item.getProduct().getName(),
-                    item.getProduct().getPrice(),
+                    toStoredProductName(item),
+                    item.getUnitPrice(),
                     item.getQty()
             ));
         }
@@ -344,13 +346,26 @@ public class TransactionRepository {
         AppDatabase db = AppDatabase.getInstance(context);
         for (TransactionEntity t : db.transactionDao().getAllTransactions()) {
             List<CartItem> items = new ArrayList<>();
-            for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
-                items.add(new CartItem(
-                        new Product(item.productId, item.productName, item.price, 0),
-                        item.qty
-                ));
-            }
-            list.add(new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items));
+        for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
+            ParsedStoredItem parsed = parseStoredProductName(item.productName);
+            Product product = parsed.tierPricingEnabled
+                    ? new Product(item.productId, parsed.productName, item.price, 0)
+                    : new Product(
+                    item.productId,
+                    parsed.productName,
+                    item.price,
+                    0,
+                    item.price,
+                    item.price,
+                    item.price,
+                    item.price,
+                    1,
+                    1,
+                    1
+            );
+            items.add(new CartItem(product, item.qty, parsed.unitCode, parsed.unitFactorToBase, item.price));
+        }
+        list.add(new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items));
         }
         return list;
     }
@@ -362,10 +377,23 @@ public class TransactionRepository {
 
         List<CartItem> items = new ArrayList<>();
         for (TransactionItemEntity item : db.transactionDao().getItemsByTransactionId(t.id)) {
-            items.add(new CartItem(
-                    new Product(item.productId, item.productName, item.price, 0),
-                    item.qty
-            ));
+            ParsedStoredItem parsed = parseStoredProductName(item.productName);
+            Product product = parsed.tierPricingEnabled
+                    ? new Product(item.productId, parsed.productName, item.price, 0)
+                    : new Product(
+                    item.productId,
+                    parsed.productName,
+                    item.price,
+                    0,
+                    item.price,
+                    item.price,
+                    item.price,
+                    item.price,
+                    1,
+                    1,
+                    1
+            );
+            items.add(new CartItem(product, item.qty, parsed.unitCode, parsed.unitFactorToBase, item.price));
         }
         return new TransactionRecord(t.id, t.date, t.time, t.total, t.pay, t.changeAmount, items);
     }
@@ -378,17 +406,30 @@ public class TransactionRepository {
         List<TransactionItemEntity> itemEntities = db.transactionDao().getItemsByTransactionId(transactionId);
         List<CartItem> items = new ArrayList<>();
         for (TransactionItemEntity item : itemEntities) {
-            items.add(new CartItem(
-                    new Product(item.productId, item.productName, item.price, 0),
-                    item.qty
-            ));
+            ParsedStoredItem parsed = parseStoredProductName(item.productName);
+            Product product = parsed.tierPricingEnabled
+                    ? new Product(item.productId, parsed.productName, item.price, 0)
+                    : new Product(
+                    item.productId,
+                    parsed.productName,
+                    item.price,
+                    0,
+                    item.price,
+                    item.price,
+                    item.price,
+                    item.price,
+                    1,
+                    1,
+                    1
+            );
+            items.add(new CartItem(product, item.qty, parsed.unitCode, parsed.unitFactorToBase, item.price));
         }
 
         db.runInTransaction(() -> {
             for (CartItem item : items) {
                 com.daspos.db.entity.ProductEntity product = db.productDao().getById(item.getProduct().getId());
                 if (product != null) {
-                    product.stock = product.stock + item.getQty();
+                    product.stock = product.stock + item.getBaseQty();
                     db.productDao().update(product);
                 }
             }
@@ -400,7 +441,7 @@ public class TransactionRepository {
 
     private static boolean deleteByIdSupabase(Context context, String transactionId) {
         try {
-            TransactionRecord record = SupabaseTransactionService.getById(
+            TransactionRecord record = getRemoteProvider(context).getTransactionById(
                     getOutletId(context),
                     getAccessToken(context),
                     transactionId
@@ -408,7 +449,7 @@ public class TransactionRepository {
             if (record == null) return false;
 
             ProductRepository.increaseStock(context, record.getItems());
-            boolean deleted = SupabaseTransactionService.deleteById(getOutletId(context), getAccessToken(context), transactionId);
+            boolean deleted = getRemoteProvider(context).deleteTransactionById(getOutletId(context), getAccessToken(context), transactionId);
             if (deleted) {
                 AppDatabase.getInstance(context).transactionDao().deleteItemsByTransactionId(record.getId());
                 AppDatabase.getInstance(context).transactionDao().deleteTransactionById(record.getId());
@@ -421,8 +462,10 @@ public class TransactionRepository {
     }
 
     private static boolean shouldUseSupabase(Context context) {
-        boolean active = SupabaseConfig.isConfigured()
-                && "supabase".equalsIgnoreCase(AuthSessionStore.getSource(context))
+        if (AuthSessionStore.isLocalDatabaseMode(context)) return false;
+        RemoteDataProvider provider = getRemoteProvider(context);
+        boolean active = provider != null
+                && provider.isConfigured(context)
                 && !getAccessToken(context).isEmpty()
                 && !getOutletId(context).isEmpty()
                 && !getUserId(context).isEmpty();
@@ -464,7 +507,7 @@ public class TransactionRepository {
         DbExecutor.runAsync(() -> {
             try {
                 syncPendingTransactionsNow(context);
-                List<TransactionRecord> remote = SupabaseTransactionService.getAll(getOutletId(context), getAccessToken(context));
+                List<TransactionRecord> remote = getRemoteProvider(context).getAllTransactions(getOutletId(context), getAccessToken(context));
                 replaceLocalTransactionCache(context, remote);
                 markTransactionsRefreshed(context);
             } catch (Exception ignored) {
@@ -479,7 +522,7 @@ public class TransactionRepository {
             if (!NetworkUtils.isOnline(context)) return;
             try {
                 syncPendingTransactionsNow(context);
-                List<TransactionRecord> remote = SupabaseTransactionService.getAll(getOutletId(context), getAccessToken(context));
+                List<TransactionRecord> remote = getRemoteProvider(context).getAllTransactions(getOutletId(context), getAccessToken(context));
                 replaceLocalTransactionCache(context, remote);
                 markTransactionsRefreshed(context);
             } catch (Exception ignored) {
@@ -498,7 +541,7 @@ public class TransactionRepository {
                 continue;
             }
 
-            SupabaseTransactionService.save(
+            getRemoteProvider(context).saveTransaction(
                     getOutletId(context),
                     getUserId(context),
                     getAccessToken(context),
@@ -511,6 +554,10 @@ public class TransactionRepository {
         }
     }
 
+    private static RemoteDataProvider getRemoteProvider(Context context) {
+        return RemoteDataProviderFactory.getProvider(context);
+    }
+
     private static void markTransactionsRefreshed(Context context) {
         prefs(context).edit().putLong(KEY_TRANSACTIONS_LAST_REFRESH, System.currentTimeMillis()).apply();
     }
@@ -518,6 +565,10 @@ public class TransactionRepository {
     private static void replaceLocalTransactionCache(Context context, List<TransactionRecord> records) {
         AppDatabase db = AppDatabase.getInstance(context);
         db.runInTransaction(() -> {
+            Map<String, List<TransactionItemEntity>> existingItemsByTransaction = new HashMap<>();
+            for (TransactionEntity existing : db.transactionDao().getAllTransactions()) {
+                existingItemsByTransaction.put(existing.id, db.transactionDao().getItemsByTransactionId(existing.id));
+            }
             db.transactionDao().deleteAllItems();
             db.transactionDao().deleteAllTransactions();
             for (TransactionRecord record : records) {
@@ -531,14 +582,20 @@ public class TransactionRepository {
                         record.getPay(),
                         record.getChange()
                 ));
+                List<TransactionItemEntity> existingItems = existingItemsByTransaction.get(record.getId());
+                if (existingItems != null && !existingItems.isEmpty()) {
+                    db.transactionDao().insertTransactionItems(existingItems);
+                    continue;
+                }
+
                 List<TransactionItemEntity> items = new ArrayList<>();
                 for (CartItem item : record.getItems()) {
                     items.add(new TransactionItemEntity(
                             UUID.randomUUID().toString(),
                             record.getId(),
                             item.getProduct().getId(),
-                            item.getProduct().getName(),
-                            item.getProduct().getPrice(),
+                            toStoredProductName(item),
+                            item.getUnitPrice(),
                             item.getQty()
                     ));
                 }
@@ -567,8 +624,8 @@ public class TransactionRepository {
                         UUID.randomUUID().toString(),
                         record.getId(),
                         item.getProduct().getId(),
-                        item.getProduct().getName(),
-                        item.getProduct().getPrice(),
+                        toStoredProductName(item),
+                        item.getUnitPrice(),
                         item.getQty()
                 ));
             }
@@ -614,6 +671,81 @@ public class TransactionRepository {
                 .apply();
     }
 
+    private static void cacheSavedSupabaseTransaction(
+            Context context,
+            String transactionId,
+            List<CartItem> items,
+            double total,
+            double pay,
+            double change
+    ) {
+        if (transactionId == null || transactionId.trim().isEmpty()) return;
+        long timestamp = System.currentTimeMillis();
+        String date = new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID")).format(new Date(timestamp));
+        String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(timestamp));
+
+        AppDatabase db = AppDatabase.getInstance(context);
+        db.runInTransaction(() -> {
+            db.transactionDao().insertTransaction(new TransactionEntity(
+                    transactionId,
+                    date,
+                    time,
+                    timestamp,
+                    total,
+                    pay,
+                    change
+            ));
+            db.transactionDao().deleteItemsByTransactionId(transactionId);
+            List<TransactionItemEntity> entities = new ArrayList<>();
+            for (CartItem item : items) {
+                entities.add(new TransactionItemEntity(
+                        UUID.randomUUID().toString(),
+                        transactionId,
+                        item.getProduct().getId(),
+                        toStoredProductName(item),
+                        item.getUnitPrice(),
+                        item.getQty()
+                ));
+            }
+            db.transactionDao().insertTransactionItems(entities);
+        });
+    }
+
+    private static String toStoredProductName(CartItem item) {
+        if (item == null || item.getProduct() == null) return "";
+        String baseName = item.getProduct().getName() == null ? "" : item.getProduct().getName();
+        return baseName
+                + "~~~"
+                + SalesUnit.normalize(item.getUnitCode())
+                + "~~~"
+                + Math.max(1, item.getUnitFactorToBase())
+                + "~~~"
+                + ((item.getProduct() != null && item.getProduct().isTierPricingEnabled()) ? "1" : "0");
+    }
+
+    private static ParsedStoredItem parseStoredProductName(String raw) {
+        if (raw == null) {
+            return new ParsedStoredItem("", SalesUnit.ECER, 1, true);
+        }
+        String[] parts = raw.split("~~~");
+        if (parts.length < 3) {
+            return new ParsedStoredItem(raw, SalesUnit.ECER, 1, true);
+        }
+        String name = parts[0];
+        String unitCode = SalesUnit.normalize(parts[1]);
+        int factor = 1;
+        try {
+            factor = Integer.parseInt(parts[2].trim());
+        } catch (Exception ignored) {
+        }
+        boolean tierPricingEnabled = true;
+        if (parts.length >= 4) {
+            String rawFlag = parts[3] == null ? "" : parts[3].trim();
+            tierPricingEnabled = !"0".equals(rawFlag) && !"false".equalsIgnoreCase(rawFlag);
+        }
+        return new ParsedStoredItem(name, unitCode, Math.max(1, factor), tierPricingEnabled);
+    }
+
     private static class BestSellerSummary {
         private final String productId;
         private final String productName;
@@ -635,6 +767,20 @@ public class TransactionRepository {
             this.dateLabel = dateLabel;
             this.count = count;
             this.total = total;
+        }
+    }
+
+    private static class ParsedStoredItem {
+        private final String productName;
+        private final String unitCode;
+        private final int unitFactorToBase;
+        private final boolean tierPricingEnabled;
+
+        private ParsedStoredItem(String productName, String unitCode, int unitFactorToBase, boolean tierPricingEnabled) {
+            this.productName = productName == null ? "" : productName;
+            this.unitCode = unitCode == null ? SalesUnit.ECER : unitCode;
+            this.unitFactorToBase = unitFactorToBase <= 0 ? 1 : unitFactorToBase;
+            this.tierPricingEnabled = tierPricingEnabled;
         }
     }
 

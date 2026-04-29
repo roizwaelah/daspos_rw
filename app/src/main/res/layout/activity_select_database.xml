@@ -78,70 +78,56 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="IP Address"
+                            android:text="Supabase URL"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 
-                        <EditText
-                            android:id="@+id/etDbIp"
+                        <TextView
+                            android:id="@+id/tvSupabaseUrl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:background="@drawable/bg_input"
-                            android:padding="8dp"
+                            android:padding="10dp"
+                            android:text="-"
+                            android:textColor="@color/text_primary"
                             android:textSize="14sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Port"
+                            android:text="Status Konfigurasi"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 
-                        <EditText
-                            android:id="@+id/etDbPort"
+                        <TextView
+                            android:id="@+id/tvSupabaseStatus"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:background="@drawable/bg_input"
-                            android:inputType="number"
-                            android:padding="8dp"
+                            android:padding="10dp"
+                            android:text="-"
+                            android:textColor="@color/text_primary"
                             android:textSize="14sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="@string/label_username"
+                            android:text="Catatan"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
-
-                        <EditText
-                            android:id="@+id/etDbUsername"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:padding="8dp"
                             android:textSize="14sp" />
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="@string/label_password"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
-
-                        <EditText
-                            android:id="@+id/etDbPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:background="@drawable/bg_input"
-                            android:inputType="textPassword"
-                            android:padding="8dp"
+                            android:padding="10dp"
+                            android:text="Mode Remote memakai konfigurasi SUPABASE_URL + SUPABASE_ANON_KEY dari BuildConfig dan session login Supabase."
+                            android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 
                         <com.google.android.material.button.MaterialButton

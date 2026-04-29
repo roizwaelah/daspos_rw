@@ -25,6 +25,7 @@ import com.daspos.feature.printer.PrinterConfigStore;
 import com.daspos.feature.settings.ReceiptConfigStore;
 import com.daspos.feature.settings.StoreConfigStore;
 import com.daspos.model.CartItem;
+import com.daspos.model.SalesUnit;
 import com.daspos.model.TransactionRecord;
 import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.CurrencyUtils;
@@ -226,7 +227,22 @@ public class StrukActivity extends BaseActivity {
         layoutItems.removeAllViews();
         for (CartItem item : transaction.getItems()) {
             View row = LayoutInflater.from(this).inflate(R.layout.item_receipt_line, layoutItems, false);
-            ((TextView) row.findViewById(R.id.tvReceiptItemName)).setText(item.getProduct().getName() + " x" + item.getQty());
+            ((TextView) row.findViewById(R.id.tvReceiptItemName)).setText(item.getProduct().getName());
+            boolean tierEnabled = item.getProduct() != null && item.getProduct().isTierPricingEnabled();
+            if (tierEnabled) {
+                ((TextView) row.findViewById(R.id.tvReceiptItemDetail)).setText(getString(
+                        R.string.receipt_item_format,
+                        item.getQty(),
+                        SalesUnit.displayName(item.getUnitCode()),
+                        CurrencyUtils.formatRupiah(item.getUnitPrice())
+                ));
+            } else {
+                ((TextView) row.findViewById(R.id.tvReceiptItemDetail)).setText(getString(
+                        R.string.receipt_item_format_no_unit,
+                        item.getQty(),
+                        CurrencyUtils.formatRupiah(item.getUnitPrice())
+                ));
+            }
             ((TextView) row.findViewById(R.id.tvReceiptItemSubtotal)).setText(CurrencyUtils.formatRupiah(item.getSubtotal()));
             layoutItems.addView(row);
         }

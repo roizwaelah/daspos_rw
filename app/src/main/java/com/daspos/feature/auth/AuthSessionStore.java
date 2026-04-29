@@ -15,6 +15,8 @@ public final class AuthSessionStore {
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String KEY_SOURCE = "source";
     private static final String KEY_OUTLET_ID = "outlet_id";
+    private static final String KEY_DATABASE_MODE = "database_mode";
+    private static final String KEY_REMOTE_PROVIDER_TYPE = "remote_provider_type";
     private static final String KEY_LAST_BACKGROUND_AT = "last_background_at";
     private static final String KEY_OFFLINE_USERNAME = "offline_username";
     private static final String KEY_OFFLINE_PASSWORD_HASH = "offline_password_hash";
@@ -30,6 +32,14 @@ public final class AuthSessionStore {
 
     private AuthSessionStore() {
     }
+
+    public static final String DATABASE_MODE_LOCAL = "local";
+    public static final String DATABASE_MODE_REMOTE = "remote";
+    public static final String PROVIDER_SUPABASE = "supabase";
+    public static final String PROVIDER_FIREBASE = "firebase";
+    public static final String PROVIDER_APPWRITE = "appwrite";
+    public static final String PROVIDER_POCKETBASE = "pocketbase";
+    public static final String PROVIDER_CUSTOM_API = "custom_api";
 
     private static SharedPreferences prefs(Context context) {
         return context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
@@ -102,6 +112,53 @@ public final class AuthSessionStore {
         String outletId = prefs(context).getString(KEY_OUTLET_ID, "");
         if (outletId != null && !outletId.trim().isEmpty()) return outletId;
         return prefs(context).getString(KEY_OFFLINE_OUTLET_ID, "");
+    }
+
+    public static void setDatabaseMode(Context context, String mode) {
+        String normalized = DATABASE_MODE_REMOTE;
+        if (DATABASE_MODE_LOCAL.equalsIgnoreCase(valueOrEmpty(mode))) {
+            normalized = DATABASE_MODE_LOCAL;
+        }
+        prefs(context)
+                .edit()
+                .putString(KEY_DATABASE_MODE, normalized)
+                .apply();
+    }
+
+    public static String getDatabaseMode(Context context) {
+        String mode = prefs(context).getString(KEY_DATABASE_MODE, "");
+        if (DATABASE_MODE_LOCAL.equalsIgnoreCase(valueOrEmpty(mode))) return DATABASE_MODE_LOCAL;
+        if (DATABASE_MODE_REMOTE.equalsIgnoreCase(valueOrEmpty(mode))) return DATABASE_MODE_REMOTE;
+
+        String source = getSource(context);
+        if ("supabase".equalsIgnoreCase(source)) return DATABASE_MODE_REMOTE;
+        return DATABASE_MODE_LOCAL;
+    }
+
+    public static boolean isLocalDatabaseMode(Context context) {
+        return DATABASE_MODE_LOCAL.equalsIgnoreCase(getDatabaseMode(context));
+    }
+
+    public static boolean isRemoteDatabaseMode(Context context) {
+        return DATABASE_MODE_REMOTE.equalsIgnoreCase(getDatabaseMode(context));
+    }
+
+    public static void setRemoteProviderType(Context context, String providerType) {
+        String normalized = normalizeProviderType(providerType);
+        prefs(context)
+                .edit()
+                .putString(KEY_REMOTE_PROVIDER_TYPE, normalized)
+                .apply();
+    }
+
+    public static String getRemoteProviderType(Context context) {
+        String saved = prefs(context).getString(KEY_REMOTE_PROVIDER_TYPE, "");
+        if (!isBlank(saved)) {
+            return normalizeProviderType(saved);
+        }
+        String source = getSource(context);
+        if ("supabase".equalsIgnoreCase(source)) return PROVIDER_SUPABASE;
+        return PROVIDER_SUPABASE;
     }
 
     public static boolean hasSession(Context context) {
@@ -235,6 +292,15 @@ public final class AuthSessionStore {
 
     private static String valueOrEmpty(String value) {
         return value == null ? "" : value;
+    }
+
+    private static String normalizeProviderType(String providerType) {
+        String value = valueOrEmpty(providerType).trim().toLowerCase();
+        if (PROVIDER_FIREBASE.equals(value)) return PROVIDER_FIREBASE;
+        if (PROVIDER_APPWRITE.equals(value)) return PROVIDER_APPWRITE;
+        if (PROVIDER_POCKETBASE.equals(value)) return PROVIDER_POCKETBASE;
+        if (PROVIDER_CUSTOM_API.equals(value)) return PROVIDER_CUSTOM_API;
+        return PROVIDER_SUPABASE;
     }
 
     public static final class OfflineSupabaseSession {

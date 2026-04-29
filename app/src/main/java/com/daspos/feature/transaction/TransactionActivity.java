@@ -3,7 +3,11 @@ package com.daspos.feature.transaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,6 +26,7 @@ import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.feature.product.ProductSearchAdapter;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
+import com.daspos.model.SalesUnit;
 import com.daspos.repository.ProductRepository;
 import com.daspos.shared.util.CurrencyUtils;
 import com.daspos.shared.util.ViewUtils;
@@ -42,6 +47,7 @@ public class TransactionActivity extends BaseActivity {
     private TextView tvTotal;
     private TextView tvChange;
     private EditText etPay;
+    private EditText etSearchProduct;
     private TransactionViewModel viewModel;
     private RecyclerView rvCart;
     private View layoutCartState;
@@ -58,10 +64,11 @@ public class TransactionActivity extends BaseActivity {
 
         final RecyclerView rvSearch = findViewById(R.id.rvSearchResult);
         rvCart = findViewById(R.id.rvCart);
-        EditText etSearch = findViewById(R.id.etSearchProduct);
+        etSearchProduct = findViewById(R.id.etSearchProduct);
         tvTotal = findViewById(R.id.tvTotal);
         tvChange = findViewById(R.id.tvChange);
         etPay = findViewById(R.id.etPay);
+        applyPayHintStyle();
         MaterialButton btnCancel = findViewById(R.id.btnCancel);
         btnFinish = findViewById(R.id.btnFinish);
         searchDropdownCard = findViewById(R.id.searchDropdownCard);
@@ -79,6 +86,7 @@ public class TransactionActivity extends BaseActivity {
         cartAdapter = new CartAdapter(new CartAdapter.Listener() {
             @Override public void onMinus(CartItem item) { decrementCartItem(item); }
             @Override public void onPlus(CartItem item) { incrementCartItem(item); }
+            @Override public void onUnitChanged(CartItem item, String unitCode) { changeCartItemUnit(item, unitCode); }
         });
         rvSearch.setAdapter(searchAdapter);
         rvCart.setAdapter(cartAdapter);
@@ -86,12 +94,20 @@ public class TransactionActivity extends BaseActivity {
 
         viewModel.getSearchResults().observe(this, new Observer<List<Product>>() {
             @Override public void onChanged(List<Product> results) {
+                if (isSearchQueryEmpty()) {
+                    searchAdapter.submit(new ArrayList<Product>());
+                    return;
+                }
                 searchAdapter.submit(results == null ? new ArrayList<Product>() : results);
             }
         });
         viewModel.getSearchUiState().observe(this, new Observer<ListUiState<Product>>() {
             @Override public void onChanged(ListUiState<Product> state) {
                 UiStateRenderer.renderListState(state, rvSearch, layoutSearchState, progressSearch, tvSearchState, getString(R.string.loading));
+                if (isSearchQueryEmpty()) {
+                    searchDropdownCard.setVisibility(View.GONE);
+                    return;
+                }
                 searchDropdownCard.setVisibility(state != null && state.getStatus() != ListUiState.Status.SUCCESS ? View.VISIBLE : (searchAdapter.getItemCount() > 0 ? View.VISIBLE : View.GONE));
             }
         });
@@ -101,7 +117,7 @@ public class TransactionActivity extends BaseActivity {
                 layoutCartState.setVisibility(state.isCartEmpty() ? View.VISIBLE : View.GONE);
                 rvCart.setVisibility(state.isCartEmpty() ? View.GONE : View.VISIBLE);
                 tvTotal.setText(CurrencyUtils.formatRupiah(state.getTotal()));
-                tvChange.setText(getString(R.string.change) + ": " + CurrencyUtils.formatRupiah(state.getChange()));
+                tvChange.setText(CurrencyUtils.formatRupiah(state.getChange()));
                 btnFinish.setEnabled(state.getCheckoutStatus() != TransactionScreenState.CheckoutStatus.PROCESSING);
             }
         });
@@ -127,7 +143,7 @@ public class TransactionActivity extends BaseActivity {
             }
         });
 
-        etSearch.addTextChangedListener(new TextWatcher() {
+        etSearchProduct.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void afterTextChanged(Editable s) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -162,18 +178,21 @@ public class TransactionActivity extends BaseActivity {
         if (latest == null || latest.getStock() <= 0) { ViewUtils.toast(this, getString(R.string.product_out_of_stock)); return; }
         for (CartItem item : cartItems) {
             if (item.getProduct().getId().equals(product.getId())) {
-                if (item.getQty() >= latest.getStock()) { ViewUtils.toast(this, getString(R.string.stock_not_enough)); return; }
+                int requestedBaseQty = getRequestedBaseQtyForProduct(product.getId(), item)
+                        + item.getBaseQty()
+                        + item.getUnitFactorToBase();
+                if (requestedBaseQty > latest.getStock()) { ViewUtils.toast(this, getString(R.string.stock_not_enough)); return; }
                 item.setQty(item.getQty() + 1);
                 cartAdapter.submit(cartItems);
                 viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
-                searchDropdownCard.setVisibility(View.GONE);
+                clearSearchInput();
                 return;
             }
         }
         cartItems.add(new CartItem(latest, 1));
         cartAdapter.submit(cartItems);
         viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
-        searchDropdownCard.setVisibility(View.GONE);
+        clearSearchInput();
     }
 
     private void decrementCartItem(CartItem item) {
@@ -190,12 +209,87 @@ public class TransactionActivity extends BaseActivity {
     private void incrementCartItem(CartItem item) {
         if (item == null) return;
         Product latest = ProductRepository.getById(this, item.getProduct().getId());
-        if (latest == null || item.getQty() >= latest.getStock()) {
+        int requestedBaseQty = getRequestedBaseQtyForProduct(item.getProduct().getId(), item) + (item.getBaseQty() + item.getUnitFactorToBase());
+        if (latest == null || requestedBaseQty > latest.getStock()) {
             ViewUtils.toast(this, getString(R.string.stock_not_enough));
             return;
         }
         item.setQty(item.getQty() + 1);
         cartAdapter.submit(cartItems);
         viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+    }
+
+    private void changeCartItemUnit(CartItem item, String unitCode) {
+        if (item == null) return;
+        Product latest = ProductRepository.getById(this, item.getProduct().getId());
+        if (latest == null) return;
+
+        item.getProduct().setPriceEcer(latest.getPriceEcer());
+        item.getProduct().setPriceRenteng(latest.getPriceRenteng());
+        item.getProduct().setPricePak(latest.getPricePak());
+        item.getProduct().setPriceKarton(latest.getPriceKarton());
+        item.getProduct().setFactorRenteng(latest.getFactorRenteng());
+        item.getProduct().setFactorPak(latest.getFactorPak());
+        item.getProduct().setFactorKarton(latest.getFactorKarton());
+
+        if (!latest.isTierPricingEnabled()) {
+            item.applyUnitFromProduct(SalesUnit.ECER);
+            cartAdapter.submit(cartItems);
+            viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+            return;
+        }
+
+        item.applyUnitFromProduct(unitCode);
+        int maxQty = item.getUnitFactorToBase() <= 0
+                ? item.getQty()
+                : (latest.getStock() - getRequestedBaseQtyForProduct(item.getProduct().getId(), item)) / item.getUnitFactorToBase();
+        if (maxQty <= 0) {
+            item.setQty(1);
+            if (item.getBaseQty() > latest.getStock()) {
+                item.applyUnitFromProduct(SalesUnit.ECER);
+                item.setQty(1);
+            }
+            ViewUtils.toast(this, getString(R.string.stock_not_enough));
+        } else if (item.getQty() > maxQty) {
+            item.setQty(maxQty);
+            ViewUtils.toast(this, getString(R.string.stock_not_enough));
+        }
+        cartAdapter.submit(cartItems);
+        viewModel.updateScreenState(cartItems, String.valueOf(etPay.getText()));
+    }
+
+    private int getRequestedBaseQtyForProduct(String productId, CartItem exclude) {
+        int total = 0;
+        for (CartItem row : cartItems) {
+            if (row == null || row.getProduct() == null) continue;
+            if (!row.getProduct().getId().equals(productId)) continue;
+            if (exclude != null && row == exclude) continue;
+            total += Math.max(0, row.getBaseQty());
+        }
+        return total;
+    }
+
+    private void clearSearchInput() {
+        if (etSearchProduct == null) return;
+        etSearchProduct.setText("");
+        etSearchProduct.clearFocus();
+        searchDropdownCard.setVisibility(View.GONE);
+    }
+
+    private boolean isSearchQueryEmpty() {
+        return etSearchProduct == null || String.valueOf(etSearchProduct.getText()).trim().isEmpty();
+    }
+
+    private void applyPayHintStyle() {
+        if (etPay == null) return;
+        String hintText = getString(R.string.pay_amount_hint);
+        SpannableString styledHint = new SpannableString(hintText);
+        int hintSizePx = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                14f,
+                getResources().getDisplayMetrics()
+        ));
+        styledHint.setSpan(new AbsoluteSizeSpan(hintSizePx), 0, styledHint.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        etPay.setHint(styledHint);
     }
 }
