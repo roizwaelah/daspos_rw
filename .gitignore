@@ -29,3 +29,6 @@ replay_pid*.log
 /.claude/
 /.omo/
 /.sisyphus/
+
+# Supabase CLI local state
+supabase/.temp/
