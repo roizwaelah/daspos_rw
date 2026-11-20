@@ -51,20 +51,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.VH> {
         final CartItem item = items.get(position);
         boolean tierEnabled = item.getProduct() != null && item.getProduct().isTierPricingEnabled();
         holder.tvName.setText(item.getProduct().getName());
-        if (tierEnabled) {
-            holder.tvQty.setText(holder.itemView.getContext().getString(
-                    R.string.cart_line_format,
-                    item.getQty(),
-                    SalesUnit.displayName(item.getUnitCode()),
-                    CurrencyUtils.formatRupiah(item.getUnitPrice())
-            ));
-        } else {
-            holder.tvQty.setText(holder.itemView.getContext().getString(
-                    R.string.cart_line_format_no_unit,
-                    item.getQty(),
-                    CurrencyUtils.formatRupiah(item.getUnitPrice())
-            ));
-        }
+        holder.tvQty.setText(holder.itemView.getContext().getString(
+                R.string.cart_line_format,
+                item.getQty(),
+                displayUnit(item),
+                CurrencyUtils.formatRupiah(item.getUnitPrice())
+        ));
         holder.tvSubtotal.setText(CurrencyUtils.formatRupiah(item.getSubtotal()));
         holder.bindUnit(item, tierEnabled, listener);
         holder.btnMinus.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +76,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.VH> {
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    private static String displayUnit(CartItem item) {
+        if (item == null || item.getProduct() == null) return "pcs";
+        boolean tierEnabled = item.getProduct().isTierPricingEnabled();
+        String unitCode = SalesUnit.normalize(item.getUnitCode());
+        if (tierEnabled && !SalesUnit.ECER.equals(unitCode)) return SalesUnit.displayName(unitCode);
+        String unitName = item.getProduct().getUnitName();
+        return unitName == null || unitName.trim().isEmpty() ? "pcs" : unitName.trim();
     }
 
     static class VH extends RecyclerView.ViewHolder {

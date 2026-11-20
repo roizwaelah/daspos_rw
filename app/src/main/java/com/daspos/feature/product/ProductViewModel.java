@@ -11,14 +11,21 @@ import com.daspos.repository.ProductRepository;
 import com.daspos.ui.state.ListUiState;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public class ProductViewModel extends AndroidViewModel {
+    public static final int PAGE_SIZE = 50;
+
     private final MutableLiveData<List<Product>> productsLiveData = new MutableLiveData<>(new ArrayList<Product>());
     private final MutableLiveData<ListUiState<Product>> productsUiState = new MutableLiveData<ListUiState<Product>>();
+    private final List<Product> accumulatedProducts = new ArrayList<>();
+
+    private String currentQuery = "";
+    private int currentSortPosition = 0;
+    private int currentPage = 0;
+    private boolean isLoadingPage = false;
+    private boolean hasMorePages = true;
+    private int requestGeneration = 0;
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
@@ -33,66 +40,69 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     public void loadProducts(String query, int sortPosition) {
+        currentQuery = query == null ? "" : query.trim();
+        currentSortPosition = sortPosition;
+        currentPage = 0;
+        hasMorePages = true;
+        isLoadingPage = true;
+        accumulatedProducts.clear();
+        final int generation = ++requestGeneration;
+
         productsUiState.setValue(ListUiState.<Product>loading());
-        ProductRepository.getAllAsync(getApplication(), products -> {
-            List<Product> filtered = new ArrayList<Product>();
-
-            String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
-            for (Product p : products) {
-                if (q.isEmpty() || p.getName().toLowerCase(Locale.ROOT).contains(q)) {
-                    filtered.add(p);
-                }
-            }
-
-            sortProducts(filtered, sortPosition);
-
-            productsLiveData.setValue(filtered);
-            if (filtered.isEmpty()) {
-                productsUiState.setValue(ListUiState.<Product>empty("Produk tidak ditemukan"));
-            } else {
-                productsUiState.setValue(ListUiState.success(filtered));
-            }
-        }, throwable -> {
-            productsUiState.setValue(ListUiState.<Product>error("Gagal memuat produk"));
-        });
+        fetchPage(0, generation, true);
     }
 
-    private void sortProducts(List<Product> filtered, int sortPosition) {
-        if (sortPosition == 0 || sortPosition == 1) {
-            Collections.sort(filtered, new Comparator<Product>() {
-                @Override
-                public int compare(Product a, Product b) {
-                    return a.getName().compareToIgnoreCase(b.getName());
-                }
+    public void loadNextPage() {
+        if (isLoadingPage || !hasMorePages) return;
+        isLoadingPage = true;
+        final int nextPage = currentPage + 1;
+        final int generation = requestGeneration;
+        fetchPage(nextPage, generation, false);
+    }
+
+    private void fetchPage(final int page, final int generation, final boolean isFirstPage) {
+        final int offset = page * PAGE_SIZE;
+        if (currentQuery.isEmpty()) {
+            ProductRepository.getAllSortedPagedAsync(getApplication(), currentSortPosition, PAGE_SIZE, offset, products -> {
+                onPageLoaded(page, generation, isFirstPage, products);
+            }, throwable -> {
+                onPageFailed(generation, isFirstPage);
             });
-        } else if (sortPosition == 2) {
-            Collections.sort(filtered, new Comparator<Product>() {
-                @Override
-                public int compare(Product a, Product b) {
-                    return b.getName().compareToIgnoreCase(a.getName());
-                }
+        } else {
+            ProductRepository.searchProductsSortedPagedAsync(getApplication(), currentQuery, currentSortPosition, PAGE_SIZE, offset, products -> {
+                onPageLoaded(page, generation, isFirstPage, products);
+            }, throwable -> {
+                onPageFailed(generation, isFirstPage);
             });
-        } else if (sortPosition == 3) {
-            Collections.sort(filtered, new Comparator<Product>() {
-                @Override
-                public int compare(Product a, Product b) {
-                    return Double.compare(a.getPrice(), b.getPrice());
-                }
-            });
-        } else if (sortPosition == 4) {
-            Collections.sort(filtered, new Comparator<Product>() {
-                @Override
-                public int compare(Product a, Product b) {
-                    return Double.compare(b.getPrice(), a.getPrice());
-                }
-            });
-        } else if (sortPosition == 5) {
-            Collections.sort(filtered, new Comparator<Product>() {
-                @Override
-                public int compare(Product a, Product b) {
-                    return Integer.compare(b.getStock(), a.getStock());
-                }
-            });
+        }
+    }
+
+    private void onPageLoaded(int page, int generation, boolean isFirstPage, List<Product> products) {
+        if (generation != requestGeneration) return;
+        isLoadingPage = false;
+        currentPage = page;
+        List<Product> safeProducts = products == null ? new ArrayList<Product>() : products;
+        hasMorePages = safeProducts.size() >= PAGE_SIZE;
+
+        if (isFirstPage) {
+            accumulatedProducts.clear();
+        }
+        accumulatedProducts.addAll(safeProducts);
+
+        List<Product> snapshot = new ArrayList<>(accumulatedProducts);
+        productsLiveData.setValue(snapshot);
+        if (snapshot.isEmpty()) {
+            productsUiState.setValue(ListUiState.<Product>empty("Produk tidak ditemukan"));
+        } else {
+            productsUiState.setValue(ListUiState.success(snapshot));
+        }
+    }
+
+    private void onPageFailed(int generation, boolean isFirstPage) {
+        if (generation != requestGeneration) return;
+        isLoadingPage = false;
+        if (isFirstPage) {
+            productsUiState.setValue(ListUiState.<Product>error("Gagal memuat produk"));
         }
     }
 }

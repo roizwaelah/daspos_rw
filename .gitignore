@@ -1,0 +1,31 @@
+.gradle/
+.gradle-user/
+.android/
+.android-user/
+build/
+app/build/
+local.properties
+# Secrets must never be committed — keep them in local.properties or CI env.
+secrets.properties
+*.pem
+*.key
+*.p12
+*.mobileprovision
+*.log
+hs_err_pid*.log
+replay_pid*.log
+*.hprof
+*.tmp
+*.bak
+*.backup
+*.jks
+*.keystore
+*.apk
+*.aab
+.idea/
+*.iml
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+/.claude/
+/.omo/
+/.sisyphus/

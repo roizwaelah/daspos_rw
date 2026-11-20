@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
-import com.daspos.repository.ProductRepository;
-import com.daspos.repository.TransactionRepository;
 import com.daspos.shared.util.ThemeManager;
 
 public class BaseActivity extends AppCompatActivity {
@@ -32,8 +30,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ProductRepository.triggerSyncIfPossible(this);
-        TransactionRepository.triggerSyncIfPossible(this);
         if (!shouldTrackBackgroundTime()) {
             return;
         }

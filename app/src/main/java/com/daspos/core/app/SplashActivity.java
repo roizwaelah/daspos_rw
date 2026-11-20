@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.daspos.R;
+import com.daspos.shared.util.DbExecutor;
 import com.daspos.feature.auth.AuthSessionStore;
 import com.daspos.feature.auth.LoginActivity;
+import com.daspos.feature.settings.SelectDatabaseActivity;
 
 public class SplashActivity extends BaseActivity {
     public static final String EXTRA_AUTH_MESSAGE = "extra_auth_message";
@@ -27,15 +29,27 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override public void run() {
-                Class<?> destination = AuthSessionStore.hasSession(SplashActivity.this)
-                        ? HomeActivity.class
-                        : LoginActivity.class;
-                startActivity(new Intent(SplashActivity.this, destination));
+        final long startTime = System.currentTimeMillis();
+        DbExecutor.runAsync(() -> {
+            final boolean isSetupCompleted = AuthSessionStore.isDatabaseSetupCompleted(SplashActivity.this);
+            final boolean hasSession = isSetupCompleted && AuthSessionStore.hasSession(SplashActivity.this);
+            
+            long elapsed = System.currentTimeMillis() - startTime;
+            long remainingDelay = Math.max(0, 1000 - elapsed);
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (isFinishing() || isDestroyed()) return;
+                if (!isSetupCompleted) {
+                    Intent setupIntent = new Intent(SplashActivity.this, SelectDatabaseActivity.class);
+                    setupIntent.putExtra(SelectDatabaseActivity.EXTRA_SETUP_FLOW, true);
+                    startActivity(setupIntent);
+                } else {
+                    Class<?> destination = hasSession ? MainActivity.class : LoginActivity.class;
+                    startActivity(new Intent(SplashActivity.this, destination));
+                }
                 finish();
-            }
-        }, 1200);
+            }, remainingDelay);
+        });
     }
 
     private String resolveAuthMessageFromIntent(Intent intent) {

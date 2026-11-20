@@ -44,6 +44,31 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tvSetupStep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="8dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
+                        android:text="@string/setup_step_database"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvSetupHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/setup_database_hint"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
                     <RadioGroup
                         android:id="@+id/rgDatabase"
                         android:layout_width="match_parent"
@@ -78,39 +103,173 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Supabase URL"
+                            android:text="@string/remote_provider"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 
-                        <TextView
-                            android:id="@+id/tvSupabaseUrl"
+                        <Spinner
+                            android:id="@+id/spRemoteProvider"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:background="@drawable/bg_input"
-                            android:padding="10dp"
-                            android:text="-"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
+                            android:padding="6dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="Status Konfigurasi"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/tvSupabaseStatus"
+                        <LinearLayout
+                            android:id="@+id/layoutSupabaseDetails"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_input"
-                            android:padding="10dp"
-                            android:text="-"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
+                            android:layout_marginTop="8dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/supabase_url"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etSupabaseUrl"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/supabase_url_hint"
+                                android:inputType="textUri"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/supabase_anon_key"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etSupabaseAnonKey"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/supabase_anon_key_hint"
+                                android:inputType="textPassword"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="Status Konfigurasi"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/tvSupabaseStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:padding="10dp"
+                                android:text="-"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layoutGenericRemoteConfig"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/remote_base_url"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etRemoteBaseUrl"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/remote_base_url_hint"
+                                android:inputType="textUri"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/remote_api_key_optional"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etRemoteApiKey"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/remote_api_key_hint"
+                                android:inputType="textNoSuggestions"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/remote_edge_function_url"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etRemoteEdgeFunctionUrl"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/remote_edge_function_url_hint"
+                                android:inputType="textUri"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="@string/remote_edge_secret_optional"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="14sp" />
+
+                            <EditText
+                                android:id="@+id/etRemoteEdgeSecret"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input"
+                                android:hint="@string/remote_edge_secret_hint"
+                                android:inputType="textPassword"
+                                android:padding="10dp"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -121,12 +280,13 @@
                             android:textSize="14sp" />
 
                         <TextView
+                            android:id="@+id/tvRemoteNotes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:background="@drawable/bg_input"
                             android:padding="10dp"
-                            android:text="Mode Remote memakai konfigurasi SUPABASE_URL + SUPABASE_ANON_KEY dari BuildConfig dan session login Supabase."
+                            android:text="@string/remote_notes_supabase"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 

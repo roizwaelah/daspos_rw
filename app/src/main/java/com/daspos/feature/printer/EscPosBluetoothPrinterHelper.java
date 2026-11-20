@@ -102,15 +102,9 @@ public class EscPosBluetoothPrinterHelper {
                 String nameLine = item.getProduct().getName() + "\n";
                 out.write(nameLine.getBytes(StandardCharsets.UTF_8));
                 out.write(boldOff);
-                boolean tierEnabled = item.getProduct() != null && item.getProduct().isTierPricingEnabled();
-                String detailLine = tierEnabled
-                        ? item.getQty()
-                        + " x "
-                        + SalesUnit.displayName(item.getUnitCode())
-                        + " @ "
-                        + CurrencyUtils.formatRupiah(item.getUnitPrice())
-                        + "\n"
-                        : item.getQty()
+                String detailLine = item.getQty()
+                        + " "
+                        + displayUnit(item)
                         + " x "
                         + CurrencyUtils.formatRupiah(item.getUnitPrice())
                         + "\n";
@@ -123,6 +117,7 @@ public class EscPosBluetoothPrinterHelper {
 
             out.write("--------------------------------\n".getBytes(StandardCharsets.UTF_8));
             out.write(alignRight);
+            if (trx.getDiscount() > 0) out.write(("Diskon: " + CurrencyUtils.formatRupiah(trx.getDiscount()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(("Total: " + CurrencyUtils.formatRupiah(trx.getTotal()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(("Bayar: " + CurrencyUtils.formatRupiah(trx.getPay()) + "\n").getBytes(StandardCharsets.UTF_8));
             out.write(("Kembalian: " + CurrencyUtils.formatRupiah(trx.getChange()) + "\n\n").getBytes(StandardCharsets.UTF_8));
@@ -141,5 +136,13 @@ public class EscPosBluetoothPrinterHelper {
             try { if (out != null) out.close(); } catch (Exception ignored) { }
             try { if (socket != null) socket.close(); } catch (Exception ignored) { }
         }
+    }
+
+    private static String displayUnit(CartItem item) {
+        if (item == null || item.getProduct() == null) return "pcs";
+        String unitCode = SalesUnit.normalize(item.getUnitCode());
+        if (item.getProduct().isTierPricingEnabled() && !SalesUnit.ECER.equals(unitCode)) return SalesUnit.displayName(unitCode);
+        String unitName = item.getProduct().getUnitName();
+        return unitName == null || unitName.trim().isEmpty() ? "pcs" : unitName.trim();
     }
 }

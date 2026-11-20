@@ -8,15 +8,21 @@ public class TransactionRecord {
     private String date;
     private String time;
     private double total;
+    private double discount;
     private double pay;
     private double change;
     private List<CartItem> items = new ArrayList<>();
 
     public TransactionRecord(String id, String date, String time, double total, double pay, double change, List<CartItem> items) {
+        this(id, date, time, total, 0, pay, change, items);
+    }
+
+    public TransactionRecord(String id, String date, String time, double total, double discount, double pay, double change, List<CartItem> items) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.total = total;
+        this.discount = Math.max(0, discount);
         this.pay = pay;
         this.change = change;
         this.items = items;
@@ -26,6 +32,7 @@ public class TransactionRecord {
     public String getDate() { return date; }
     public String getTime() { return time; }
     public double getTotal() { return total; }
+    public double getDiscount() { return discount; }
     public double getPay() { return pay; }
     public double getChange() { return change; }
     public List<CartItem> getItems() { return items; }

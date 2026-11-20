@@ -1,6 +1,7 @@
 package com.daspos.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.daspos.db.AppDatabase;
 import com.daspos.db.entity.UserEntity;
@@ -14,9 +15,12 @@ import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.PasswordHasher;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserRepository {
+    private static final String TAG = "UserRepository";
     public static List<User> getAll(final Context context) {
         return DbExecutor.runBlocking(() -> {
             syncRemoteCashiersIfNeeded(context);
@@ -30,14 +34,14 @@ public class UserRepository {
 
     public static User getByUsername(final Context context, final String username) {
         return DbExecutor.runBlocking(() -> {
-            UserEntity e = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            UserEntity e = AppDatabase.getInstance(context).userDao().getByUsername(normalizeUsername(username));
             if (e == null) return null;
             return new User(e.username, e.role);
         });
     }
 
     public static boolean usernameExists(final Context context, final String username) {
-        return DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().getByUsername(username) != null);
+        return DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().getByUsername(normalizeUsername(username)) != null);
     }
 
     public static void add(
@@ -48,7 +52,8 @@ public class UserRepository {
             final List<String> allowedMenus
     ) {
         DbExecutor.runBlocking(() -> {
-            if (shouldCreateSupabaseCashier(context, role)) {
+            String normalizedUsername = normalizeUsername(username);
+            if (shouldCreateRemoteCashier(context, role)) {
                 if (!NetworkUtils.isOnline(context)) {
                     throw new IllegalStateException("Tambah kasir butuh koneksi internet");
                 }
@@ -57,9 +62,9 @@ public class UserRepository {
                     result = getRemoteProvider(context).createCashierByAdmin(
                             safe(AuthSessionStore.getAccessToken(context)),
                             safe(AuthSessionStore.getOutletId(context)),
-                            username,
+                            normalizedUsername,
                             password,
-                            defaultDisplayName(username),
+                            defaultDisplayName(normalizedUsername),
                             allowedMenus
                     );
                 } catch (Exception e) {
@@ -67,24 +72,24 @@ public class UserRepository {
                 }
                 if (!result.success) {
                     String msg = result.message == null || result.message.trim().isEmpty()
-                            ? "Gagal menambah kasir ke Supabase"
+                            ? "Gagal menambah kasir ke remote provider"
                             : result.message;
                     throw new IllegalStateException(msg);
                 }
             }
 
             String passwordHash = PasswordHasher.hash(password);
-            AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, role, passwordHash));
+            AppDatabase.getInstance(context).userDao().insert(new UserEntity(normalizedUsername, role, passwordHash));
         });
     }
 
     public static void addWithPasswordHash(final Context context, final String username, final String role, final String passwordHash) {
-        DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, role, passwordHash)));
+        DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().insert(new UserEntity(normalizeUsername(username), role, passwordHash)));
     }
 
     public static boolean authenticate(final Context context, final String username, final String password) {
         return DbExecutor.runBlocking(() -> {
-            UserEntity user = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            UserEntity user = AppDatabase.getInstance(context).userDao().getByUsername(normalizeUsername(username));
             if (user == null) return false;
             boolean authenticated = PasswordHasher.verify(password, user.passwordHash);
             if (!authenticated) return false;
@@ -100,77 +105,136 @@ public class UserRepository {
 
     public static String getPasswordHash(final Context context, final String username) {
         return DbExecutor.runBlocking(() -> {
-            UserEntity user = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            UserEntity user = AppDatabase.getInstance(context).userDao().getByUsername(normalizeUsername(username));
             return user == null ? "" : user.passwordHash;
         });
     }
 
     public static void updateRole(final Context context, final String username, final String role) {
         DbExecutor.runBlocking(() -> {
-            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            String normalizedUsername = normalizeUsername(username);
+            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(normalizedUsername);
             String passwordHash = existing == null ? "" : existing.passwordHash;
-            AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, role, passwordHash));
+            AppDatabase.getInstance(context).userDao().insert(new UserEntity(normalizedUsername, role, passwordHash));
         });
     }
 
     public static void updatePassword(final Context context, final String username, final String newPassword) {
         DbExecutor.runBlocking(() -> {
-            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(username);
+            String normalizedUsername = normalizeUsername(username);
+            UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(normalizedUsername);
             if (existing == null) return;
             String passwordHash = PasswordHasher.hash(newPassword);
-            AppDatabase.getInstance(context).userDao().insert(new UserEntity(username, existing.role, passwordHash));
+            AppDatabase.getInstance(context).userDao().insert(new UserEntity(normalizedUsername, existing.role, passwordHash));
         });
     }
 
     public static void delete(final Context context, final String username) {
-        DbExecutor.runBlocking(() -> AppDatabase.getInstance(context).userDao().deleteByUsername(username));
+        DbExecutor.runBlocking(() -> {
+            String normalizedUsername = normalizeUsername(username);
+            deleteRemoteCashierIfNeeded(context, normalizedUsername);
+            AppDatabase.getInstance(context).userDao().deleteByUsername(normalizedUsername);
+        });
     }
 
-    private static boolean shouldCreateSupabaseCashier(Context context, String role) {
+    // Remote-managed accounts are keyed by email; deleting them locally only
+    // would let the next cashier sync resurrect them.
+    private static void deleteRemoteCashierIfNeeded(Context context, String username) {
+        if (AuthSessionStore.isLocalDatabaseMode(context)) return;
+        if (username.indexOf('@') < 0) return;
+        RemoteDataProvider provider = getRemoteProvider(context);
+        if (provider == null || !provider.isConfigured(context)) return;
+        if (!provider.supportsCashierManagement()) return;
+        String accessToken = safe(AuthSessionStore.getAccessToken(context));
+        if (provider.requiresAccessToken() && accessToken.isEmpty()) {
+            throw new IllegalStateException("Sesi login tidak valid untuk menghapus kasir");
+        }
+        if (!NetworkUtils.isOnline(context)) {
+            throw new IllegalStateException("Hapus kasir butuh koneksi internet");
+        }
+        RemoteDataProvider.CreateCashierResult result;
+        try {
+            result = provider.deleteCashierByAdmin(accessToken, username);
+        } catch (Exception e) {
+            throw new IllegalStateException("Gagal menghapus kasir di remote provider", e);
+        }
+        if (result == null || !result.success) {
+            String msg = result == null || result.message == null || result.message.trim().isEmpty()
+                    ? "Gagal menghapus kasir di remote provider"
+                    : result.message;
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    private static boolean shouldCreateRemoteCashier(Context context, String role) {
         if (AuthSessionStore.isLocalDatabaseMode(context)) return false;
-        return getRemoteProvider(context).isConfigured(context)
-                && "supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))
-                && !safe(AuthSessionStore.getAccessToken(context)).isEmpty()
-                && !safe(AuthSessionStore.getOutletId(context)).isEmpty()
-                && "kasir".equalsIgnoreCase(safe(role));
+        RemoteDataProvider provider = getRemoteProvider(context);
+        if (provider == null || !provider.isConfigured(context)) return false;
+        if (!provider.supportsCashierManagement()) return false;
+        String accessToken = safe(AuthSessionStore.getAccessToken(context));
+        String outletId = safe(AuthSessionStore.getOutletId(context));
+        if (provider.requiresAccessToken() && accessToken.isEmpty()) return false;
+        if (provider.requiresOutletId() && outletId.isEmpty()) return false;
+        return "kasir".equalsIgnoreCase(safe(role));
     }
 
     private static void syncRemoteCashiersIfNeeded(Context context) {
         if (AuthSessionStore.isLocalDatabaseMode(context)) return;
-        if (!getRemoteProvider(context).isConfigured(context)) return;
+        RemoteDataProvider provider = getRemoteProvider(context);
+        if (provider == null || !provider.isConfigured(context)) return;
+        if (!provider.supportsCashierManagement()) return;
         if (!NetworkUtils.isOnline(context)) return;
-        if (!"supabase".equalsIgnoreCase(safe(AuthSessionStore.getSource(context)))) return;
         String role = safe(AuthSessionStore.getRole(context));
         if (!"admin".equalsIgnoreCase(role) && !"owner".equalsIgnoreCase(role)) return;
 
         String accessToken = safe(AuthSessionStore.getAccessToken(context));
-        if (accessToken.isEmpty()) return;
+        if (provider.requiresAccessToken() && accessToken.isEmpty()) return;
 
         RemoteDataProvider.ListCashiersResult result;
         try {
-            result = getRemoteProvider(context).listCashiersByAdmin(accessToken);
-        } catch (Exception ignored) {
+            result = provider.listCashiersByAdmin(accessToken);
+        } catch (Exception e) {
+            Log.w(TAG, "Gagal sinkronisasi kasir remote", e);
             return;
         }
         if (!result.success) return;
 
+        Set<String> remoteEmails = new HashSet<>();
         for (RemoteDataProvider.RemoteCashier cashier : result.users) {
             String email = safe(cashier.email);
             if (email.isEmpty()) continue;
+            remoteEmails.add(normalizeUsername(email));
             UserEntity existing = AppDatabase.getInstance(context).userDao().getByUsername(email);
             String passwordHash = existing == null ? "" : safe(existing.passwordHash);
             String cashierRole = safe(cashier.role).isEmpty() ? "Kasir" : cashier.role;
             AppDatabase.getInstance(context).userDao().insert(new UserEntity(email, cashierRole, passwordHash));
             MenuAccessStore.saveForUser(context, email, cashier.allowedMenus);
         }
+
+        // The remote list is authoritative for cashiers: drop stale local rows
+        // for accounts that no longer exist remotely (e.g. deleted in Supabase).
+        String sessionUsername = normalizeUsername(AuthSessionStore.getUsername(context));
+        for (UserEntity local : AppDatabase.getInstance(context).userDao().getAll()) {
+            String name = normalizeUsername(local.username);
+            if (name.indexOf('@') < 0) continue;
+            if (!"kasir".equalsIgnoreCase(safe(local.role))) continue;
+            if (name.equals(sessionUsername)) continue;
+            if (remoteEmails.contains(name)) continue;
+            AppDatabase.getInstance(context).userDao().deleteByUsername(local.username);
+            MenuAccessStore.clearForUser(context, local.username);
+        }
     }
 
     private static String defaultDisplayName(String email) {
-        String safeEmail = safe(email);
+        String safeEmail = normalizeUsername(email);
         int at = safeEmail.indexOf('@');
         String base = at > 0 ? safeEmail.substring(0, at) : safeEmail;
         if (base.trim().isEmpty()) return "Kasir";
         return base.trim();
+    }
+
+    private static String normalizeUsername(String value) {
+        return safe(value).toLowerCase();
     }
 
     private static String safe(String value) {

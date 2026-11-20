@@ -10,15 +10,17 @@ public class TransactionScreenState {
 
     private final boolean cartEmpty;
     private final double total;
+    private final double discount;
     private final double pay;
     private final double change;
     private final CheckoutStatus checkoutStatus;
     private final String message;
 
-    public TransactionScreenState(boolean cartEmpty, double total, double pay, double change,
+    public TransactionScreenState(boolean cartEmpty, double total, double discount, double pay, double change,
                                   CheckoutStatus checkoutStatus, String message) {
         this.cartEmpty = cartEmpty;
         this.total = total;
+        this.discount = discount;
         this.pay = pay;
         this.change = change;
         this.checkoutStatus = checkoutStatus;
@@ -27,17 +29,22 @@ public class TransactionScreenState {
 
     public boolean isCartEmpty() { return cartEmpty; }
     public double getTotal() { return total; }
+    public double getDiscount() { return discount; }
     public double getPay() { return pay; }
     public double getChange() { return change; }
     public CheckoutStatus getCheckoutStatus() { return checkoutStatus; }
     public String getMessage() { return message; }
 
     public TransactionScreenState withCheckout(CheckoutStatus status, String message) {
-        return new TransactionScreenState(cartEmpty, total, pay, change, status, message);
+        return new TransactionScreenState(cartEmpty, total, discount, pay, change, status, message);
+    }
+
+    public static TransactionScreenState of(boolean cartEmpty, double total, double discount, double pay, double change) {
+        return new TransactionScreenState(cartEmpty, total, discount, pay, change, CheckoutStatus.IDLE, "");
     }
 
     public static TransactionScreenState of(boolean cartEmpty, double total, double pay, double change) {
-        return new TransactionScreenState(cartEmpty, total, pay, change, CheckoutStatus.IDLE, "");
+        return of(cartEmpty, total, 0, pay, change);
     }
 
     public static TransactionScreenState empty() {

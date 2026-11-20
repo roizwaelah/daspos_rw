@@ -13,6 +13,7 @@ import com.daspos.feature.printer.PrinterConfigStore;
 import com.daspos.feature.auth.MenuAccessStore;
 import com.daspos.model.CartItem;
 import com.daspos.model.Product;
+import com.daspos.model.SalesUnit;
 import com.daspos.model.TransactionRecord;
 import com.daspos.model.User;
 import com.daspos.repository.ProductRepository;
@@ -43,7 +44,7 @@ public class BackupRestoreHelper {
             JSONObject root = new JSONObject();
 
             JSONObject meta = new JSONObject();
-            meta.put("formatVersion", 3);
+            meta.put("formatVersion", 4);
             meta.put("app", "DasPos");
             meta.put("createdAt", System.currentTimeMillis());
             root.put("meta", meta);
@@ -61,8 +62,7 @@ public class BackupRestoreHelper {
             store.put("address", StoreConfigStore.getAddress(context));
             store.put("phone", StoreConfigStore.getPhone(context));
             store.put("email", StoreConfigStore.getEmail(context));
-            store.put("hasLogo", StoreConfigStore.hasLogo(context));
-            store.put("logoUri", StoreConfigStore.getLogoUri(context));
+            store.put("hasLogo", false);
             root.put("store", store);
 
             JSONObject receipt = new JSONObject();
@@ -76,8 +76,19 @@ public class BackupRestoreHelper {
                 JSONObject o = new JSONObject();
                 o.put("id", p.getId());
                 o.put("name", p.getName());
+                o.put("barcode", p.getBarcode());
                 o.put("price", p.getPrice());
+                o.put("costPrice", p.getCostPrice());
                 o.put("stock", p.getStock());
+                o.put("unitName", p.getUnitName());
+                o.put("trackStock", p.isTrackStock());
+                o.put("priceEcer", p.getPriceEcer());
+                o.put("priceRenteng", p.getPriceRenteng());
+                o.put("pricePak", p.getPricePak());
+                o.put("priceKarton", p.getPriceKarton());
+                o.put("factorRenteng", p.getFactorRenteng());
+                o.put("factorPak", p.getFactorPak());
+                o.put("factorKarton", p.getFactorKarton());
                 products.put(o);
             }
             root.put("products", products);
@@ -114,6 +125,7 @@ public class BackupRestoreHelper {
                 TransactionEntity tx = AppDatabase.getInstance(context).transactionDao().getTransactionById(t.getId());
                 o.put("timestamp", tx == null ? toTimestamp(t.getDate(), t.getTime()) : tx.timestamp);
                 o.put("total", t.getTotal());
+                o.put("discount", t.getDiscount());
                 o.put("pay", t.getPay());
                 o.put("change", t.getChange());
                 JSONArray items = new JSONArray();
@@ -121,8 +133,12 @@ public class BackupRestoreHelper {
                     JSONObject io = new JSONObject();
                     io.put("productId", item.getProduct().getId());
                     io.put("productName", item.getProduct().getName());
-                    io.put("price", item.getProduct().getPrice());
+                    io.put("price", item.getUnitPrice());
                     io.put("qty", item.getQty());
+                    io.put("unitCode", SalesUnit.normalize(item.getUnitCode()));
+                    io.put("unitFactorToBase", item.getUnitFactorToBase());
+                    io.put("tierPricingEnabled", item.getProduct().isTierPricingEnabled());
+                    io.put("unitName", item.getProduct().getUnitName());
                     items.put(io);
                 }
                 o.put("items", items);
@@ -160,7 +176,7 @@ public class BackupRestoreHelper {
 
             int version = 1;
             if (root.has("meta")) version = root.getJSONObject("meta").optInt("formatVersion", 1);
-            if (version > 3) {
+            if (version > 4) {
                 Log.e(TAG, "Restore incompatible version: " + version);
                 return RestoreStatus.INCOMPATIBLE_VERSION;
             }
@@ -204,11 +220,7 @@ public class BackupRestoreHelper {
                         store.optString("phone", ""),
                         store.optString("email", "")
                 );
-                if (store.optBoolean("hasLogo", false)) {
-                    StoreConfigStore.saveLogoUri(context, store.optString("logoUri", ""));
-                } else {
-                    StoreConfigStore.clearLogo(context);
-                }
+                StoreConfigStore.clearLogo(context);
             }
             if (root.has("receipt")) {
                 JSONObject receipt = root.getJSONObject("receipt");
@@ -256,8 +268,12 @@ public class BackupRestoreHelper {
                 payload.productEntities.add(new ProductEntity(
                         o.getString("id"),
                         o.getString("name"),
+                        o.optString("barcode", ""),
                         o.getDouble("price"),
-                        o.getInt("stock")
+                        o.optDouble("costPrice", o.optDouble("cost_price", 0)),
+                        o.getInt("stock"),
+                        o.optString("unitName", o.optString("unit_name", "pcs")),
+                        o.optBoolean("trackStock", o.optBoolean("track_stock", true))
                 ));
             }
 
@@ -283,6 +299,7 @@ public class BackupRestoreHelper {
                         o.getString("time"),
                         ts,
                         o.getDouble("total"),
+                        o.optDouble("discount", 0),
                         o.optDouble("pay", 0),
                         o.optDouble("change", 0)
                 ));
@@ -294,7 +311,7 @@ public class BackupRestoreHelper {
                             UUID.randomUUID().toString(),
                             id,
                             io.optString("productId", ""),
-                            io.getString("productName"),
+                            toStoredProductName(io),
                             io.getDouble("price"),
                             io.getInt("qty")
                     ));
@@ -316,6 +333,24 @@ public class BackupRestoreHelper {
         } catch (Exception ignored) {
             return System.currentTimeMillis();
         }
+    }
+
+    private static String toStoredProductName(JSONObject item) {
+        String productName = item.optString("productName", "");
+        String unitCode = SalesUnit.normalize(item.optString("unitCode", SalesUnit.ECER));
+        int factor = Math.max(1, item.optInt("unitFactorToBase", 1));
+        boolean tierPricingEnabled = item.optBoolean("tierPricingEnabled", true);
+        String unitName = item.optString("unitName", "pcs");
+        if (unitName == null || unitName.trim().isEmpty()) unitName = "pcs";
+        return productName
+                + "~~~"
+                + unitCode
+                + "~~~"
+                + factor
+                + "~~~"
+                + (tierPricingEnabled ? "1" : "0")
+                + "~~~"
+                + unitName.trim();
     }
 
     public static void resetAll(final Context context) {

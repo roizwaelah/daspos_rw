@@ -46,7 +46,8 @@ public class BluetoothScanActivity extends BaseActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) loadDevices();
             else {
                 ViewUtils.toast(this, getString(R.string.bluetooth_permission_required));
-                loadDevices();
+                setResult(RESULT_CANCELED);
+                finish();
             }
         }
     }
@@ -69,6 +70,10 @@ public class BluetoothScanActivity extends BaseActivity {
 
     private List<BluetoothDeviceAdapter.DeviceItem> getDevices() {
         List<BluetoothDeviceAdapter.DeviceItem> list = new ArrayList<BluetoothDeviceAdapter.DeviceItem>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return list;
+        }
         try {
             BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
             if (bt != null) {
@@ -79,7 +84,7 @@ public class BluetoothScanActivity extends BaseActivity {
                 }
             }
         } catch (Exception ignored) { }
-        if (list.isEmpty()) {
+        if (list.isEmpty() && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             list.addAll(Arrays.asList(
                 new BluetoothDeviceAdapter.DeviceItem("Printer Kasir A", "00:11:22:33:44:55"),
                 new BluetoothDeviceAdapter.DeviceItem("Printer Gudang", "00:11:22:33:44:66"),

@@ -21,43 +21,45 @@ public class ReceiptPrintHelper {
         html.append("<html><body style='font-family:sans-serif;padding:24px;'>");
         if (!receiptHeader.isEmpty()) {
             html.append("<div style='text-align:center;font-size:18px;font-weight:bold;margin-bottom:12px;'>")
-                    .append(receiptHeader)
+                    .append(escapeHtml(receiptHeader))
                     .append("</div>");
         }
-        html.append("<h2 style='text-align:center;'>").append(StoreConfigStore.getStoreName(context)).append("</h2>");
+        html.append("<h2 style='text-align:center;'>").append(escapeHtml(StoreConfigStore.getStoreName(context))).append("</h2>");
         if (!StoreConfigStore.getAddress(context).isEmpty()) {
-            html.append("<div style='text-align:center;'>").append(StoreConfigStore.getAddress(context)).append("</div>");
+            html.append("<div style='text-align:center;'>").append(escapeHtml(StoreConfigStore.getAddress(context))).append("</div>");
         }
         if (!StoreConfigStore.getPhone(context).isEmpty()) {
-            html.append("<div style='text-align:center;'>").append(StoreConfigStore.getPhone(context)).append("</div>");
+            html.append("<div style='text-align:center;'>").append(escapeHtml(StoreConfigStore.getPhone(context))).append("</div>");
         }
         if (!StoreConfigStore.getEmail(context).isEmpty()) {
-            html.append("<div style='text-align:center;'>").append(StoreConfigStore.getEmail(context)).append("</div>");
+            html.append("<div style='text-align:center;'>").append(escapeHtml(StoreConfigStore.getEmail(context))).append("</div>");
         }
         html.append("<hr/>");
         html.append("<table style='width:100%;table-layout:fixed;border-collapse:collapse;margin-bottom:8px;'>")
                 .append("<tr>")
-                .append("<td style='text-align:left;font-size:13px;'>No. Transaksi: ").append(trx.getId()).append("</td>")
-                .append("<td style='text-align:right;font-size:13px;'>").append(trx.getDate()).append(" ").append(trx.getTime()).append("</td>")
+                .append("<td style='text-align:left;font-size:13px;'>No. Transaksi: ").append(escapeHtml(trx.getId())).append("</td>")
+                .append("<td style='text-align:right;font-size:13px;'>").append(escapeHtml(trx.getDate())).append(" ").append(escapeHtml(trx.getTime())).append("</td>")
                 .append("</tr>")
                 .append("</table>");
         html.append("<hr/>");
         for (CartItem item : trx.getItems()) {
-            boolean tierEnabled = item.getProduct() != null && item.getProduct().isTierPricingEnabled();
-            String detail = tierEnabled
-                    ? item.getQty()
+            String detail = item.getQty()
+                    + " "
+                    + displayUnit(item)
                     + " x "
-                    + SalesUnit.displayName(item.getUnitCode())
-                    + " @ "
-                    + CurrencyUtils.formatRupiah(item.getUnitPrice())
-                    : item.getQty() + " x " + CurrencyUtils.formatRupiah(item.getUnitPrice());
+                    + CurrencyUtils.formatRupiah(item.getUnitPrice());
             html.append("<div style='display:flex;justify-content:space-between;'>")
-                .append("<span><strong>").append(item.getProduct().getName()).append("</strong><br/><small>").append(detail).append("</small></span>")
+                .append("<span><strong>").append(escapeHtml(item.getProduct().getName())).append("</strong><br/><small>").append(escapeHtml(detail)).append("</small></span>")
                 .append("<span>").append(CurrencyUtils.formatRupiah(item.getSubtotal())).append("</span>")
                 .append("</div>")
                 .append("<div style='height:8px;'></div>");
         }
         html.append("<hr/>");
+        if (trx.getDiscount() > 0) {
+            html.append("<div style='text-align:right;font-weight:600;'>Diskon: ")
+                    .append(CurrencyUtils.formatRupiah(trx.getDiscount()))
+                    .append("</div>");
+        }
         html.append("<div style='text-align:right;font-weight:600;'>Total: ")
                 .append(CurrencyUtils.formatRupiah(trx.getTotal()))
                 .append("</div>");
@@ -67,7 +69,7 @@ public class ReceiptPrintHelper {
         html.append("<div style='text-align:right;font-weight:600;'>Kembalian: ")
                 .append(CurrencyUtils.formatRupiah(trx.getChange()))
                 .append("</div>");
-        html.append("<div style='text-align:center;margin-top:16px;'>").append(receiptFooter).append("</div>");
+        html.append("<div style='text-align:center;margin-top:16px;'>").append(escapeHtml(receiptFooter)).append("</div>");
         html.append("</body></html>");
 
         WebView webView = new WebView(context);
@@ -77,5 +79,25 @@ public class ReceiptPrintHelper {
             printManager.print("daspos_receipt", webView.createPrintDocumentAdapter("daspos_receipt"),
                     new PrintAttributes.Builder().build());
         }
+    }
+
+    private static String displayUnit(CartItem item) {
+        if (item == null || item.getProduct() == null) return "pcs";
+        String unitCode = SalesUnit.normalize(item.getUnitCode());
+        if (item.getProduct().isTierPricingEnabled() && !SalesUnit.ECER.equals(unitCode)) {
+            return SalesUnit.displayName(unitCode);
+        }
+        String unitName = item.getProduct().getUnitName();
+        return unitName == null || unitName.trim().isEmpty() ? "pcs" : unitName.trim();
+    }
+
+    private static String escapeHtml(String value) {
+        if (value == null) return "";
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

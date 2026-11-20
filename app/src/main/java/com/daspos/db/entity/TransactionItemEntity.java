@@ -2,9 +2,10 @@ package com.daspos.db.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "transaction_items")
+@Entity(tableName = "transaction_items", indices = {@Index(value = {"transactionId"}), @Index(value = {"productId"})})
 public class TransactionItemEntity {
     @PrimaryKey
     @NonNull

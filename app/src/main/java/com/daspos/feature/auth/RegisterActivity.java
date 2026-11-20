@@ -10,7 +10,10 @@ import androidx.appcompat.app.AlertDialog;
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
 import com.daspos.feature.settings.StoreConfigStore;
+import com.daspos.remote.RemoteAuthBridgeService;
 import com.daspos.repository.UserRepository;
+import com.daspos.shared.util.DbExecutor;
+import com.daspos.shared.util.NetworkUtils;
 import com.daspos.shared.util.LoadingDialogHelper;
 import com.daspos.shared.util.PasswordFieldToggleHelper;
 import com.daspos.shared.util.ViewUtils;
@@ -21,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends BaseActivity {
     private AlertDialog loadingDialog;
+    private boolean setupFlow;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +38,12 @@ public class RegisterActivity extends BaseActivity {
         PasswordFieldToggleHelper.attach(etConfirmPassword);
 
         MaterialButton btnRegister = findViewById(R.id.btnRegister);
-        if (SupabaseConfig.isConfigured()) {
+        TextView tvSetupStep = findViewById(R.id.tvSetupStep);
+        TextView tvSetupHint = findViewById(R.id.tvSetupHint);
+        setupFlow = getIntent().getBooleanExtra(LoginActivity.EXTRA_SETUP_FLOW, false);
+        tvSetupStep.setVisibility(setupFlow ? View.VISIBLE : View.GONE);
+        tvSetupHint.setVisibility(setupFlow ? View.VISIBLE : View.GONE);
+        if (AuthSessionStore.isRemoteDatabaseMode(this)) {
             etStoreName.setText("");
         } else {
             etStoreName.setText(StoreConfigStore.getStoreName(this));
@@ -63,30 +72,8 @@ public class RegisterActivity extends BaseActivity {
                 }
 
                 setLoading(true, btnRegister, tvLogin);
-                if (SupabaseConfig.isConfigured()) {
-                    com.daspos.shared.util.DbExecutor.runAsync(() ->
-                                    SupabaseAuthService.signupWithEmailActivation(email, password, storeName),
-                            signupResult -> {
-                                setLoading(false, btnRegister, tvLogin);
-                                if (!signupResult.success) {
-                                    String msg = signupResult.message == null || signupResult.message.trim().isEmpty()
-                                            ? getString(R.string.register_failed)
-                                            : signupResult.message;
-                                    ViewUtils.toast(RegisterActivity.this, msg);
-                                    return;
-                                }
-                                ViewUtils.toast(RegisterActivity.this, getString(R.string.register_activation_sent));
-                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                intent.putExtra(LoginActivity.EXTRA_PREFILL_EMAIL, email);
-                                startActivity(intent);
-                                finish();
-                            }, throwable -> {
-                                setLoading(false, btnRegister, tvLogin);
-                                String msg = throwable == null || throwable.getMessage() == null
-                                        ? getString(R.string.register_failed)
-                                        : throwable.getMessage();
-                                ViewUtils.toast(RegisterActivity.this, msg);
-                            });
+                if (AuthSessionStore.isRemoteDatabaseMode(RegisterActivity.this)) {
+                    handleRemoteRegister(email, password, storeName, btnRegister, tvLogin);
                     return;
                 }
                 UserRepository.usernameExistsAsync(RegisterActivity.this, email, exists -> {
@@ -107,7 +94,9 @@ public class RegisterActivity extends BaseActivity {
                     UserRepository.addAsync(RegisterActivity.this, email, password, "Admin", () -> {
                         setLoading(false, btnRegister, tvLogin);
                         ViewUtils.toast(RegisterActivity.this, getString(R.string.register_success));
-                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        intent.putExtra(LoginActivity.EXTRA_SETUP_FLOW, setupFlow);
+                        startActivity(intent);
                         finish();
                     }, throwable -> {
                         setLoading(false, btnRegister, tvLogin);
@@ -122,6 +111,81 @@ public class RegisterActivity extends BaseActivity {
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { finish(); }
         });
+    }
+
+    private void handleRemoteRegister(
+            String email,
+            String password,
+            String storeName,
+            MaterialButton btnRegister,
+            TextView tvLogin
+    ) {
+        String providerType = AuthSessionStore.getRemoteProviderType(this);
+        if (!NetworkUtils.isOnline(this)) {
+            setLoading(false, btnRegister, tvLogin);
+            ViewUtils.toast(this, getString(R.string.register_need_internet));
+            return;
+        }
+        if (AuthSessionStore.PROVIDER_SUPABASE.equalsIgnoreCase(providerType)) {
+            if (!SupabaseConfig.isConfigured()) {
+                setLoading(false, btnRegister, tvLogin);
+                ViewUtils.toast(this, getString(R.string.register_failed));
+                return;
+            }
+            DbExecutor.runAsync(() -> SupabaseAuthService.signupWithEmailActivation(email, password, storeName),
+                    signupResult -> {
+                        setLoading(false, btnRegister, tvLogin);
+                        if (!signupResult.success) {
+                            String msg = signupResult.message == null || signupResult.message.trim().isEmpty()
+                                    ? getString(R.string.register_failed)
+                                    : signupResult.message;
+                            ViewUtils.toast(RegisterActivity.this, msg);
+                            return;
+                        }
+                        ViewUtils.toast(RegisterActivity.this, getString(R.string.register_activation_sent));
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        intent.putExtra(LoginActivity.EXTRA_PREFILL_EMAIL, email);
+                        intent.putExtra(LoginActivity.EXTRA_SETUP_FLOW, setupFlow);
+                        startActivity(intent);
+                        finish();
+                    }, throwable -> {
+                        setLoading(false, btnRegister, tvLogin);
+                        String msg = throwable == null || throwable.getMessage() == null
+                                ? getString(R.string.register_failed)
+                                : throwable.getMessage();
+                        ViewUtils.toast(RegisterActivity.this, msg);
+                    });
+            return;
+        }
+
+        DbExecutor.runAsync(() -> RemoteAuthBridgeService.register(RegisterActivity.this, providerType, email, password, storeName),
+                result -> {
+                    setLoading(false, btnRegister, tvLogin);
+                    if (!result.success) {
+                        String msg = result.message == null || result.message.trim().isEmpty()
+                                ? getString(R.string.register_failed)
+                                : result.message;
+                        ViewUtils.toast(RegisterActivity.this, msg);
+                        return;
+                    }
+                    ViewUtils.toast(
+                            RegisterActivity.this,
+                            result.requiresEmailVerification
+                                    ? getString(R.string.register_activation_sent)
+                                    : getString(R.string.register_success)
+                    );
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.EXTRA_PREFILL_EMAIL, email);
+                    intent.putExtra(LoginActivity.EXTRA_SETUP_FLOW, setupFlow);
+                    startActivity(intent);
+                    finish();
+                }, throwable -> {
+                    setLoading(false, btnRegister, tvLogin);
+                    String msg = throwable == null || throwable.getMessage() == null
+                            ? getString(R.string.register_failed)
+                            : throwable.getMessage();
+                    ViewUtils.toast(RegisterActivity.this, msg);
+                });
     }
 
     private void setLoading(boolean isLoading, MaterialButton btnRegister, TextView tvLogin) {

@@ -1,7 +1,9 @@
 package com.daspos.feature.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 public class StoreConfigStore {
     private static final String PREF = "store_config";
@@ -58,10 +60,21 @@ public class StoreConfigStore {
     }
 
     public static void clearLogo(Context context) {
+        releaseLogoPermission(context, getLogoUri(context));
         prefs(context).edit()
                 .putBoolean(KEY_HAS_LOGO, false)
                 .putString(KEY_LOGO_URI, "")
                 .apply();
+    }
+
+    private static void releaseLogoPermission(Context context, String logoUri) {
+        if (context == null || logoUri == null || logoUri.trim().isEmpty()) return;
+        try {
+            context.getContentResolver().releasePersistableUriPermission(
+                    Uri.parse(logoUri),
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
+        } catch (Exception ignored) { }
     }
 
     public static void setHasLogo(Context context, boolean hasLogo) {

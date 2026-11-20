@@ -3,8 +3,16 @@ package com.daspos.feature.auth;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
+import com.daspos.shared.util.PasswordHasher;
+import com.daspos.shared.util.SecurePrefs;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public final class AuthSessionStore {
     private static final String PREF = "auth_session";
@@ -16,6 +24,7 @@ public final class AuthSessionStore {
     private static final String KEY_SOURCE = "source";
     private static final String KEY_OUTLET_ID = "outlet_id";
     private static final String KEY_DATABASE_MODE = "database_mode";
+    private static final String KEY_DATABASE_SETUP_COMPLETED = "database_setup_completed";
     private static final String KEY_REMOTE_PROVIDER_TYPE = "remote_provider_type";
     private static final String KEY_LAST_BACKGROUND_AT = "last_background_at";
     private static final String KEY_OFFLINE_USERNAME = "offline_username";
@@ -29,6 +38,19 @@ public final class AuthSessionStore {
     private static final String KEY_OFFLINE_OUTLET_EMAIL = "offline_outlet_email";
     private static final String KEY_OFFLINE_ACCESS_TOKEN = "offline_access_token";
     private static final String KEY_OFFLINE_REFRESH_TOKEN = "offline_refresh_token";
+    private static final String KEY_OFFLINE_REMOTE_PROVIDER_TYPE = "offline_remote_provider_type";
+    private static final String KEY_OFFLINE_REMOTE_USERNAME = "offline_remote_username";
+    private static final String KEY_OFFLINE_REMOTE_PASSWORD_HASH = "offline_remote_password_hash";
+    private static final String KEY_OFFLINE_REMOTE_ROLE = "offline_remote_role";
+    private static final String KEY_OFFLINE_REMOTE_USER_ID = "offline_remote_user_id";
+    private static final String KEY_OFFLINE_REMOTE_OUTLET_ID = "offline_remote_outlet_id";
+    private static final String KEY_OFFLINE_REMOTE_OUTLET_NAME = "offline_remote_outlet_name";
+    private static final String KEY_OFFLINE_REMOTE_OUTLET_ADDRESS = "offline_remote_outlet_address";
+    private static final String KEY_OFFLINE_REMOTE_OUTLET_PHONE = "offline_remote_outlet_phone";
+    private static final String KEY_OFFLINE_REMOTE_OUTLET_EMAIL = "offline_remote_outlet_email";
+    private static final String KEY_OFFLINE_REMOTE_ACCESS_TOKEN = "offline_remote_access_token";
+    private static final String KEY_OFFLINE_REMOTE_REFRESH_TOKEN = "offline_remote_refresh_token";
+    private static final String KEY_OFFLINE_REMOTE_ALLOWED_MENUS = "offline_remote_allowed_menus";
 
     private AuthSessionStore() {
     }
@@ -42,7 +64,7 @@ public final class AuthSessionStore {
     public static final String PROVIDER_CUSTOM_API = "custom_api";
 
     private static SharedPreferences prefs(Context context) {
-        return context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        return SecurePrefs.get(context, PREF);
     }
 
     public static void saveSession(Context context, String username, String role) {
@@ -69,6 +91,18 @@ public final class AuthSessionStore {
                 .putString(KEY_SOURCE, source)
                 .putString(KEY_OUTLET_ID, outletId)
                 .apply();
+    }
+
+    public static void updateTokens(Context context, String accessToken, String refreshToken) {
+        SharedPreferences.Editor editor = prefs(context).edit()
+                .putString(KEY_ACCESS_TOKEN, valueOrEmpty(accessToken))
+                .putString(KEY_REFRESH_TOKEN, valueOrEmpty(refreshToken));
+        // Keep the offline Supabase credential fresh so offline fallback stays valid.
+        if (PROVIDER_SUPABASE.equalsIgnoreCase(getSource(context))) {
+            editor.putString(KEY_OFFLINE_ACCESS_TOKEN, valueOrEmpty(accessToken))
+                    .putString(KEY_OFFLINE_REFRESH_TOKEN, valueOrEmpty(refreshToken));
+        }
+        editor.apply();
     }
 
     public static String getUsername(Context context) {
@@ -99,6 +133,12 @@ public final class AuthSessionStore {
         String source = prefs(context).getString(KEY_SOURCE, "");
         if (source != null && !source.trim().isEmpty()) return source.trim().toLowerCase();
 
+        String offlineRemoteProvider = prefs(context).getString(KEY_OFFLINE_REMOTE_PROVIDER_TYPE, "");
+        String offlineRemoteUsername = prefs(context).getString(KEY_OFFLINE_REMOTE_USERNAME, "");
+        if (!isBlank(offlineRemoteProvider) && !isBlank(offlineRemoteUsername)) {
+            return normalizeProviderType(offlineRemoteProvider);
+        }
+
         String offlineAccessToken = prefs(context).getString(KEY_OFFLINE_ACCESS_TOKEN, "");
         String offlineOutletId = prefs(context).getString(KEY_OFFLINE_OUTLET_ID, "");
         if (offlineAccessToken != null && !offlineAccessToken.trim().isEmpty()
@@ -111,6 +151,8 @@ public final class AuthSessionStore {
     public static String getOutletId(Context context) {
         String outletId = prefs(context).getString(KEY_OUTLET_ID, "");
         if (outletId != null && !outletId.trim().isEmpty()) return outletId;
+        String remoteOutletId = prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_ID, "");
+        if (remoteOutletId != null && !remoteOutletId.trim().isEmpty()) return remoteOutletId;
         return prefs(context).getString(KEY_OFFLINE_OUTLET_ID, "");
     }
 
@@ -122,7 +164,16 @@ public final class AuthSessionStore {
         prefs(context)
                 .edit()
                 .putString(KEY_DATABASE_MODE, normalized)
+                .putBoolean(KEY_DATABASE_SETUP_COMPLETED, true)
                 .apply();
+    }
+
+    public static boolean isDatabaseSetupCompleted(Context context) {
+        return prefs(context).getBoolean(KEY_DATABASE_SETUP_COMPLETED, false);
+    }
+
+    public static void setDatabaseSetupCompleted(Context context, boolean completed) {
+        prefs(context).edit().putBoolean(KEY_DATABASE_SETUP_COMPLETED, completed).apply();
     }
 
     public static String getDatabaseMode(Context context) {
@@ -157,13 +208,22 @@ public final class AuthSessionStore {
             return normalizeProviderType(saved);
         }
         String source = getSource(context);
-        if ("supabase".equalsIgnoreCase(source)) return PROVIDER_SUPABASE;
+        if (PROVIDER_FIREBASE.equalsIgnoreCase(source)) return PROVIDER_FIREBASE;
+        if (PROVIDER_APPWRITE.equalsIgnoreCase(source)) return PROVIDER_APPWRITE;
+        if (PROVIDER_POCKETBASE.equalsIgnoreCase(source)) return PROVIDER_POCKETBASE;
+        if (PROVIDER_CUSTOM_API.equalsIgnoreCase(source)) return PROVIDER_CUSTOM_API;
+        if (PROVIDER_SUPABASE.equalsIgnoreCase(source)) return PROVIDER_SUPABASE;
         return PROVIDER_SUPABASE;
     }
 
     public static boolean hasSession(Context context) {
-        if ("supabase".equals(getSource(context))) {
+        String source = getSource(context);
+        if ("supabase".equals(source)) {
             return hasValidSupabaseSession(context);
+        }
+        if (isRemoteProvider(source)) {
+            String username = getUsername(context);
+            return username != null && !username.trim().isEmpty();
         }
         String username = getUsername(context);
         return username != null && !username.trim().isEmpty();
@@ -226,7 +286,7 @@ public final class AuthSessionStore {
         if (isBlank(username) || isBlank(password)) return;
         prefs(context).edit()
                 .putString(KEY_OFFLINE_USERNAME, username.trim())
-                .putString(KEY_OFFLINE_PASSWORD_HASH, sha256(password))
+                .putString(KEY_OFFLINE_PASSWORD_HASH, PasswordHasher.hash(password))
                 .putString(KEY_OFFLINE_ROLE, valueOrEmpty(role))
                 .putString(KEY_OFFLINE_USER_ID, valueOrEmpty(userId))
                 .putString(KEY_OFFLINE_OUTLET_ID, valueOrEmpty(outletId))
@@ -245,7 +305,7 @@ public final class AuthSessionStore {
         String storedHash = prefs(context).getString(KEY_OFFLINE_PASSWORD_HASH, "");
         if (isBlank(storedUsername) || isBlank(storedHash)) return null;
         if (!storedUsername.trim().equalsIgnoreCase(username.trim())) return null;
-        if (!storedHash.equals(sha256(password))) return null;
+        if (!PasswordHasher.verify(password, storedHash)) return null;
 
         String role = prefs(context).getString(KEY_OFFLINE_ROLE, "");
         String userId = prefs(context).getString(KEY_OFFLINE_USER_ID, "");
@@ -272,18 +332,119 @@ public final class AuthSessionStore {
         );
     }
 
-    private static String sha256(String raw) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] digest = md.digest(valueOrEmpty(raw).getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
+    public static void saveOfflineRemoteCredential(
+            Context context,
+            String providerType,
+            String username,
+            String password,
+            String role,
+            String userId,
+            String outletId,
+            String outletName,
+            String outletAddress,
+            String outletPhone,
+            String outletEmail,
+            String accessToken,
+            String refreshToken,
+            List<String> allowedMenus
+    ) {
+        if (isBlank(providerType) || PROVIDER_SUPABASE.equalsIgnoreCase(providerType)) return;
+        if (isBlank(username) || isBlank(password)) return;
+        prefs(context).edit()
+                .putString(KEY_OFFLINE_REMOTE_PROVIDER_TYPE, normalizeProviderType(providerType))
+                .putString(KEY_OFFLINE_REMOTE_USERNAME, username.trim())
+                .putString(KEY_OFFLINE_REMOTE_PASSWORD_HASH, PasswordHasher.hash(password))
+                .putString(KEY_OFFLINE_REMOTE_ROLE, valueOrEmpty(role))
+                .putString(KEY_OFFLINE_REMOTE_USER_ID, valueOrEmpty(userId))
+                .putString(KEY_OFFLINE_REMOTE_OUTLET_ID, valueOrEmpty(outletId))
+                .putString(KEY_OFFLINE_REMOTE_OUTLET_NAME, valueOrEmpty(outletName))
+                .putString(KEY_OFFLINE_REMOTE_OUTLET_ADDRESS, valueOrEmpty(outletAddress))
+                .putString(KEY_OFFLINE_REMOTE_OUTLET_PHONE, valueOrEmpty(outletPhone))
+                .putString(KEY_OFFLINE_REMOTE_OUTLET_EMAIL, valueOrEmpty(outletEmail))
+                .putString(KEY_OFFLINE_REMOTE_ACCESS_TOKEN, valueOrEmpty(accessToken))
+                .putString(KEY_OFFLINE_REMOTE_REFRESH_TOKEN, valueOrEmpty(refreshToken))
+                .putString(KEY_OFFLINE_REMOTE_ALLOWED_MENUS, toJsonArray(normalizeMenus(allowedMenus)).toString())
+                .apply();
+    }
+
+    public static OfflineRemoteSession tryOfflineRemoteLogin(
+            Context context,
+            String providerType,
+            String username,
+            String password
+    ) {
+        String normalizedProvider = normalizeProviderType(providerType);
+        if (PROVIDER_SUPABASE.equals(normalizedProvider)) return null;
+        if (isBlank(username) || isBlank(password)) return null;
+
+        String storedProvider = normalizeProviderType(prefs(context).getString(KEY_OFFLINE_REMOTE_PROVIDER_TYPE, ""));
+        if (!normalizedProvider.equals(storedProvider)) return null;
+        String storedUsername = prefs(context).getString(KEY_OFFLINE_REMOTE_USERNAME, "");
+        String storedHash = prefs(context).getString(KEY_OFFLINE_REMOTE_PASSWORD_HASH, "");
+        if (isBlank(storedUsername) || isBlank(storedHash)) return null;
+        if (!storedUsername.trim().equalsIgnoreCase(username.trim())) return null;
+        if (!PasswordHasher.verify(password, storedHash)) return null;
+
+        return new OfflineRemoteSession(
+                storedProvider,
+                storedUsername.trim(),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_ROLE, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_USER_ID, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_ID, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_NAME, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_ADDRESS, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_PHONE, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_OUTLET_EMAIL, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_ACCESS_TOKEN, "")),
+                valueOrEmpty(prefs(context).getString(KEY_OFFLINE_REMOTE_REFRESH_TOKEN, "")),
+                parseMenus(prefs(context).getString(KEY_OFFLINE_REMOTE_ALLOWED_MENUS, ""))
+        );
+    }
+
+    private static boolean isRemoteProvider(String source) {
+        String value = valueOrEmpty(source).trim().toLowerCase(Locale.ROOT);
+        return PROVIDER_SUPABASE.equals(value)
+                || PROVIDER_FIREBASE.equals(value)
+                || PROVIDER_APPWRITE.equals(value)
+                || PROVIDER_POCKETBASE.equals(value)
+                || PROVIDER_CUSTOM_API.equals(value);
+    }
+
+    private static List<String> normalizeMenus(List<String> source) {
+        Set<String> dedup = new LinkedHashSet<>();
+        if (source != null) {
+            for (String item : source) {
+                String menu = valueOrEmpty(item).trim().toLowerCase(Locale.ROOT);
+                if (menu.isEmpty()) continue;
+                dedup.add(menu);
             }
-            return sb.toString();
-        } catch (Exception ignored) {
-            return "";
         }
+        return new ArrayList<>(dedup);
+    }
+
+    private static JSONArray toJsonArray(List<String> menus) {
+        JSONArray array = new JSONArray();
+        if (menus == null) return array;
+        for (String menu : menus) {
+            if (isBlank(menu)) continue;
+            array.put(menu.trim().toLowerCase(Locale.ROOT));
+        }
+        return array;
+    }
+
+    private static List<String> parseMenus(String raw) {
+        List<String> out = new ArrayList<>();
+        if (isBlank(raw)) return out;
+        try {
+            JSONArray arr = new JSONArray(raw);
+            for (int i = 0; i < arr.length(); i++) {
+                String menu = valueOrEmpty(arr.optString(i, "")).trim().toLowerCase(Locale.ROOT);
+                if (menu.isEmpty()) continue;
+                if (!out.contains(menu)) out.add(menu);
+            }
+        } catch (Exception ignored) {
+        }
+        return out;
     }
 
     private static boolean isBlank(String value) {
@@ -337,6 +498,49 @@ public final class AuthSessionStore {
             this.outletEmail = outletEmail;
             this.accessToken = accessToken;
             this.refreshToken = refreshToken;
+        }
+    }
+
+    public static final class OfflineRemoteSession {
+        public final String providerType;
+        public final String username;
+        public final String role;
+        public final String userId;
+        public final String outletId;
+        public final String outletName;
+        public final String outletAddress;
+        public final String outletPhone;
+        public final String outletEmail;
+        public final String accessToken;
+        public final String refreshToken;
+        public final List<String> allowedMenus;
+
+        private OfflineRemoteSession(
+                String providerType,
+                String username,
+                String role,
+                String userId,
+                String outletId,
+                String outletName,
+                String outletAddress,
+                String outletPhone,
+                String outletEmail,
+                String accessToken,
+                String refreshToken,
+                List<String> allowedMenus
+        ) {
+            this.providerType = providerType;
+            this.username = username;
+            this.role = role;
+            this.userId = userId;
+            this.outletId = outletId;
+            this.outletName = outletName;
+            this.outletAddress = outletAddress;
+            this.outletPhone = outletPhone;
+            this.outletEmail = outletEmail;
+            this.accessToken = accessToken;
+            this.refreshToken = refreshToken;
+            this.allowedMenus = allowedMenus == null ? new ArrayList<>() : new ArrayList<>(allowedMenus);
         }
     }
 }

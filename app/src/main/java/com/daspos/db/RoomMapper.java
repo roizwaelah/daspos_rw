@@ -15,11 +15,36 @@ import java.util.UUID;
 
 public class RoomMapper {
     public static ProductEntity toEntity(Product model) {
-        return new ProductEntity(model.getId(), model.getName(), model.getPrice(), model.getStock());
+        return new ProductEntity(
+                model.getId(),
+                model.getName(),
+                model.getBarcode(),
+                model.getPrice(),
+                model.getCostPrice(),
+                model.getStock(),
+                model.getUnitName(),
+                model.isTrackStock()
+        );
     }
 
     public static Product toModel(ProductEntity entity) {
-        return new Product(entity.id, entity.name, entity.price, entity.stock);
+        return new Product(
+                entity.id,
+                entity.name,
+                entity.barcode,
+                entity.price,
+                entity.costPrice,
+                entity.stock,
+                entity.unitName,
+                entity.trackStock,
+                entity.price,
+                entity.price,
+                entity.price,
+                entity.price,
+                1,
+                1,
+                1
+        );
     }
 
     public static UserEntity toEntity(User model) {
@@ -31,7 +56,7 @@ public class RoomMapper {
     }
 
     public static TransactionEntity toTransactionEntity(TransactionRecord record, long timestamp) {
-        return new TransactionEntity(record.getId(), record.getDate(), record.getTime(), timestamp, record.getTotal(), record.getPay(), record.getChange());
+        return new TransactionEntity(record.getId(), record.getDate(), record.getTime(), timestamp, record.getTotal(), record.getDiscount(), record.getPay(), record.getChange());
     }
 
     public static List<TransactionItemEntity> toTransactionItemEntities(TransactionRecord record) {

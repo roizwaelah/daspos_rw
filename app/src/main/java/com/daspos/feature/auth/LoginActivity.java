@@ -9,9 +9,10 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.daspos.R;
 import com.daspos.core.app.BaseActivity;
-import com.daspos.core.app.HomeActivity;
+import com.daspos.core.app.MainActivity;
 import com.daspos.core.app.SplashActivity;
 import com.daspos.feature.settings.StoreConfigStore;
+import com.daspos.remote.RemoteAuthBridgeService;
 import com.daspos.repository.UserRepository;
 import com.daspos.shared.util.DbExecutor;
 import com.daspos.shared.util.LoadingDialogHelper;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class LoginActivity extends BaseActivity {
     public static final String EXTRA_PREFILL_EMAIL = "extra_prefill_email";
+    public static final String EXTRA_SETUP_FLOW = "extra_setup_flow";
     private AlertDialog loadingDialog;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,11 @@ public class LoginActivity extends BaseActivity {
         MaterialButton btnLogin = findViewById(R.id.btnLogin);
         TextView tvRegister = findViewById(R.id.tvRegister);
         TextView tvResendVerification = findViewById(R.id.tvResendVerification);
+        TextView tvSetupStep = findViewById(R.id.tvSetupStep);
+        TextView tvSetupHint = findViewById(R.id.tvSetupHint);
+        boolean setupFlow = getIntent().getBooleanExtra(EXTRA_SETUP_FLOW, false);
+        tvSetupStep.setVisibility(setupFlow ? View.VISIBLE : View.GONE);
+        tvSetupHint.setVisibility(setupFlow ? View.VISIBLE : View.GONE);
 
         String prefillEmail = getIntent().getStringExtra(EXTRA_PREFILL_EMAIL);
         if (prefillEmail != null && !prefillEmail.trim().isEmpty()) {
@@ -64,7 +71,10 @@ public class LoginActivity extends BaseActivity {
                 DbExecutor.runAsync(() -> authenticate(email, pass), result -> {
                     setLoading(false, btnLogin, tvRegister);
                     if (!result.authenticated) {
-                        ViewUtils.toast(LoginActivity.this, getString(R.string.login_failed));
+                        String msg = result.message == null || result.message.trim().isEmpty()
+                                ? getString(R.string.login_failed)
+                                : result.message;
+                        ViewUtils.toast(LoginActivity.this, msg);
                         return;
                     }
                     AuthSessionStore.saveSession(
@@ -77,7 +87,7 @@ public class LoginActivity extends BaseActivity {
                             result.source,
                             result.outletId
                     );
-                    if ("supabase".equalsIgnoreCase(result.source)) {
+                    if (isRemoteSource(result.source)) {
                         if ("kasir".equalsIgnoreCase(result.role)) {
                             List<String> menusFromServer = result.allowedMenus == null ? new ArrayList<>() : result.allowedMenus;
                             if (!menusFromServer.isEmpty()) {
@@ -93,23 +103,42 @@ public class LoginActivity extends BaseActivity {
                                 result.outletPhone,
                                 result.outletEmail
                         );
-                        AuthSessionStore.saveOfflineSupabaseCredential(
-                                LoginActivity.this,
-                                result.username,
-                                pass,
-                                result.role,
-                                result.userId,
-                                result.outletId,
-                                result.outletName,
-                                result.outletAddress,
-                                result.outletPhone,
-                                result.outletEmail,
-                                result.accessToken,
-                                result.refreshToken
-                        );
+                        if (isSupabaseSource(result.source)) {
+                            AuthSessionStore.saveOfflineSupabaseCredential(
+                                    LoginActivity.this,
+                                    result.username,
+                                    pass,
+                                    result.role,
+                                    result.userId,
+                                    result.outletId,
+                                    result.outletName,
+                                    result.outletAddress,
+                                    result.outletPhone,
+                                    result.outletEmail,
+                                    result.accessToken,
+                                    result.refreshToken
+                            );
+                        } else {
+                            AuthSessionStore.saveOfflineRemoteCredential(
+                                    LoginActivity.this,
+                                    result.source,
+                                    result.username,
+                                    pass,
+                                    result.role,
+                                    result.userId,
+                                    result.outletId,
+                                    result.outletName,
+                                    result.outletAddress,
+                                    result.outletPhone,
+                                    result.outletEmail,
+                                    result.accessToken,
+                                    result.refreshToken,
+                                    result.allowedMenus
+                            );
+                        }
                     }
                     AuthSessionStore.saveLastBackgroundAt(LoginActivity.this, 0L);
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }, throwable -> {
                     setLoading(false, btnLogin, tvRegister);
@@ -118,7 +147,11 @@ public class LoginActivity extends BaseActivity {
             }
         });
         tvRegister.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { startActivity(new Intent(LoginActivity.this, RegisterActivity.class)); }
+            @Override public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent.putExtra(EXTRA_SETUP_FLOW, setupFlow);
+                startActivity(intent);
+            }
         });
         tvResendVerification.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
@@ -171,21 +204,52 @@ public class LoginActivity extends BaseActivity {
     }
 
     private AuthOutcome authenticate(String email, String password) {
-        boolean supabaseConfigured = SupabaseConfig.isConfigured();
+        boolean remoteMode = AuthSessionStore.isRemoteDatabaseMode(this);
+        String providerType = AuthSessionStore.getRemoteProviderType(this);
         boolean online = NetworkUtils.isOnline(this);
+        String remoteFailureMessage = "";
 
-        if (supabaseConfigured && online) {
-            SupabaseAuthService.AuthResult remoteResult = SupabaseAuthService.loginWithPassword(email, password);
-            if (remoteResult.authenticated) {
-                return AuthOutcome.supabase(remoteResult);
+        if (remoteMode) {
+            if (AuthSessionStore.PROVIDER_SUPABASE.equalsIgnoreCase(providerType)) {
+                boolean supabaseConfigured = SupabaseConfig.isConfigured();
+                if (supabaseConfigured && online) {
+                    SupabaseAuthService.AuthResult remoteResult = SupabaseAuthService.loginWithPassword(email, password);
+                    if (remoteResult.authenticated) {
+                        return AuthOutcome.supabase(remoteResult);
+                    }
+                    remoteFailureMessage = remoteResult.message;
+                }
+                if (supabaseConfigured && !online) {
+                    AuthSessionStore.OfflineSupabaseSession offlineSession =
+                            AuthSessionStore.tryOfflineSupabaseLogin(this, email, password);
+                    if (offlineSession != null) {
+                        return AuthOutcome.supabaseOffline(offlineSession);
+                    }
+                }
+            } else {
+                if (online) {
+                    RemoteAuthBridgeService.AuthResult remoteResult =
+                            RemoteAuthBridgeService.login(this, providerType, email, password);
+                    if (remoteResult.authenticated) {
+                        return AuthOutcome.remote(providerType, remoteResult);
+                    }
+                    remoteFailureMessage = remoteResult.message;
+                }
+                AuthSessionStore.OfflineRemoteSession offlineSession =
+                        AuthSessionStore.tryOfflineRemoteLogin(this, providerType, email, password);
+                if (offlineSession != null) {
+                    return AuthOutcome.remoteOffline(offlineSession);
+                }
             }
         }
-        if (supabaseConfigured && !online) {
-            AuthSessionStore.OfflineSupabaseSession offlineSession =
-                    AuthSessionStore.tryOfflineSupabaseLogin(this, email, password);
-            if (offlineSession != null) {
-                return AuthOutcome.supabaseOffline(offlineSession);
+
+        // Remote mode must never fall back to the local users table: it is only
+        // a mirror, and local auth would bypass remote deactivation/password resets.
+        if (remoteMode) {
+            if (remoteFailureMessage != null && !remoteFailureMessage.trim().isEmpty()) {
+                return AuthOutcome.failed(remoteFailureMessage);
             }
+            return AuthOutcome.failed();
         }
 
         boolean authenticated = UserRepository.authenticate(LoginActivity.this, email, password);
@@ -195,6 +259,18 @@ public class LoginActivity extends BaseActivity {
         com.daspos.model.User user = UserRepository.getByUsername(LoginActivity.this, email);
         String role = user == null ? "" : user.getRole();
         return AuthOutcome.local(email, role);
+    }
+
+    private boolean isSupabaseSource(String source) {
+        return AuthSessionStore.PROVIDER_SUPABASE.equalsIgnoreCase(source);
+    }
+
+    private boolean isRemoteSource(String source) {
+        return AuthSessionStore.PROVIDER_SUPABASE.equalsIgnoreCase(source)
+                || AuthSessionStore.PROVIDER_FIREBASE.equalsIgnoreCase(source)
+                || AuthSessionStore.PROVIDER_APPWRITE.equalsIgnoreCase(source)
+                || AuthSessionStore.PROVIDER_POCKETBASE.equalsIgnoreCase(source)
+                || AuthSessionStore.PROVIDER_CUSTOM_API.equalsIgnoreCase(source);
     }
 
     private static final class AuthOutcome {
@@ -211,6 +287,7 @@ public class LoginActivity extends BaseActivity {
         private final String outletAddress;
         private final String outletPhone;
         private final String outletEmail;
+        private final String message;
 
         private AuthOutcome(
                 boolean authenticated,
@@ -225,7 +302,8 @@ public class LoginActivity extends BaseActivity {
                 String outletName,
                 String outletAddress,
                 String outletPhone,
-                String outletEmail
+                String outletEmail,
+                String message
         ) {
             this.authenticated = authenticated;
             this.username = username;
@@ -240,10 +318,11 @@ public class LoginActivity extends BaseActivity {
             this.outletAddress = outletAddress;
             this.outletPhone = outletPhone;
             this.outletEmail = outletEmail;
+            this.message = message;
         }
 
         private static AuthOutcome local(String username, String role) {
-            return new AuthOutcome(true, username, role, "", "", "", "local", new java.util.ArrayList<>(), "", "", "", "", "");
+            return new AuthOutcome(true, username, role, "", "", "", "local", new java.util.ArrayList<>(), "", "", "", "", "", "");
         }
 
         private static AuthOutcome supabase(SupabaseAuthService.AuthResult result) {
@@ -260,7 +339,8 @@ public class LoginActivity extends BaseActivity {
                     result.outletName,
                     result.outletAddress,
                     result.outletPhone,
-                    result.outletEmail
+                    result.outletEmail,
+                    ""
             );
         }
 
@@ -278,12 +358,55 @@ public class LoginActivity extends BaseActivity {
                     session.outletName,
                     session.outletAddress,
                     session.outletPhone,
-                    session.outletEmail
+                    session.outletEmail,
+                    ""
+            );
+        }
+
+        private static AuthOutcome remote(String providerType, RemoteAuthBridgeService.AuthResult result) {
+            return new AuthOutcome(
+                    true,
+                    result.username,
+                    result.role,
+                    result.userId,
+                    result.accessToken,
+                    result.refreshToken,
+                    providerType,
+                    result.allowedMenus,
+                    result.outletId,
+                    result.outletName,
+                    result.outletAddress,
+                    result.outletPhone,
+                    result.outletEmail,
+                    ""
+            );
+        }
+
+        private static AuthOutcome remoteOffline(AuthSessionStore.OfflineRemoteSession session) {
+            return new AuthOutcome(
+                    true,
+                    session.username,
+                    session.role,
+                    session.userId,
+                    session.accessToken,
+                    session.refreshToken,
+                    session.providerType,
+                    session.allowedMenus,
+                    session.outletId,
+                    session.outletName,
+                    session.outletAddress,
+                    session.outletPhone,
+                    session.outletEmail,
+                    ""
             );
         }
 
         private static AuthOutcome failed() {
-            return new AuthOutcome(false, "", "", "", "", "", "", new java.util.ArrayList<>(), "", "", "", "", "");
+            return failed("");
+        }
+
+        private static AuthOutcome failed(String message) {
+            return new AuthOutcome(false, "", "", "", "", "", "", new java.util.ArrayList<>(), "", "", "", "", "", message);
         }
     }
 

@@ -14,7 +14,7 @@ public interface UserDao {
     @Query("SELECT * FROM users ORDER BY username ASC")
     List<UserEntity> getAll();
 
-    @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
+    @Query("SELECT * FROM users WHERE lower(username) = lower(:username) LIMIT 1")
     UserEntity getByUsername(String username);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,8 +23,11 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(UserEntity item);
 
-    @Query("DELETE FROM users WHERE username = :username")
+    @Query("DELETE FROM users WHERE lower(username) = lower(:username)")
     void deleteByUsername(String username);
+
+    @Query("DELETE FROM users")
+    void deleteAll();
 
     @Query("SELECT COUNT(*) FROM users")
     int count();

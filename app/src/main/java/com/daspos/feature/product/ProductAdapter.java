@@ -42,10 +42,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.VH> {
     public void onBindViewHolder(@NonNull VH holder, int position) {
         final Product p = items.get(position);
         holder.tvName.setText(p.getName());
+        String stockInfo = p.isTrackStock() ? " | stok " + p.getStock() + " " + p.getUnitName() : " | tanpa stok";
         if (p.isTierPricingEnabled()) {
-            holder.tvInfo.setText("Ecer " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + " | Renteng " + CurrencyUtils.formatRupiah(p.getPriceRenteng()) + " | stok " + p.getStock() + " ecer");
+            holder.tvInfo.setText("Ecer " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + " | Renteng " + CurrencyUtils.formatRupiah(p.getPriceRenteng()) + stockInfo);
         } else {
-            holder.tvInfo.setText("Harga " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + " | stok " + p.getStock());
+            holder.tvInfo.setText("Harga " + CurrencyUtils.formatRupiah(p.getPriceEcer()) + stockInfo);
         }
         holder.btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { listener.onEdit(p); }

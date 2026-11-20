@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DasPos</string>
-    <string name="welcome_login">Masuk</string>
-    <string name="label_username">Username</string>
     <string name="label_password">Password</string>
     <string name="label_confirm_password">Konfirmasi Password</string>
     <string name="label_store_name">Nama Toko</string>
@@ -13,7 +11,6 @@
     <string name="register">Daftar</string>
     <string name="no_account">Belum punya akun? Daftar</string>
     <string name="has_account">Sudah punya akun? Masuk</string>
-    <string name="create_account">Buat Akun Baru</string>
     <string name="transactions_today">Transaksi Hari Ini</string>
     <string name="income_today">Pendapatan Hari Ini</string>
     <string name="income_this_month">Pendapatan Bulan Ini</string>
@@ -35,10 +32,13 @@
     <string name="finish">Selesai</string>
     <string name="add_product">Tambah Produk</string>
     <string name="import_product">Import Produk</string>
-    <string name="sort">Sortir</string>
     <string name="sort_placeholder">Urutkan</string>
     <string name="product_name">Nama Produk</string>
-    <string name="price">Harga</string>
+    <string name="product_barcode">Kode Produk / Barcode</string>
+    <string name="cost_price">Harga Pokok</string>
+    <string name="selling_price">Harga Jual</string>
+    <string name="product_unit_name">Nama Satuan Produk</string>
+    <string name="use_stock">Pakai Stok</string>
     <string name="stock">Stok</string>
     <string name="tier_price_title">Harga Bertingkat (Ecer/Renteng/Pak/Karton)</string>
     <string name="tier_price_hint">Konversi default: 1 Renteng = 10 Ecer, 1 Pak = 20 Ecer, 1 Karton = 100 Ecer.</string>
@@ -46,7 +46,6 @@
     <string name="use_tier_pricing">Gunakan harga bertingkat (renteng/pak/karton)</string>
     <string name="tier_factor_title">Konversi Unit (ke Ecer)</string>
     <string name="tier_factor_hint">Kosongkan untuk pakai default. Contoh: 1 Renteng = 10 Ecer.</string>
-    <string name="unit_ecer">Harga Ecer</string>
     <string name="unit_renteng">Harga Renteng</string>
     <string name="unit_pak">Harga Pak</string>
     <string name="unit_karton">Harga Karton</string>
@@ -58,14 +57,16 @@
     <string name="default_factor_pak">20</string>
     <string name="default_factor_karton">100</string>
     <string name="cart_line_format">%1$d x %2$s @ %3$s</string>
-    <string name="cart_line_format_no_unit">%1$d x %2$s</string>
     <string name="receipt_item_format">%1$d x %2$s @ %3$s</string>
-    <string name="receipt_item_format_no_unit">%1$d x %2$s</string>
+    <string name="manual_item_name">Nama barang manual</string>
+    <string name="manual_item_price">Harga jual</string>
+    <string name="manual_item_name_required">Nama barang manual wajib diisi</string>
+    <string name="manual_item_price_required">Harga barang manual wajib lebih dari 0</string>
+    <string name="discount">Diskon</string>
     <string name="save">Simpan</string>
     <string name="edit">Edit</string>
     <string name="delete">Hapus</string>
     <string name="product_form_title">Tambah/Edit Produk</string>
-    <string name="today_transaction_history">Riwayat Transaksi Hari Ini</string>
     <string name="summary">Rekap</string>
     <string name="daily">Harian</string>
     <string name="monthly">Bulanan</string>
@@ -96,10 +97,8 @@
     <string name="old_password">Password Lama</string>
     <string name="new_password">Password Baru</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="logo_hint">Ukuran logo yang disarankan 512x512 px.</string>
     <string name="select_logo">Pilih Logo</string>
     <string name="remove_logo">Hapus</string>
-    <string name="preview_receipt">Preview Struk</string>
     <string name="receipt_header">Header Struk</string>
     <string name="receipt_footer">Footer Struk</string>
     <string name="show_logo_receipt">Tampilkan Logo pada Struk</string>
@@ -109,40 +108,52 @@
     <string name="printer_usb">USB</string>
     <string name="printer_network">Network</string>
     <string name="choose_bluetooth_printer">Pilih Printer Bluetooth</string>
-    <string name="ip_address">IP Address</string>
-    <string name="port">Port</string>
     <string name="test_connection">Tes Koneksi</string>
     <string name="test_print">Tes Print</string>
     <string name="backup">Backup</string>
     <string name="backup_desc">Simpan cadangan data untuk keamanan transaksi dan master data.</string>
-    <string name="auto_backup">Backup Otomatis</string>
-    <string name="backup_interval">Interval Backup</string>
     <string name="backup_now">Backup Sekarang</string>
     <string name="restore">Restore</string>
     <string name="restore_desc">Pilih file backup sebelumnya untuk memulihkan data aplikasi.</string>
     <string name="choose_file">Pilih File</string>
     <string name="reset_data">Reset Semua Data</string>
-    <string name="reset_desc">Tindakan ini akan menghapus seluruh data transaksi dan master secara permanen.</string>
-    <string name="app_version">Versi</string>
     <string name="app_version_not_available">Versi tidak tersedia</string>
     <string name="app_version_build_format">Versi %1$s (Build %2$d)</string>
     <string name="app_info_overview">DasPos adalah aplikasi kasir (Point of Sale) untuk membantu operasional toko harian, mulai dari pengelolaan produk, transaksi penjualan, hingga rekap laporan.</string>
     <string name="app_info_features">Fitur utama aplikasi mencakup manajemen produk, transaksi kasir, laporan harian/bulanan, pengaturan struk, backup/restore data, dan dukungan printer Bluetooth maupun network.</string>
     <string name="app_info_data_note">Data disimpan secara lokal di perangkat dan dapat dicadangkan secara manual melalui menu Backup/Restore sesuai kebutuhan pengguna.</string>
-    <string name="app_description">DasPos adalah aplikasi POS sederhana untuk toko ritel dengan fitur produk, transaksi, laporan, dan backup.</string>
-    <string name="changelog">Changelog</string>
-    <string name="privacy_policy">Kebijakan Privasi</string>
-    <string name="contact_help">Butuh bantuan atau ingin berdiskusi? Hubungi tim kami melalui WhatsApp.</string>
     <string name="chat_whatsapp">Chat via WhatsApp</string>
     <string name="select_database">Pilih Database</string>
+    <string name="setup_step_database">Langkah 1 dari 2</string>
+    <string name="setup_database_hint">Tentukan mode database yang akan dipakai aplikasi, lalu lanjut ke login/registrasi.</string>
+    <string name="setup_step_account">Langkah 2 dari 2</string>
+    <string name="setup_account_hint">Masuk dengan akun yang sudah ada atau daftar akun baru untuk mulai memakai aplikasi.</string>
     <string name="local_database">Local</string>
     <string name="remote_database">Remote</string>
+    <string name="remote_provider">Remote Provider</string>
+    <string name="provider_supabase">Supabase</string>
+    <string name="provider_firebase">Firebase (via Edge Function)</string>
+    <string name="provider_appwrite">Appwrite (via Function)</string>
+    <string name="provider_pocketbase">PocketBase (via API/Function)</string>
+    <string name="provider_custom_api">Custom API / Edge Function</string>
+    <string name="remote_base_url">Base URL (opsional)</string>
+    <string name="remote_base_url_hint">https://api.domain-anda.com</string>
+    <string name="remote_api_key_optional">API Key (opsional)</string>
+    <string name="remote_api_key_hint">Masukkan API key jika diperlukan</string>
+    <string name="remote_edge_function_url">URL Edge Function/Bridge</string>
+    <string name="remote_edge_function_url_hint">https://domain/functions/v1/daspos-bridge</string>
+    <string name="remote_edge_secret_optional">Edge Secret (opsional)</string>
+    <string name="remote_edge_secret_hint">Header x-edge-secret (opsional)</string>
+    <string name="supabase_url">Supabase URL</string>
+    <string name="supabase_url_hint">https://project-ref.supabase.co</string>
+    <string name="supabase_anon_key">Supabase Anon Key</string>
+    <string name="supabase_anon_key_hint">Masukkan anon key Supabase</string>
+    <string name="remote_notes_supabase">Mode Remote Supabase memakai URL + anon key yang diisi di aplikasi, lalu session login Supabase.</string>
+    <string name="remote_notes_generic">Provider non-Supabase membutuhkan endpoint bridge (Edge Function/API) yang meng-handle action DasPos.</string>
     <string name="download_template">Download Template</string>
     <string name="download_template_desc">Gunakan template resmi agar kolom produk terbaca dengan benar saat import.</string>
-    <string name="download">Unduh</string>
     <string name="upload_excel">Upload Excel</string>
     <string name="upload_excel_desc">Pilih file Excel untuk dipreview sebelum diimport ke sistem.</string>
-    <string name="close">Tutup</string>
     <string name="import_preview">Preview Import</string>
     <string name="duplicate_info">Beberapa data duplikat akan ditandai sebelum proses import dilakukan.</string>
     <string name="import_action">Import</string>
@@ -153,40 +164,22 @@
     <string name="edit_user">Edit User</string>
     <string name="user_list">Daftar User</string>
     <string name="bluetooth_scan">Pilih Printer Bluetooth</string>
-    <string name="theme">Tema</string>
-    <string name="store_logo">Logo Toko</string>
-    <string name="search">Cari</string>
-    <string name="informasi_usaha">Informasi Usaha</string>
-    <string name="receipt_sample_header">DASPOS STORE</string>
-    <string name="receipt_sample_footer">Terima kasih telah berbelanja</string>
-    <string name="sample_total">Rp 250.000</string>
-    <string name="sample_change">Rp 50.000</string>
     <string name="password_not_match">Password tidak cocok</string>
     <string name="field_required">Field wajib diisi</string>
     <string name="saved_success">Data berhasil disimpan</string>
-    <string name="test_print_success">Tes print dikirim</string>
-    <string name="print_simulation">Simulasi cetak struk</string>
-    <string name="download_simulation">Simulasi unduh template Excel</string>
-    <string name="backup_simulation">Simulasi backup sekarang</string>
-    <string name="restore_simulation">Simulasi pilih file restore</string>
     <string name="reset_warning">Reset semua data hanya simulasi pada starter project ini.</string>
 
     <string name="stock_not_enough">Stok tidak mencukupi</string>
     <string name="product_out_of_stock">Produk habis</string>
-    <string name="transaction_saved">Transaksi berhasil disimpan</string>
-    <string name="period_daily_format">%1$s</string>
-    <string name="period_monthly_format">%1$s %2$s</string>
 
 
     <string name="invalid_price">Harga tidak valid</string>
     <string name="invalid_stock">Stok tidak valid</string>
     <string name="invalid_factor">Konversi unit tidak valid</string>
-    <string name="username_required">Email wajib diisi</string>
     <string name="email_required">Email wajib diisi</string>
     <string name="password_required">Password wajib diisi</string>
 
     <string name="login_failed">Email atau password salah</string>
-    <string name="username_already_exists">Email sudah terdaftar</string>
     <string name="email_already_exists">Email sudah terdaftar</string>
     <string name="register_success">Akun berhasil dibuat</string>
     <string name="register_failed">Pendaftaran gagal</string>
@@ -198,16 +191,11 @@
 
     <string name="loading">Memuat...</string>
     <string name="empty_users">Belum ada user</string>
-    <string name="empty_products">Produk tidak ditemukan</string>
-    <string name="empty_reports">Belum ada laporan pada periode ini</string>
 
 
-    <string name="empty_search_products">Produk tidak ditemukan</string>
     <string name="empty_cart">Keranjang masih kosong</string>
 
 
-    <string name="payment_insufficient">Nominal bayar kurang</string>
-    <string name="search_failed">Gagal mencari produk</string>
 
 
     <string name="export_success">File berhasil disimpan</string>
@@ -219,7 +207,6 @@
     <string name="printer_saved">Pengaturan printer tersimpan</string>
     <string name="selected_printer">Printer terpilih</string>
     <string name="print_started">Proses print dimulai</string>
-    <string name="excel_compatible_csv">File CSV kompatibel Excel</string>
 
 
     <string name="xlsx_export_success">File XLSX berhasil disimpan</string>
@@ -256,7 +243,17 @@
     <string name="map_name_column">Kolom Nama</string>
     <string name="map_price_column">Kolom Harga</string>
     <string name="map_stock_column">Kolom Stok</string>
-    <string name="mapping_updated">Pemetaan kolom diperbarui</string>
+    <string name="map_optional_columns">Kolom Opsional (boleh dikosongkan)</string>
+    <string name="map_barcode_column">Barcode</string>
+    <string name="map_unit_column">Satuan</string>
+    <string name="map_cost_column">Harga Modal</string>
+    <string name="map_price_renteng_column">Harga Renteng</string>
+    <string name="map_price_pak_column">Harga Pak</string>
+    <string name="map_price_karton_column">Harga Karton</string>
+    <string name="map_factor_renteng_column">Faktor Renteng</string>
+    <string name="map_factor_pak_column">Faktor Pak</string>
+    <string name="map_factor_karton_column">Faktor Karton</string>
+    <string name="mapping_empty_column">— (tidak diimpor) —</string>
 
 
     <string name="row_stats">Baris valid: %1$d • invalid: %2$d</string>
@@ -274,9 +271,6 @@
     <string name="export_log">Export Log</string>
     <string name="import_log_saved">Log import berhasil disimpan</string>
     <string name="invalid_row_format">Baris %1$d: %2$s</string>
-    <string name="invalid_reason_empty_name">Nama produk kosong</string>
-    <string name="invalid_reason_price">Harga tidak valid</string>
-    <string name="invalid_reason_stock">Stok tidak valid</string>
     <string name="no_invalid_rows">Tidak ada baris invalid</string>
 
 
@@ -304,7 +298,6 @@
     <string name="time">Waktu</string>
     <string name="add">Tambah</string>
     <string name="database">Database</string>
-    <string name="insert_username">Masukkan Username</string>
     <string name="insert_password">Masukkan Password</string>
     <string name="insert_password_again">Masukkan Password Lagi</string>
     <string name="insert_store_name">Masukkan Nama Toko</string>
@@ -320,12 +313,10 @@
     <string name="old_password_invalid">Password lama tidak sesuai</string>
     <string name="user_session_not_found">Sesi login tidak ditemukan, silakan login ulang</string>
 
-    <string name="today_transaction_history_hint">Tap untuk lihat daftar transaksi hari ini</string>
     <string name="delete_receipt">Hapus</string>
     <string name="delete_receipt_confirmation">Struk ini akan dihapus dan stok produk akan dikembalikan. Lanjutkan?</string>
     <string name="delete_receipt_success">Struk berhasil dihapus</string>
     <string name="delete_receipt_failed">Gagal menghapus struk</string>
-    <string name="show_today_transactions">Menampilkan daftar transaksi hari ini</string>
     <string name="menu_access_settings">Akses Menu Kasir</string>
     <string name="menu_access_transaction">Transaksi</string>
     <string name="menu_access_product">Produk</string>
@@ -352,4 +343,6 @@
     <string name="purge_outlet_failed">Gagal menghapus outlet dan data.</string>
     <string name="saved_local_sync_pending">Data tersimpan lokal. Sinkron ke Supabase menunggu koneksi internet.</string>
     <string name="saved_local_sync_failed">Data tersimpan lokal, tetapi sinkron ke Supabase gagal.</string>
+    <string name="delete_product_failed">Gagal menghapus produk</string>
+    <string name="store_name_required">Nama toko tidak boleh kosong</string>
 </resources>
